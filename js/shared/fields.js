@@ -1,10 +1,10 @@
 const isCheckbox = (field) => field.type === 'checkbox' || field.tagName.toLocaleLowerCase().includes('checkbox');
 
-const getoption-fields = (parent) => document.querySelectorAll(`${parent} .option-field`);
+const getOptionFields = (parent) => document.querySelectorAll(`${parent} .option-field`);
 
 const attachOptionFieldsListeners = (fields, parent) => {
-  const option-fields = getoption-fields(parent);
-  option-fields.forEach((field) => {
+  const optionFields = getOptionFields(parent);
+  optionFields.forEach((field) => {
     field.addEventListener('change', () => {
       const value = isCheckbox(field) ? field.checked : field.value;
       fields[field.id] = value;
@@ -15,8 +15,8 @@ const attachOptionFieldsListeners = (fields, parent) => {
 
 const initOptionFields = (parent) => {
   const fields = {};
-  const option-fields = getoption-fields(parent);
-  option-fields.forEach((field) => {
+  const optionFields = getOptionFields(parent);
+  optionFields.forEach((field) => {
     const value = localStorage.getItem(`option-field-${field.id}`);
     if (value !== null) {
       if (isCheckbox(field)) {
@@ -33,7 +33,7 @@ const initOptionFields = (parent) => {
 };
 
 export {
-  getoption-fields,
+  getOptionFields,
   initOptionFields,
   attachOptionFieldsListeners,
 };
