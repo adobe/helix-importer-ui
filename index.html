@@ -62,6 +62,7 @@
                 <sp-tab label="Preview" value="import-preview"></sp-tab>
                 <sp-tab label="Markdown" value="import-markdown"></sp-tab>
                 <sp-tab label="HTML" value="import-html"></sp-tab>
+                <sp-tab label="Options" value="import-options"></sp-tab>
                 <sp-tab-panel value="import-preview">
                   <div id="import-markdown-preview"></div>
                 </sp-tab-panel>
@@ -93,13 +94,13 @@
             <div class="eyedropper">
               <h2>Eye dropper</h2>
               <div class="config form">
-                <sp-field-label for="url" size="m" required>URL</sp-field-label>
+                <sp-field-label for="inspect-url" size="m" required>URL</sp-field-label>
                 <sp-textfield placeholder="https://www.samples.com/" id="inspect-url" style="width: 400px" class="optionField"></sp-textfield>
                 <sp-button id="inspect-dropButton">Eye Drop</sp-button>
               </div>
               <div class="preview hidden">
                 <h2>Preview</h2>
-                <iframe id="inspect-contentFrame" frameborder="0" sandbox="allow-same-origin"></iframe>
+                <iframe id="inspect-contentFrame" frameborder="0"></iframe>
               </div>
             </div>
             <div>
@@ -107,6 +108,7 @@
                 <sp-tab label="Logo" value="inspect-logo"></sp-tab>
                 <sp-tab label="Colors" value="inspect-colors"></sp-tab>
                 <sp-tab label="Fonts & Sizes" value="inspect-fonts-sizes"></sp-tab>
+                <sp-tab label="Options" value="inspect-options"></sp-tab>
                 <sp-tab-panel value="inspect-logo">
                   <div class="brand vars">
                     <div class="logo">
@@ -265,7 +267,14 @@
                   </div>
                 </sp-tab-panel>
                 <sp-tab-panel value="inspect-options">
-                  TODO
+                  <div>
+                    <h2>Options</h2>
+                    <div class="config form">
+                      <sp-field-group>
+                        <sp-checkbox size="m" id="inspect-enable-js" class="optionField" value="false">Enable Javascript</sp-checkbox>
+                      </sp-field-group>
+                    </div>
+                  </div>
                 </sp-tab-panel>
               </sp-tabs>
               <div class="toolbar">
