@@ -6,10 +6,10 @@ const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} .config`;
 const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} .vars`;
 const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .preview`);
 const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
-const DROP_BUTTON = document.querySelector(`${CONFIG_PARENT_SELECTOR} #inspect-dropButton`);
-const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copyCSSButton`);
-const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-contentFrame`);
-const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} .varField`);
+const DROP_BUTTON = document.querySelector(`${CONFIG_PARENT_SELECTOR} #inspect-drop-button`);
+const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-css-button`);
+const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-content-frame`);
+const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} .inspect-var-field`);
 const PICKERS = document.querySelectorAll(`${PARENT_SELECTOR} .picker`);
 const ALERT = document.getElementById('alert-container');
 

@@ -49,7 +49,7 @@
               <h2>Importer</h2>
               <div class="config form">
                 <sp-field-label for="import-url" size="m" required>URL</sp-field-label>
-                <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="optionField"></sp-textfield>
+                <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="option-field"></sp-textfield>
                 <sp-button id="import-importButton">Import</sp-button>
                 <div class="preview hidden">
                   <h2>Preview</h2>
@@ -95,12 +95,12 @@
               <h2>Eye dropper</h2>
               <div class="config form">
                 <sp-field-label for="inspect-url" size="m" required>URL</sp-field-label>
-                <sp-textfield placeholder="https://www.samples.com/" id="inspect-url" style="width: 400px" class="optionField"></sp-textfield>
-                <sp-button id="inspect-dropButton">Eye Drop</sp-button>
+                <sp-textfield placeholder="https://www.samples.com/" id="inspect-url" style="width: 400px" class="option-field"></sp-textfield>
+                <sp-button id="inspect-drop-button">Eye Drop</sp-button>
               </div>
               <div class="preview hidden">
                 <h2>Preview</h2>
-                <iframe id="inspect-contentFrame" frameborder="0"></iframe>
+                <iframe id="inspect-content-frame" frameborder="0"></iframe>
               </div>
             </div>
             <div>
@@ -141,37 +141,37 @@
                       <h2>Colors</h2>
                       <div class="row">
                         <sp-field-label for="inspect-text-color" size="m">Text Color</sp-field-label>
-                        <sp-textfield id="inspect-text-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-text-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-text-color"></sp-color-handle>
                         <sp-action-button class="picker colorpicker" disabled for="inspect-text-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-link-color" size="m">Link Color</sp-field-label>
-                        <sp-textfield id="inspect-link-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-link-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-link-color"></sp-color-handle>
                         <sp-action-button class="picker colorpicker" disabled for="inspect-link-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-link-hover-color" size="m">Link Hover color</sp-field-label>
-                        <sp-textfield id="inspect-link-hover-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-link-hover-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-link-hover-color"></sp-color-handle>
                         <sp-action-button class="picker colorpicker" disabled for="inspect-link-hover-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-background-color" size="m">Background color</sp-field-label>
-                        <sp-textfield id="inspect-background-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-background-color"></sp-color-handle>
                         <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-overlay-background-color" size="m">Overlay Background color</sp-field-label>
-                        <sp-textfield id="inspect-overlay-background-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-overlay-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-overlay-background-color"></sp-color-handle>
                         <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-overlay-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-highlight-background-color" size="m">Highlight Background color</sp-field-label>
-                        <sp-textfield id="inspect-highlight-background-color" style="width: 80px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-highlight-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
                         <sp-color-handle for="inspect-highlight-background-color"></sp-color-handle>
                         <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-highlight-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
@@ -184,81 +184,81 @@
                       <h2>Fonts and sizes</h2>
                       <div class="row">
                         <sp-field-label for="inspect-heading-font-family" size="m">Heading font family</sp-field-label>
-                        <sp-textfield id="inspect-heading-font-family" style="width: 400px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-heading-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
                         <sp-action-button class="picker fontpicker" disabled for="inspect-heading-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-body-font-family" size="m">Body font family</sp-field-label>
-                        <sp-textfield id="inspect-body-font-family" style="width: 400px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-body-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
                         <sp-action-button class="picker fontpicker" disabled for="inspect-body-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="row">
                         <sp-field-label for="inspect-fixed-font-family" size="m">Fixed font family</sp-field-label>
-                        <sp-textfield id="inspect-fixed-font-family" style="width: 400px" class="varField"></sp-textfield>
+                        <sp-textfield id="inspect-fixed-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
                         <sp-action-button class="picker fontpicker" disabled for="inspect-fixed-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                       </div>
                       <div class="cols">
                         <div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-xxl" size="m">Heading font size XXL</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xxl" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xxl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-xl" size="m">Heading font size XL</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xl" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-l" size="m">Heading font size L</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-l" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-l" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-m" size="m">Heading font size M</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-m" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-m" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-s" size="m">Heading font size S</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-s" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-s" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-heading-font-size-xs" size="m">Heading font size XS</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xs" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-heading-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xs" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                         </div>
                         <div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-xxl" size="m">body font size XXL</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xxl" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xxl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-xl" size="m">body font size XL</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xl" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-l" size="m">body font size L</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-l" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-l" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-m" size="m">body font size M</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-m" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-m" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-s" size="m">body font size S</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-s" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-s" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                           <div class="row">
                             <sp-field-label for="inspect-body-font-size-xs" size="m">body font size XS</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xs" style="width: 80px" class="varField"></sp-textfield>
+                            <sp-textfield id="inspect-body-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
                             <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xs" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
                           </div>
                         </div>
@@ -271,14 +271,14 @@
                     <h2>Options</h2>
                     <div class="config form">
                       <sp-field-group>
-                        <sp-checkbox size="m" id="inspect-enable-js" class="optionField" value="false">Enable Javascript</sp-checkbox>
+                        <sp-checkbox size="m" id="inspect-enable-js" class="option-field" value="false">Enable Javascript</sp-checkbox>
                       </sp-field-group>
                     </div>
                   </div>
                 </sp-tab-panel>
               </sp-tabs>
               <div class="toolbar">
-                <sp-button id="inspect-copyCSSButton">Copy CSS to clipboard</sp-button>
+                <sp-button id="inspect-copy-css-button">Copy CSS to clipboard</sp-button>
               </div>
             </div>
           </div>

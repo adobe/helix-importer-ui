@@ -18,7 +18,7 @@ const PARENT_SELECTOR = '.import';
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .preview`);
 
 const URLS_INPUT = document.getElementById('import-url');
-const OPTION_FIELDS = document.querySelectorAll('.optionField');
+const OPTION_FIELDS = document.querySelectorAll('.option-field');
 const IMPORTFILEURL_FIELD = document.querySelector('#importFileURL');
 const IMPORT_BUTTON = document.getElementById('import-importButton');
 
