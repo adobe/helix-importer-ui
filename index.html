@@ -50,7 +50,7 @@
               <div class="config form">
                 <sp-field-label for="import-url" size="m" required>URL</sp-field-label>
                 <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="option-field"></sp-textfield>
-                <sp-button id="import-importButton">Import</sp-button>
+                <sp-button id="import-doimport-button">Import</sp-button>
                 <div class="preview hidden">
                   <h2>Preview</h2>
                   <iframe id="import-content-frame" frameborder="0"></iframe>
@@ -77,7 +77,25 @@
                   </div>
                 </sp-tab-panel>
                 <sp-tab-panel value="import-options">
-                  TODO
+                  <div>
+                    <h2>Options</h2>
+                    <div class="config form">
+                      <div class="row">
+                        <sp-checkbox size="m" id="import-local-save" class="option-field" checked>Local save as docx</sp-checkbox>
+                      </div>
+                      <div class="row">
+                        <sp-field-label for="import-file-url" size="m">Import file URL</sp-field-label>
+                        <sp-textfield id="import-file-url" class="option-field" style="width: 400px" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                      </div>
+                      <div class="row">
+                        <sp-field-label for="import-pageload-timeout" size="m">Page load timeout</sp-field-label>
+                        <sp-textfield id="import-pageload-timeout" class="option-field" style="width: 80px" value="100"></sp-textfield>
+                      </div>
+                      <div class="row">
+                        <sp-checkbox size="m" id="import-enable-js" class="option-field">Enable Javascript</sp-checkbox>
+                      </div>
+                    </div>
+                  </div>
                 </sp-tab-panel>
               </sp-tabs>
               <div class="toolbar">
@@ -270,9 +288,9 @@
                   <div>
                     <h2>Options</h2>
                     <div class="config form">
-                      <sp-field-group>
-                        <sp-checkbox size="m" id="inspect-enable-js" class="option-field" value="false">Enable Javascript</sp-checkbox>
-                      </sp-field-group>
+                      <div class="row">
+                        <sp-checkbox size="m" id="inspect-enable-js" class="option-field">Enable Javascript</sp-checkbox>
+                      </div>
                     </div>
                   </div>
                 </sp-tab-panel>

@@ -100,6 +100,7 @@
   color: var(--hlx-import-markdown-color);
   background-color: var(--hlx-import-markdown-bg);
   font-family: var(--hlx-import-markdown-ff);
+  padding: 10px;
 }
 
 #import-markdown-preview h2 {

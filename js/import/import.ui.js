@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* global CodeMirror, showdown, html_beautify, ExcelJS */
+import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import PollImporter from '../shared/pollimporter.js';
 
@@ -18,9 +19,8 @@ const PARENT_SELECTOR = '.import';
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .preview`);
 
 const URLS_INPUT = document.getElementById('import-url');
-const OPTION_FIELDS = document.querySelectorAll('.option-field');
-const IMPORTFILEURL_FIELD = document.querySelector('#importFileURL');
-const IMPORT_BUTTON = document.getElementById('import-importButton');
+const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
+const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 
 // const SAVEASWORD_BUTTON = document.getElementById('saveAsWord');
 const FOLDERNAME_SPAN = document.getElementById('folderName');
@@ -106,13 +106,15 @@ const createImporter = () => {
   config.importer = new PollImporter({
     origin: config.origin,
     poll: false,
-    importFileURL: config.importFileURL,
+    importFileURL: config.fields['import-file-url'],
   });
 };
 
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
 const attachListeners = () => {
+  attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
+
   config.importer.addListener(async (out) => {
     const includeDocx = !!out.docx;
     updateImporterUI(out, includeDocx);
@@ -133,7 +135,7 @@ const attachListeners = () => {
   IMPORT_BUTTON.addEventListener('click', (async () => {
     PREVIEW_CONTAINER.classList.remove('hidden');
     disableProcessButtons();
-    if (config.localSave && !dirHandle) {
+    if (config.fields['import-local-save'] && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
         await dirHandle.requestPermission({
@@ -182,8 +184,10 @@ const attachListeners = () => {
             const frame = document.createElement('iframe');
             frame.id = 'contentFrame';
 
-            if (!config.enableJS) {
-              frame.sandbox = 'allow-same-origin';
+            if (config.fields['import-enable-js']) {
+              frame.removeAttribute('sandbox');
+            } else {
+              frame.setAttribute('sandbox', 'allow-same-origin');
             }
 
             const onLoad = async () => {
@@ -213,7 +217,7 @@ const attachListeners = () => {
 
                 const event = new Event('transformation-complete');
                 frame.dispatchEvent(event);
-              }, config.pageLoadTimeout || 1);
+              }, config.fields['import-pageload-timeout'] || 100);
             };
 
             frame.addEventListener('load', onLoad);
@@ -251,14 +255,6 @@ const attachListeners = () => {
     processNext();
   }));
 
-  OPTION_FIELDS.forEach((field) => {
-    field.addEventListener('change', () => {
-      const value = field.type === 'checkbox' ? field.checked : field.value;
-      config[field.id] = value;
-      localStorage.setItem(`option-field-${field.id}`, value);
-    });
-  });
-
   IMPORTFILEURL_FIELD.addEventListener('change', (event) => {
     if (config.importer) {
       config.importer.setImportFileURL(event.target.value);
@@ -288,18 +284,7 @@ const attachListeners = () => {
 
 const init = () => {
   config.origin = window.location.origin;
-  OPTION_FIELDS.forEach((field) => {
-    const value = localStorage.getItem(`option-field-${field.id}`);
-    if (value !== null) {
-      if (field.type === 'checkbox') {
-        field.checked = (value === 'true');
-      } else {
-        field.value = value;
-      }
-    }
-
-    config[field.id] = field.type === 'checkbox' ? field.checked : field.value;
-  });
+  config.fields = initOptionFields(PARENT_SELECTOR);
 
   createImporter();
 

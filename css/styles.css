@@ -18,7 +18,7 @@ body {
 
 sp-theme {
   height: 100%;
-  padding: 2em;
+  padding: 0 2em;
   background-color: var(--spectrum-global-color-gray-100);
   color: var(--spectrum-global-color-gray-800);
 }
