@@ -1,5 +1,6 @@
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { drop, generateCSS, rgb2hex } from './inspect.js';
+import { success, error } from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.inspect';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} .config`;
@@ -11,7 +12,6 @@ const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-
 const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-content-frame`);
 const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} .inspect-var-field`);
 const PICKERS = document.querySelectorAll(`${PARENT_SELECTOR} .picker`);
-const ALERT = document.getElementById('alert-container');
 
 const config = {
   vars: {},
@@ -35,9 +35,8 @@ const disablePickers = () => {
 
 const doDrop = async () => {
   window.setTimeout(() => {
-    if (!CONTENT_FRAME.contentDocument) {
-      // eslint-disable-next-line no-console
-      console.error('Cannot read iframe document - check security context');
+    if (!CONTENT_FRAME.contentDocument || !CONTENT_FRAME.contentDocument.documentElement) {
+      error('Cannot read frame document - check security context or disable Javascript (see Options)');
       return;
     }
 
@@ -88,8 +87,6 @@ let pickerField;
 const capture = (event) => {
   if (pickerType) {
     const style = getStyle(event.view.window, event.clientX, event.clientY, pickerType);
-    // eslint-disable-next-line no-console
-    console.log('found style', style, pickerType);
     return style;
   }
   return null;
@@ -155,12 +152,7 @@ const doCopyCSS = async () => {
 
   if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
     await navigator.clipboard.writeText(css);
-    const toast = document.createElement('sp-toast');
-    toast.setAttribute('timeout', 1);
-    toast.setAttribute('variant', 'positive');
-    toast.setAttribute('open', true);
-    toast.innerHTML = 'CSS copied to clipboard';
-    ALERT.append(toast);
+    success('CSS copied to clipboard');
   }
 };
 
