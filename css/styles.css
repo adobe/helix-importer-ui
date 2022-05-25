@@ -1,0 +1,85 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #333;
+}
+
+/* header */
+.header {
+  display: flex;
+  align-items: center;
+  height: 64px;
+}
+
+.header svg {
+  height: 1.6rem;
+  padding-right: .8rem;
+}
+
+sp-theme {
+  height: 100%;
+  padding: 2em;
+  background-color: var(--spectrum-global-color-gray-100);
+  color: var(--spectrum-global-color-gray-800);
+}
+
+sp-tab {
+  margin-right: 40px;
+}
+
+sp-tab-panel {
+  min-height: 400px;
+}
+
+sp-tab-panel div {
+  width: 100%;
+  margin-top: 5px;
+}
+
+.flex {
+  display: flex;
+  width: 100%;
+}
+
+.hidden {
+  display: none;
+}
+
+.row {
+  display: flex;
+}
+
+.row sp-field-label {
+  width: 150px;
+  line-height: 32px;
+  vertical-align: middle;;
+}
+
+.row > * {
+  margin-right: 20px;
+}
+
+.row sp-color-handle {
+  margin-top: 4px;
+  position: relative;
+    height: 24px;
+    width: 24px;
+}
+
+.logo {
+  min-width: 100px;
+  min-height: 100px;
+  margin-right: 20px;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: auto auto;
+}
+
+#alert-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  left: calc(50% - 125px);
+}

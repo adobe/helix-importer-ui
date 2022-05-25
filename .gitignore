@@ -1,0 +1,6 @@
+.hlx/*
+coverage/*
+logs/*
+node_modules/*
+dist/*
+js/libs/hlx/*

@@ -1,0 +1,130 @@
+@import url("../libs/vendors/codemirror/codemirror.min.css");
+@import url("../libs/vendors/codemirror/base16-dark.css");
+
+:host,
+:root {
+  --hlx-importer-bg: #f1f1f1;
+  --hlx-importer-color: #0f0f0f;
+  --hlx-importer-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --hlx-importer-font-size: 16px;
+  --hlx-importer-line-height: 1.4;
+  --hlx-importer-button-bg: #1473e6;
+  --hlx-importer-button-pressed-bg: #1267CE;
+  --hlx-importer-button-color: var(--hlx-importer-bg);
+  --hlx-importer-menu-bg: #EBEBEB;
+  --hlx-importer-menu-border: #D6D6D6;
+  --hlx-importer-menu-highlight: #C2C2C2;
+  --hlx-import-markdown-ff: Arial, Helvetica, sans-serif;
+  --hlx-import-markdown-bg: #f1f1f1;
+  --hlx-import-markdown-color: #0f0f0f;
+  --hlx-import-markdown-th-bg: #F4CCCD;
+}
+
+@media (prefers-color-scheme: dark) {
+  :host,
+  :root {
+    --hlx-importer-bg: #0f0f0f;
+    --hlx-importer-color: #f1f1f1;
+    --hlx-importer-button-color: var(--hlx-importer-color);
+    --hlx-importer-menu-bg: #1e1e1e;
+    --hlx-importer-menu-border: #2d2d2d;
+    --hlx-importer-menu-highlight: #323232;
+  }
+}
+
+.import .preview {
+  width: 100%;
+  height: 1000px;
+  overflow: hidden;
+}
+
+.import iframe {
+  height: calc(100% / .50);
+  width: calc(100% / .50);
+  transform: scale(0.45);
+  transform-origin: 0 0;
+  background-color: white;
+  overflow-x: auto;
+}
+
+/* .import .result {
+  min-width: 258px;
+  color: var(--hlx-importer-color);
+}
+
+.import .container .result .panels {
+  padding: 0;
+}
+
+.import .container .result [data-panel=markdown], .container .result [data-panel=crawled] {
+  padding: 1rem;
+} */
+
+.import .code {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  padding-top: 0;
+  padding: 1rem;
+  max-width: 718px;
+  height: 1000px;
+}
+
+.import .CodeMirror {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  padding-top: 1rem;
+}
+
+.import .cm-s-base16-dark.CodeMirror {
+  background: #1e1e1e;
+}
+
+.import .cm-s-base16-dark .CodeMirror-gutters {
+  background: #1e1e1e;
+}
+
+#import-markdown-preview {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  max-height: 1000px;
+  line-height: var(--hlx-importer-line-height);
+  overflow-x: hidden;
+  overflow-y: auto;
+  color: var(--hlx-import-markdown-color);
+  background-color: var(--hlx-import-markdown-bg);
+  font-family: var(--hlx-import-markdown-ff);
+}
+
+#import-markdown-preview h2 {
+  margin: unset;
+}
+
+#import-markdown-preview img {
+  max-width: 100%;
+}
+
+#import-markdown-preview table,
+#import-markdown-preview th,
+#import-markdown-preview td {
+  max-width: 100%;
+  border: 1px solid var(--hlx-importer-menu-highlight);
+  border-collapse: collapse;
+  color: var(--hlx-import-markdown-color);
+  font-family: var(--hlx-import-markdown-ff);
+}
+
+#import-markdown-preview table {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+#import-markdown-preview th {
+  background: var(--hlx-import-markdown-th-bg);
+}

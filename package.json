@@ -1,0 +1,40 @@
+{
+  "name": "helix-bulk-lit",
+  "version": "1.0.0",
+  "description": "helix-bulk-lit",
+  "scripts": {
+    "clean": "rm -fr dist && rm -fr ./js/libs/hlx",
+    "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs && cp -fr ./dist/lib ./js/libs/hlx",
+    "build:dev": "npm run clean && npm i && webpack --config webpack.dev.cjs && cp -fr ./dist/lib ./js/libs/hlx",
+    "build": "npm run build:prod",
+    "lint:js": "eslint .",
+    "lint:css": "stylelint './css/**/*.css'",
+    "lint": "npm run lint:js && npm run lint:css"
+  },
+  "dependencies": {
+    "@adobe/helix-importer": "1.13.1",
+    "@spectrum-web-components/bundle": "0.24.11",
+    "parcel": "2.5.0",
+    "path-browserify": "1.0.1"
+  },
+  "devDependencies": {
+    "@adobe/eslint-config-helix": "1.3.2",
+    "@babel/core": "7.17.5",
+    "@babel/eslint-parser": "7.17.0",
+    "clean-webpack-plugin": "4.0.0",
+    "copy-webpack-plugin": "11.0.0",
+    "eslint": "8.10.0",
+    "eslint-plugin-header": "3.1.1",
+    "eslint-plugin-import": "2.25.4",
+    "html-webpack-plugin": "5.5.0",
+    "mini-css-extract-plugin": "2.6.0",
+    "node-polyfill-webpack-plugin": "1.1.4",
+    "stylelint": "14.5.3",
+    "stylelint-config-prettier": "9.0.3",
+    "stylelint-config-standard": "25.0.0",
+    "webpack": "5.67.0",
+    "webpack-cli": "4.9.2",
+    "webpack-dev-server": "4.9.0",
+    "webpack-merge": "5.8.0"
+  }
+}
