@@ -189,9 +189,9 @@ const attachListeners = () => {
     const url = new URL(config.fields['inspect-url']);
 
     if (config.fields['inspect-enable-js']) {
-      delete CONTENT_FRAME.sandbox;
+      CONTENT_FRAME.removeAttribute('sandbox');
     } else {
-      CONTENT_FRAME.sandbox = 'allow-same-origin';
+      CONTENT_FRAME.setAttribute('sandbox', 'allow-same-origin');
     }
 
     CONTENT_FRAME.src = `http://localhost:3001${url.pathname}?host=${url.origin}`;
