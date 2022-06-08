@@ -33,6 +33,11 @@ h3 {
   font-size: var(--spectrum-alias-heading-xs-text-size);
 }
 
+.hidden {
+  display: none;
+  visibility: hidden;
+}
+
 /* SIDEBAR */
 aside {
   grid-area: sidebar;
@@ -86,17 +91,86 @@ footer svg {
 /* MAIN */
 main {
   grid-area: main;
+  max-height: 100vh;
   /* padding: 0 24px; */
   padding: 24px 56px;
+  overflow-y: auto;
 }
 
 main sp-divider {
-  background-color: var(--spectrum-global-color-gray-100);
+  background-color: var(--spectrum-global-color-gray-200);
 }
 
-main sp-textfield {
+main .form-field {
   width: 100%;
 }
+
+main .form-field + sp-field-label {
+  margin-top: 12px;
+}
+
+main .form-field + sp-checkbox {
+  margin-top: 6px;
+}
+
+main sp-button-group {
+  margin-top: 12px;
+}
+
+/* SECTIONS */
+section {
+  height: 100%;
+}
+
+section .section-title {
+  margin-bottom: 12px;
+}
+
+section .section-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  grid-template-rows: 1fr; 
+  gap: 0 40px; 
+  height: calc(100% - 32px);
+}
+
+section .section-cols .section-col {
+  height: 100%;
+}
+
+section form {
+  margin-bottom: 12px;
+}
+
+section sp-accordion sp-accordion-item {
+  margin-left: -16px;
+  border-bottom: 0;
+}
+
+section sp-accordion sp-accordion-item sp-textfield,
+section sp-accordion sp-accordion-item sp-number-field,
+section sp-accordion sp-accordion-item sp-checkbox {
+  width: calc(100% + 16px);
+}
+
+section sp-tab-panel {
+  padding-top: 12px;
+}
+
+/* IMPORT SECTION */
+.import .import-preview {
+  height: calc(100% - 164px - 12px);
+}
+
+.import .import-preview iframe {
+  width: 100%;
+  height: calc(100% - 19px - 16px);
+}
+
+/* CRAWL SECTION */
+
+/* EYEDROPPER SECTION */
+
 
 sp-tab {
   /* margin-right: 40px; */
