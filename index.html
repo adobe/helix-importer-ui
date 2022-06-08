@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8" />
-    <title>Helix Tools</title>
+    <title>Helix Importer Tools</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="./css/import/import.css" />
     <link rel="stylesheet" href="./css/inspect/inspect.css" />
@@ -25,286 +26,427 @@
     <script src="./js/import/import.ui.js" type="module"></script>
 
     <script src="./js/inspect/inspect.ui.js" type="module"></script>
-  </head>
-  <body>
+</head>
+
+<body>
     <sp-theme color="dark" scale="medium">
-      <header class="header">
-        <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 216'>
-        <circle fill="#f15a3a" cx='22.5' cy='108' r='22.5'/>
-        <circle fill="#f15a3a" cx='193.5' cy='108' r='22.5'/>
-        <circle fill="#c71f3d" cx='63' cy='27' r='27'/>
-        <circle fill="#ffc40c" cx='162' cy='27' r='18'/>
-        <circle fill="#c71f3d" cx='162' cy='189' r='27'/>
-        <circle fill="#ffc40c" cx='63' cy='189' r='18'/>
-      </svg>
-        <h1 class="title">Helix - Importer tools</h1>
-    </header>
-    <main>
-      <sp-tabs selected="import" size="m"  direction="vertical">
-        <sp-tab label="Import" value="import"></sp-tab>
-        <sp-tab label="Crawl" value="crawl"></sp-tab>
-        <sp-tab label="Inspect" value="inspect"></sp-tab>
-        <sp-tab-panel value="import">
-          <div class="flex import">
-            <div>
-              <h2>Importer</h2>
-              <div class="config form">
-                <sp-field-label for="import-url" size="m" required>URL</sp-field-label>
-                <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="option-field"></sp-textfield>
-                <sp-button id="import-doimport-button">Import</sp-button>
-                <div class="preview hidden">
-                  <h2>Preview</h2>
-                  <iframe id="import-content-frame" frameborder="0"></iframe>
+        <!-- SIDEBAR CONTENT -->
+        <aside>
+            <header>
+                <a href="#">
+                    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 216 216'>
+                        <circle fill="#f15a3a" cx='22.5' cy='108' r='22.5'/>
+                        <circle fill="#f15a3a" cx='193.5' cy='108' r='22.5'/>
+                        <circle fill="#c71f3d" cx='63' cy='27' r='27'/>
+                        <circle fill="#ffc40c" cx='162' cy='27' r='18'/>
+                        <circle fill="#c71f3d" cx='162' cy='189' r='27'/>
+                        <circle fill="#ffc40c" cx='63' cy='189' r='18'/>
+                    </svg>
+                    <h1>Helix Importer&nbsp;Tools</h1>
+                </a>
+            </header>
+            <nav>
+                <sp-sidenav defaultValue="Import">
+                    <sp-sidenav-item value="Import" label="Import"></sp-sidenav-item>
+                    <sp-sidenav-item value="Crawl" label="Crawl"></sp-sidenav-item>
+                    <sp-sidenav-item value="Inspect" label="Inspect"></sp-sidenav-item>
+                </sp-sidenav>
+            </nav>
+            <footer>
+                <a class="footer" href="https://github.com/kptdobe/helix-importer-tools" target="_blank" title="GitHub repository">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512">
+                        <!--! Font Awesome Pro 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                        <path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+                    </svg>
+                </a>
+            </footer>
+        </aside>
+        <!-- MAIN CONTENT -->
+        <main>
+            <section value="Import">
+                <div class="section-title">
+                    <h2>Import</h2>
+                    <sp-divider size="l"></sp-divider>
                 </div>
-              </div>
-            </div>
-            <div>
-              <sp-tabs selected="import-preview" size="m">
-                <sp-tab label="Preview" value="import-preview"></sp-tab>
-                <sp-tab label="Markdown" value="import-markdown"></sp-tab>
-                <sp-tab label="HTML" value="import-html"></sp-tab>
-                <sp-tab label="Options" value="import-options"></sp-tab>
-                <sp-tab-panel value="import-preview">
-                  <div id="import-markdown-preview"></div>
-                </sp-tab-panel>
-                <sp-tab-panel value="import-markdown">
-                  <div data-panel="source" class="code">
-                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                  </div>
-                </sp-tab-panel>
-                <sp-tab-panel value="import-html">
-                  <div data-panel="source" class="code">
-                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
-                  </div>
-                </sp-tab-panel>
-                <sp-tab-panel value="import-options">
-                  <div>
-                    <h2>Options</h2>
-                    <div class="config form">
-                      <div class="row">
-                        <sp-checkbox size="m" id="import-local-save" class="option-field" checked>Local save as docx</sp-checkbox>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="import-file-url" size="m">Import file URL</sp-field-label>
-                        <sp-textfield id="import-file-url" class="option-field" style="width: 400px" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="import-pageload-timeout" size="m">Page load timeout</sp-field-label>
-                        <sp-textfield id="import-pageload-timeout" class="option-field" style="width: 80px" value="100"></sp-textfield>
-                      </div>
-                      <div class="row">
-                        <sp-checkbox size="m" id="import-enable-js" class="option-field">Enable Javascript</sp-checkbox>
-                      </div>
+                <div class="section-col">
+                    <form>
+                        <sp-field-label for="import-url" required>URL</sp-field-label>
+                        <sp-textfield id="import-url" type="url">
+                            <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
+                            <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
+                        </sp-textfield>
+                        <sp-button size="m" id="import-doimport-button">Import</sp-button>
+                    </form>
+                </div>
+                <div class="section-col section-col-hidden">
+                    <div>
+                        <sp-tabs selected="import-preview" size="m">
+                            <sp-tab label="Preview" value="import-preview"></sp-tab>
+                            <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                            <sp-tab label="HTML" value="import-html"></sp-tab>
+                            <sp-tab label="Options" value="import-options"></sp-tab>
+                            <sp-tab-panel value="import-preview">
+                                <div id="import-markdown-preview"></div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-markdown">
+                                <div data-panel="source" class="code">
+                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-html">
+                                <div data-panel="source" class="code">
+                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-options">
+                                <div>
+                                    <h2>Options</h2>
+                                    <div class="config form">
+                                        <div class="row">
+                                            <sp-checkbox size="m" id="import-local-save" class="option-field" checked>Local save as docx</sp-checkbox>
+                                        </div>
+                                        <div class="row">
+                                            <sp-field-label for="import-file-url" size="m">Import file URL</sp-field-label>
+                                            <sp-textfield id="import-file-url" class="option-field" style="width: 400px" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                                        </div>
+                                        <div class="row">
+                                            <sp-field-label for="import-pageload-timeout" size="m">Page load timeout</sp-field-label>
+                                            <sp-textfield id="import-pageload-timeout" class="option-field" style="width: 80px" value="100"></sp-textfield>
+                                        </div>
+                                        <div class="row">
+                                            <sp-checkbox size="m" id="import-enable-js" class="option-field">Enable Javascript</sp-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </sp-tab-panel>
+                        </sp-tabs>
+                        <div class="toolbar">
+                            <sp-button class="hidden" id="import-downloadImportReport">Download import report</sp-button>
+                        </div>
                     </div>
-                  </div>
+                    <!-- <h3>Preview</h3>
+                    <iframe id="import-content-frame" frameborder="0"></iframe> -->
+                </div>
+                <div class="flex import">
+                    <!-- <div>
+                        <div class="config form"> -->
+                            <!-- <sp-field-label for="import-url" size="m" required>URL</sp-field-label>
+                            <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="option-field"></sp-textfield>
+                            <sp-button id="import-doimport-button">Import</sp-button> -->
+                            <!-- <div class="preview hidden">
+                                <h2>Preview</h2>
+                            </div>
+                        </div>
+                    </div> -->
+                    
+                </div>
+            </section>
+            <!-- <sp-tabs selected="import" size="m" direction="vertical">
+                <sp-tab label="Import" value="import"></sp-tab>
+                <sp-tab label="Crawl" value="crawl"></sp-tab>
+                <sp-tab label="Inspect" value="inspect"></sp-tab>
+                <sp-tab-panel value="import">
+                    <div class="flex import">
+                        <div>
+                            <h2>Importer</h2>
+                            <div class="config form">
+                                <sp-field-label for="import-url" size="m" required>URL</sp-field-label>
+                                <sp-textfield placeholder="https://www.samples.com/" id="import-url" style="width: 400px" class="option-field"></sp-textfield>
+                                <sp-button id="import-doimport-button">Import</sp-button>
+                                <div class="preview hidden">
+                                    <h2>Preview</h2>
+                                    <iframe id="import-content-frame" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <sp-tabs selected="import-preview" size="m">
+                                <sp-tab label="Preview" value="import-preview"></sp-tab>
+                                <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                                <sp-tab label="HTML" value="import-html"></sp-tab>
+                                <sp-tab label="Options" value="import-options"></sp-tab>
+                                <sp-tab-panel value="import-preview">
+                                    <div id="import-markdown-preview"></div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="import-markdown">
+                                    <div data-panel="source" class="code">
+                                        <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                    </div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="import-html">
+                                    <div data-panel="source" class="code">
+                                        <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                    </div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="import-options">
+                                    <div>
+                                        <h2>Options</h2>
+                                        <div class="config form">
+                                            <div class="row">
+                                                <sp-checkbox size="m" id="import-local-save" class="option-field" checked>Local save as docx</sp-checkbox>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="import-file-url" size="m">Import file URL</sp-field-label>
+                                                <sp-textfield id="import-file-url" class="option-field" style="width: 400px" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="import-pageload-timeout" size="m">Page load timeout</sp-field-label>
+                                                <sp-textfield id="import-pageload-timeout" class="option-field" style="width: 80px" value="100"></sp-textfield>
+                                            </div>
+                                            <div class="row">
+                                                <sp-checkbox size="m" id="import-enable-js" class="option-field">Enable Javascript</sp-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </sp-tab-panel>
+                            </sp-tabs>
+                            <div class="toolbar">
+                                <sp-button class="hidden" id="import-downloadImportReport">Download import report</sp-button>
+                            </div>
+                        </div>
+                    </div>
                 </sp-tab-panel>
-              </sp-tabs>
-              <div class="toolbar">
-                <sp-button class="hidden" id="import-downloadImportReport">Download import report</sp-button>
-            </div>
-            </div>
-          </div>
-        </sp-tab-panel>
-        <sp-tab-panel value="crawl">
-          TODO
-        </sp-tab-panel>
-        <sp-tab-panel value="inspect">
-          <div class="flex inspect">
-            <div class="eyedropper">
-              <h2>Eye dropper</h2>
-              <div class="config form">
-                <sp-field-label for="inspect-url" size="m" required>URL</sp-field-label>
-                <sp-textfield placeholder="https://www.samples.com/" id="inspect-url" style="width: 400px" class="option-field"></sp-textfield>
-                <sp-button id="inspect-drop-button">Eye Drop</sp-button>
-              </div>
-              <div class="preview hidden">
-                <h2>Preview</h2>
-                <iframe id="inspect-content-frame" frameborder="0"></iframe>
-              </div>
-            </div>
-            <div>
-              <sp-tabs selected="inspect-logo" size="m">
-                <sp-tab label="Logo" value="inspect-logo"></sp-tab>
-                <sp-tab label="Colors" value="inspect-colors"></sp-tab>
-                <sp-tab label="Fonts & Sizes" value="inspect-fonts-sizes"></sp-tab>
-                <sp-tab label="Options" value="inspect-options"></sp-tab>
-                <sp-tab-panel value="inspect-logo">
-                  <div class="brand vars">
-                    <div class="logo">
-                      <h2>Logo</h2>
-                      <sp-dropzone id="inspect-dropzone" style="width: 400px; height: 200px">
-                        <sp-illustrated-message heading="Drag and Drop Your File">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 150 103"
-                            width="150"
-                            height="103">
+                <sp-tab-panel value="crawl">
+                    TODO
+                </sp-tab-panel>
+                <sp-tab-panel value="inspect">
+                    <div class="flex inspect">
+                        <div class="eyedropper">
+                            <h2>Eye dropper</h2>
+                            <div class="config form">
+                                <sp-field-label for="inspect-url" size="m" required>URL</sp-field-label>
+                                <sp-textfield placeholder="https://www.samples.com/" id="inspect-url" style="width: 400px" class="option-field"></sp-textfield>
+                                <sp-button id="inspect-drop-button">Eye Drop</sp-button>
+                            </div>
+                            <div class="preview hidden">
+                                <h2>Preview</h2>
+                                <iframe id="inspect-content-frame" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                        <div>
+                            <sp-tabs selected="inspect-logo" size="m">
+                                <sp-tab label="Logo" value="inspect-logo"></sp-tab>
+                                <sp-tab label="Colors" value="inspect-colors"></sp-tab>
+                                <sp-tab label="Fonts & Sizes" value="inspect-fonts-sizes"></sp-tab>
+                                <sp-tab label="Options" value="inspect-options"></sp-tab>
+                                <sp-tab-panel value="inspect-logo">
+                                    <div class="brand vars">
+                                        <div class="logo">
+                                            <h2>Logo</h2>
+                                            <sp-dropzone id="inspect-dropzone" style="width: 400px; height: 200px">
+                                                <sp-illustrated-message heading="Drag and Drop Your File">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 103" width="150" height="103">
                               <path
                                   d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z"
                               ></path>
                           </svg>
-                        </sp-illustrated-message>
-                        <div>
-                            <label for="inspect-file-input"><sp-link onclick="this.parentElement.nextElementSibling.click()">Select a File</sp-link> from your computer</label>
-                            <input type="file" id="file-input" style="display: none" />
+                                                </sp-illustrated-message>
+                                                <div>
+                                                    <label for="inspect-file-input"><sp-link onclick="this.parentElement.nextElementSibling.click()">Select a File</sp-link> from your computer</label>
+                                                    <input type="file" id="file-input" style="display: none" />
+                                                </div>
+                                                <div>or
+                                                    <sp-link href="http://stock.adobe.com" target="blank">Search Adobe Stock</sp-link>
+                                                </div>
+                                            </sp-dropzone>
+                                            <sp-asset class="hidden"><img/></sp-thumbnail>
+                                        </div>
+                                    </div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="inspect-colors">
+                                    <div class="brand vars">
+                                        <div class="colors">
+                                            <h2>Colors</h2>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-text-color" size="m">Text Color</sp-field-label>
+                                                <sp-textfield id="inspect-text-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-text-color"></sp-color-handle>
+                                                <sp-action-button class="picker colorpicker" disabled for="inspect-text-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-link-color" size="m">Link Color</sp-field-label>
+                                                <sp-textfield id="inspect-link-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-link-color"></sp-color-handle>
+                                                <sp-action-button class="picker colorpicker" disabled for="inspect-link-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-link-hover-color" size="m">Link Hover color</sp-field-label>
+                                                <sp-textfield id="inspect-link-hover-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-link-hover-color"></sp-color-handle>
+                                                <sp-action-button class="picker colorpicker" disabled for="inspect-link-hover-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-background-color" size="m">Background color</sp-field-label>
+                                                <sp-textfield id="inspect-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-background-color"></sp-color-handle>
+                                                <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-background-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-overlay-background-color" size="m">Overlay Background color</sp-field-label>
+                                                <sp-textfield id="inspect-overlay-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-overlay-background-color"></sp-color-handle>
+                                                <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-overlay-background-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-highlight-background-color" size="m">Highlight Background color</sp-field-label>
+                                                <sp-textfield id="inspect-highlight-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                <sp-color-handle for="inspect-highlight-background-color"></sp-color-handle>
+                                                <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-highlight-background-color" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="inspect-fonts-sizes">
+                                    <div class="brand vars">
+                                        <div class="fonts">
+                                            <h2>Fonts and sizes</h2>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-heading-font-family" size="m">Heading font family</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
+                                                <sp-action-button class="picker fontpicker" disabled for="inspect-heading-font-family" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-body-font-family" size="m">Body font family</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
+                                                <sp-action-button class="picker fontpicker" disabled for="inspect-body-font-family" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="row">
+                                                <sp-field-label for="inspect-fixed-font-family" size="m">Fixed font family</sp-field-label>
+                                                <sp-textfield id="inspect-fixed-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
+                                                <sp-action-button class="picker fontpicker" disabled for="inspect-fixed-font-family" size="m">
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            <div class="cols">
+                                                <div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-xxl" size="m">Heading font size XXL</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xxl" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-xl" size="m">Heading font size XL</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xl" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-l" size="m">Heading font size L</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-l" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-m" size="m">Heading font size M</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-m" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-s" size="m">Heading font size S</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-s" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-heading-font-size-xs" size="m">Heading font size XS</sp-field-label>
+                                                        <sp-textfield id="inspect-heading-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xs" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-xxl" size="m">body font size XXL</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xxl" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-xl" size="m">body font size XL</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xl" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-l" size="m">body font size L</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-l" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-m" size="m">body font size M</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-m" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-s" size="m">body font size S</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-s" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                    <div class="row">
+                                                        <sp-field-label for="inspect-body-font-size-xs" size="m">body font size XS</sp-field-label>
+                                                        <sp-textfield id="inspect-body-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                                        <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xs" size="m">
+                                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                        </sp-action-button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </sp-tab-panel>
+                                <sp-tab-panel value="inspect-options">
+                                    <div>
+                                        <h2>Options</h2>
+                                        <div class="config form">
+                                            <div class="row">
+                                                <sp-checkbox size="m" id="inspect-enable-js" class="option-field">Enable Javascript</sp-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </sp-tab-panel>
+                            </sp-tabs>
+                            <div class="toolbar">
+                                <sp-button id="inspect-copy-css-button">Copy CSS to clipboard</sp-button>
+                            </div>
                         </div>
-                        <div>or <sp-link href="http://stock.adobe.com" target="blank">Search Adobe Stock</sp-link></div>
-                      </sp-dropzone>
-                      <sp-asset class="hidden"><img/></sp-thumbnail>
                     </div>
-                  </div>
                 </sp-tab-panel>
-                <sp-tab-panel value="inspect-colors">
-                  <div class="brand vars">
-                    <div class="colors">
-                      <h2>Colors</h2>
-                      <div class="row">
-                        <sp-field-label for="inspect-text-color" size="m">Text Color</sp-field-label>
-                        <sp-textfield id="inspect-text-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-text-color"></sp-color-handle>
-                        <sp-action-button class="picker colorpicker" disabled for="inspect-text-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-link-color" size="m">Link Color</sp-field-label>
-                        <sp-textfield id="inspect-link-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-link-color"></sp-color-handle>
-                        <sp-action-button class="picker colorpicker" disabled for="inspect-link-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-link-hover-color" size="m">Link Hover color</sp-field-label>
-                        <sp-textfield id="inspect-link-hover-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-link-hover-color"></sp-color-handle>
-                        <sp-action-button class="picker colorpicker" disabled for="inspect-link-hover-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-background-color" size="m">Background color</sp-field-label>
-                        <sp-textfield id="inspect-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-background-color"></sp-color-handle>
-                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-overlay-background-color" size="m">Overlay Background color</sp-field-label>
-                        <sp-textfield id="inspect-overlay-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-overlay-background-color"></sp-color-handle>
-                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-overlay-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-highlight-background-color" size="m">Highlight Background color</sp-field-label>
-                        <sp-textfield id="inspect-highlight-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                        <sp-color-handle for="inspect-highlight-background-color"></sp-color-handle>
-                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-highlight-background-color" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                    </div>
-                  </div>
-                </sp-tab-panel>
-                <sp-tab-panel value="inspect-fonts-sizes">
-                  <div class="brand vars">
-                    <div class="fonts">
-                      <h2>Fonts and sizes</h2>
-                      <div class="row">
-                        <sp-field-label for="inspect-heading-font-family" size="m">Heading font family</sp-field-label>
-                        <sp-textfield id="inspect-heading-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                        <sp-action-button class="picker fontpicker" disabled for="inspect-heading-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-body-font-family" size="m">Body font family</sp-field-label>
-                        <sp-textfield id="inspect-body-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                        <sp-action-button class="picker fontpicker" disabled for="inspect-body-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="row">
-                        <sp-field-label for="inspect-fixed-font-family" size="m">Fixed font family</sp-field-label>
-                        <sp-textfield id="inspect-fixed-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                        <sp-action-button class="picker fontpicker" disabled for="inspect-fixed-font-family" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                      </div>
-                      <div class="cols">
-                        <div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-xxl" size="m">Heading font size XXL</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xxl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-xl" size="m">Heading font size XL</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-l" size="m">Heading font size L</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-l" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-m" size="m">Heading font size M</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-m" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-s" size="m">Heading font size S</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-s" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-heading-font-size-xs" size="m">Heading font size XS</sp-field-label>
-                            <sp-textfield id="inspect-heading-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xs" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                        </div>
-                        <div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-xxl" size="m">body font size XXL</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xxl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-xl" size="m">body font size XL</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xl" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-l" size="m">body font size L</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-l" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-m" size="m">body font size M</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-m" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-s" size="m">body font size S</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-s" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                          <div class="row">
-                            <sp-field-label for="inspect-body-font-size-xs" size="m">body font size XS</sp-field-label>
-                            <sp-textfield id="inspect-body-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                            <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xs" size="m"><sp-icon-anchor-select></sp-icon-anchor-select></sp-action-button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </sp-tab-panel>
-                <sp-tab-panel value="inspect-options">
-                  <div>
-                    <h2>Options</h2>
-                    <div class="config form">
-                      <div class="row">
-                        <sp-checkbox size="m" id="inspect-enable-js" class="option-field">Enable Javascript</sp-checkbox>
-                      </div>
-                    </div>
-                  </div>
-                </sp-tab-panel>
-              </sp-tabs>
-              <div class="toolbar">
-                <sp-button id="inspect-copy-css-button">Copy CSS to clipboard</sp-button>
-              </div>
-            </div>
-          </div>
-        </sp-tab-panel>
-      </sp-tabs>
-      <div id="alert-container"></div>
-    </main>
-  </sp-theme>
-  </body>
+            </sp-tabs>
+            <div id="alert-container"></div> -->
+        </main>
+    </sp-theme>
+</body>
+
 </html>
