@@ -3,7 +3,7 @@ import { drop, generateCSS, rgb2hex } from './inspect.js';
 import { success, error } from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.inspect';
-const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} .config`;
+const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} sp-tab-panel div`;
 
 const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
@@ -130,15 +130,8 @@ const startCapturing = (picker) => {
 
   disablePickers();
 
-  if (currentPicker.classList.contains('colorpicker')) {
-    pickerType = 'color';
-  } else if (currentPicker.classList.contains('backgroundcolorpicker')) {
-    pickerType = 'backgroundcolor';
-  } else if (currentPicker.classList.contains('fontpicker')) {
-    pickerType = 'font';
-  } else if (currentPicker.classList.contains('sizepicker')) {
-    pickerType = 'size';
-  }
+  pickerType = currentPicker.getAttribute('data-picker');
+
   currentPicker.removeAttribute('disabled');
   currentPicker.setAttribute('selected', 'true');
   currentPicker.setAttribute('emphasized', 'true');

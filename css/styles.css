@@ -101,15 +101,15 @@ main sp-divider {
   background-color: var(--spectrum-global-color-gray-200);
 }
 
-main .form-field {
+main .option-field {
   width: 100%;
 }
 
-main .form-field + sp-field-label {
+main .option-field + sp-field-label {
   margin-top: 12px;
 }
 
-main .form-field + sp-checkbox {
+main .option-field + sp-checkbox {
   margin-top: 6px;
 }
 
@@ -201,7 +201,7 @@ section sp-tabs sp-tab-panel div {
 }
 
 section .page-preview {
-  height: calc(100vh - 289px);
+  height: calc(100vh - 293px);
   overflow: hidden;
 }
 

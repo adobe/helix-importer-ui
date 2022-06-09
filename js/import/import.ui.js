@@ -15,6 +15,7 @@ import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import PollImporter from '../shared/pollimporter.js';
 
 const PARENT_SELECTOR = '.import';
+const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 
@@ -62,6 +63,9 @@ const setupUI = () => {
 
 const updateImporterUI = (out) => {
   const { md, html: outputHTML } = out;
+
+  console.log('md:', md);
+  console.log('html:', outputHTML);
 
   ui.transformedEditor.setValue(html_beautify(outputHTML));
   ui.markdownEditor.setValue(md || '');
@@ -142,7 +146,7 @@ const attachListeners = () => {
           mode: 'readwrite',
         });
         FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
-        FOLDERNAME_SPAN.classList.remove('hidden');
+        FOLDERNAME_SPAN.parentNode.classList.remove('hidden');
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log('No directory selected');
@@ -284,7 +288,7 @@ const attachListeners = () => {
 
 const init = () => {
   config.origin = window.location.origin;
-  config.fields = initOptionFields(PARENT_SELECTOR);
+  config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   createImporter();
 

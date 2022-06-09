@@ -75,7 +75,7 @@
                     <div class="section-col">
                         <form class="import-form">
                             <sp-field-label for="import-url" required>URL</sp-field-label>
-                            <sp-textfield class="form-field" id="import-url" type="url">
+                            <sp-textfield class="option-field" id="import-url" type="url">
                                 <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
                                 <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
                             </sp-textfield>
@@ -83,16 +83,16 @@
                                 <sp-accordion-item label="Import Options">
                                     <div>
                                         <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
-                                        <sp-textfield class="form-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                                        <sp-textfield class="option-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
 
                                         <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
-                                        <sp-number-field class="form-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
-                                        <sp-checkbox class="form-field" id="import-local-save" checked>
+                                        <sp-checkbox class="option-field" id="import-local-save" checked>
                                             Save locally as .docx
                                         </sp-checkbox>
 
-                                        <sp-checkbox class="form-field" id="import-enable-js" checked>
+                                        <sp-checkbox class="option-field" id="import-enable-js" checked>
                                             Enable JavaScript
                                         </sp-checkbox>
                                     </div>
@@ -103,7 +103,10 @@
                                 <sp-button id="import-doimport-button">Import</sp-button>
                             </sp-button-group>
                         </form>
-                        <span id="folder-name" class="hidden"></span>
+                        <div>
+                          <span id="folder-name" class="hidden"></span>
+                          <sp-divider size="s"></sp-divider>
+                        </div>
                         <div class="page-preview hidden">
                             <h3>Page Preview</h3>
                             <iframe id="import-content-frame" frameborder="0"></iframe>
@@ -157,14 +160,14 @@
                     <div class="section-col">
                         <form class="inspect-form">
                             <sp-field-label for="inspect-url" required>URL</sp-field-label>
-                            <sp-textfield class="form-field" id="inspect-url" type="url">
+                            <sp-textfield class="option-field" id="inspect-url" type="url">
                                 <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
                                 <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
                             </sp-textfield>
                             <sp-accordion>
                                 <sp-accordion-item label="Eyedropper Options">
                                     <div>
-                                        <sp-checkbox class="form-field" id="inspect-enable-js" checked>
+                                        <sp-checkbox class="option-field" id="inspect-enable-js" checked>
                                             Enable JavaScript
                                         </sp-checkbox>
                                     </div>
@@ -175,7 +178,7 @@
                                 <sp-button id="inspect-drop-button">Eyedrop</sp-button>
                             </sp-button-group>
                         </form>
-                        <div class="page-preview" hidden>
+                        <div class="page-preview hidden">
                             <h3>Page Preview</h3>
                             <iframe id="inspect-content-frame" frameborder="0"></iframe>
                         </div>
@@ -212,7 +215,7 @@
                                         <sp-field-label for="inspect-text-color" side-aligned="start">Text color</sp-field-label>
                                         <sp-textfield id="inspect-text-color"></sp-textfield>
                                         <sp-color-handle for="inspect-text-color"></sp-color-handle>
-                                        <sp-action-button for="inspect-text-color" disabled>
+                                        <sp-action-button for="inspect-text-color" data-picker="color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -221,7 +224,7 @@
                                         <sp-field-label for="inspect-link-color" side-aligned="start">Link color</sp-field-label>
                                         <sp-textfield id="inspect-link-color"></sp-textfield>
                                         <sp-color-handle for="inspect-link-color"></sp-color-handle>
-                                        <sp-action-button for="inspect-link-color" disabled>
+                                        <sp-action-button for="inspect-link-color" data-picker="color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -230,7 +233,7 @@
                                         <sp-field-label for="inspect-link-hover-color">Link hover color</sp-field-label>
                                         <sp-textfield id="inspect-link-hover-color"></sp-textfield>
                                         <sp-color-handle for="inspect-link-hover-color"></sp-color-handle>
-                                        <sp-action-button for="inspect-link-hover-color" disabled>
+                                        <sp-action-button for="inspect-link-hover-color" data-picker="color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -239,7 +242,16 @@
                                         <sp-field-label for="inspect-background-color">Background color</sp-field-label>
                                         <sp-textfield id="inspect-background-color"></sp-textfield>
                                         <sp-color-handle for="inspect-background-color"></sp-color-handle>
-                                        <sp-action-button for="inspect-background-color" disabled>
+                                        <sp-action-button for="inspect-background-color" data-picker="backgroundcolor" disabled>
+                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                        </sp-action-button>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-overlay-background-color">Overlay background color</sp-field-label>
+                                        <sp-textfield id="inspect-overlay-background-color"></sp-textfield>
+                                        <sp-color-handle for="inspect-overlay-background-color"></sp-color-handle>
+                                        <sp-action-button for="inspect-overlay-background-color" data-picker="backgroundcolor" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -248,7 +260,7 @@
                                         <sp-field-label for="inspect-highlight-background-color">Highlight background color</sp-field-label>
                                         <sp-textfield id="inspect-highlight-background-color"></sp-textfield>
                                         <sp-color-handle for="inspect-highlight-background-color"></sp-color-handle>
-                                        <sp-action-button for="inspect-highlight-background-color" disabled>
+                                        <sp-action-button for="inspect-highlight-background-color" data-picker="backgroundcolor" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -259,7 +271,7 @@
                                     <div class="field-group">
                                         <sp-field-label for="inspect-heading-font-family">Heading font family</sp-field-label>
                                         <sp-textfield id="inspect-heading-font-family"></sp-textfield>
-                                        <sp-action-button for="inspect-heading-font-family" disabled>
+                                        <sp-action-button for="inspect-heading-font-family" data-picker="font" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -267,7 +279,7 @@
                                     <div class="field-group">
                                         <sp-field-label for="inspect-body-font-family">Body font family</sp-field-label>
                                         <sp-textfield id="inspect-body-font-family"></sp-textfield>
-                                        <sp-action-button for="inspect-body-font-family" disabled>
+                                        <sp-action-button for="inspect-body-font-family" data-picker="font" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -275,7 +287,7 @@
                                     <div class="field-group">
                                         <sp-field-label for="inspect-fixed-font-family">Fixed font family</sp-field-label>
                                         <sp-textfield id="inspect-fixed-font-family"></sp-textfield>
-                                        <sp-action-button for="inspect-fixed-font-family" disabled>
+                                        <sp-action-button for="inspect-fixed-font-family" data-picker="font" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -285,7 +297,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-xxl">Heading font size XXL</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-xxl"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-xxl" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-xxl" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -293,7 +305,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-xl">Heading font size XL</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-xl"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-xl" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-xl" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -301,7 +313,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-l">Heading font size L</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-l"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-l" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-l" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -309,7 +321,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-m">Heading font size M</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-m"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-m" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-m" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -317,7 +329,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-s">Heading font size S</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-s"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-s" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-s" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -325,7 +337,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-xs">Heading font size XS</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-xs"></sp-textfield>
-                                                <sp-action-button for="inspect-heading-font-size-xs" disabled>
+                                                <sp-action-button for="inspect-heading-font-size-xs" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -334,7 +346,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-xxl">Body font size XXL</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-xxl"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-xxl" disabled>
+                                                <sp-action-button for="inspect-body-font-size-xxl" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -342,7 +354,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-xl">Body font size XL</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-xl"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-xl" disabled>
+                                                <sp-action-button for="inspect-body-font-size-xl" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -350,7 +362,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-l">Body font size L</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-l"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-l" disabled>
+                                                <sp-action-button for="inspect-body-font-size-l" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -358,7 +370,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-m">Body font size M</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-m"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-m" disabled>
+                                                <sp-action-button for="inspect-body-font-size-m" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -366,7 +378,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-s">Body font size S</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-s"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-s" disabled>
+                                                <sp-action-button for="inspect-body-font-size-s" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
@@ -374,7 +386,7 @@
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-xs">Body font size XS</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-xs"></sp-textfield>
-                                                <sp-action-button for="inspect-body-font-size-xs" disabled>
+                                                <sp-action-button for="inspect-body-font-size-xs" data-picker="size" disabled>
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
