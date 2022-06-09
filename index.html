@@ -22,9 +22,11 @@
     <script src="./js/libs/vendors/showdown/showdown.min.js"></script>
     <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
     <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
-    <script src="./js/libs/hlx/importer-bundle.js"></script>
-    <script src="./js/import/import.ui.js" type="module"></script>
 
+    <script src="./js/libs/hlx/importer-bundle.js"></script>
+
+    <script src="./js/script.js" type="module"></script>
+    <script src="./js/import/import.ui.js" type="module"></script>
     <script src="./js/inspect/inspect.ui.js" type="module"></script>
 </head>
 
@@ -49,7 +51,7 @@
                 <sp-sidenav defaultValue="Import">
                     <sp-sidenav-item value="Import" label="Import" selected></sp-sidenav-item>
                     <sp-sidenav-item value="Crawl" label="Crawl"></sp-sidenav-item>
-                    <sp-sidenav-item value="Eyedropper" label="Eyedropper"></sp-sidenav-item>
+                    <sp-sidenav-item value="Inspect" label="Eyedropper"></sp-sidenav-item>
                 </sp-sidenav>
             </nav>
             <footer>
@@ -64,7 +66,7 @@
         <!-- MAIN CONTENT -->
         <main>
             <!-- IMPORT SECTION -->
-            <section value="Import" class="import hidden">
+            <section value="Import" class="import">
                 <div class="section-title">
                     <h2>Import</h2>
                     <sp-divider size="l"></sp-divider>
@@ -101,7 +103,8 @@
                                 <sp-button id="import-doimport-button">Import</sp-button>
                             </sp-button-group>
                         </form>
-                        <div class="import-preview hidden">
+                        <span id="folder-name" class="hidden"></span>
+                        <div class="page-preview hidden">
                             <h3>Page Preview</h3>
                             <iframe id="import-content-frame" frameborder="0"></iframe>
                         </div>
@@ -145,7 +148,7 @@
                 </div>
             </section>
             <!-- EYEDROPPER SECTION -->
-            <section value="Eyedropper" class="inspect">
+            <section value="Eyedropper" class="inspect hidden">
                 <div class="section-title">
                     <h2>Eyedropper</h2>
                     <sp-divider size="l"></sp-divider>
@@ -172,21 +175,21 @@
                                 <sp-button id="inspect-drop-button">Eyedrop</sp-button>
                             </sp-button-group>
                         </form>
-                        <div class="import-preview hidden">
+                        <div class="page-preview" hidden>
                             <h3>Page Preview</h3>
                             <iframe id="inspect-content-frame" frameborder="0"></iframe>
                         </div>
 
                     </div>
                     <div class="section-col">
-                        <sp-tabs selected="inspect-logo">
+                        <sp-tabs selected="inspect-fonts-sizes">
                             <sp-tab label="Logo" value="inspect-logo"></sp-tab>
                             <sp-tab label="Colors" value="inspect-colors"></sp-tab>
                             <sp-tab label="Fonts & sizes" value="inspect-fonts-sizes"></sp-tab>
                             <sp-tab-panel value="inspect-logo">
                                 <div>
                                     <sp-dropzone id="inspect-dropzone">
-                                        <sp-illustrated-message heading="Drag&nbsp;and&nbsp;drop your&nbsp;file">
+                                        <sp-illustrated-message heading="Drag&nbsp;and&nbsp;drop your&nbsp;logo">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 103">
                                                 <path d="M133.7,8.5h-118c-1.9,0-3.5,1.6-3.5,3.5v27c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5V23.5h119V92c0,0.3-0.2,0.5-0.5,0.5h-118c-0.3,0-0.5-0.2-0.5-0.5V69c0-0.8-0.7-1.5-1.5-1.5s-1.5,0.7-1.5,1.5v23c0,1.9,1.6,3.5,3.5,3.5h118c1.9,0,3.5-1.6,3.5-3.5V12C137.2,10.1,135.6,8.5,133.7,8.5z M15.2,21.5V12c0-0.3,0.2-0.5,0.5-0.5h118c0.3,0,0.5,0.2,0.5,0.5v9.5H15.2z M32.6,16.5c0,0.6-0.4,1-1,1h-10c-0.6,0-1-0.4-1-1s0.4-1,1-1h10C32.2,15.5,32.6,15.9,32.6,16.5z M13.6,56.1l-8.6,8.5C4.8,65,4.4,65.1,4,65.1c-0.4,0-0.8-0.1-1.1-0.4c-0.6-0.6-0.6-1.5,0-2.1l8.6-8.5l-8.6-8.5c-0.6-0.6-0.6-1.5,0-2.1c0.6-0.6,1.5-0.6,2.1,0l8.6,8.5l8.6-8.5c0.6-0.6,1.5-0.6,2.1,0c0.6,0.6,0.6,1.5,0,2.1L15.8,54l8.6,8.5c0.6,0.6,0.6,1.5,0,2.1c-0.3,0.3-0.7,0.4-1.1,0.4c-0.4,0-0.8-0.1-1.1-0.4L13.6,56.1z"
                                                 ></path>
@@ -194,7 +197,7 @@
                                         </sp-illustrated-message>
                                         <div>
                                             <label for="inspect-file-input">
-                                                <sp-link onclick="this.parentElement.nextElementSibling.click()">Select a file</sp-link> from your computer</label>
+                                                <sp-link onclick="this.parentElement.nextElementSibling.click()">Select a logo</sp-link> from your computer</label>
                                             <input type="file" id="file-input" style="display: none" />
                                         </div>
                                     </sp-dropzone>
@@ -205,51 +208,47 @@
                             </sp-tab-panel>
                             <sp-tab-panel value="inspect-colors">
                                 <div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-text-color" size="m">Text Color</sp-field-label>
-                                        <sp-textfield id="inspect-text-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-text-color" side-aligned="start">Text color</sp-field-label>
+                                        <sp-textfield id="inspect-text-color"></sp-textfield>
                                         <sp-color-handle for="inspect-text-color"></sp-color-handle>
-                                        <sp-action-button class="picker colorpicker" disabled for="inspect-text-color" size="m">
+                                        <sp-action-button for="inspect-text-color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-link-color" size="m">Link Color</sp-field-label>
-                                        <sp-textfield id="inspect-link-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-link-color" side-aligned="start">Link color</sp-field-label>
+                                        <sp-textfield id="inspect-link-color"></sp-textfield>
                                         <sp-color-handle for="inspect-link-color"></sp-color-handle>
-                                        <sp-action-button class="picker colorpicker" disabled for="inspect-link-color" size="m">
+                                        <sp-action-button for="inspect-link-color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-link-hover-color" size="m">Link Hover color</sp-field-label>
-                                        <sp-textfield id="inspect-link-hover-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-link-hover-color">Link hover color</sp-field-label>
+                                        <sp-textfield id="inspect-link-hover-color"></sp-textfield>
                                         <sp-color-handle for="inspect-link-hover-color"></sp-color-handle>
-                                        <sp-action-button class="picker colorpicker" disabled for="inspect-link-hover-color" size="m">
+                                        <sp-action-button for="inspect-link-hover-color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-background-color" size="m">Background color</sp-field-label>
-                                        <sp-textfield id="inspect-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-background-color">Background color</sp-field-label>
+                                        <sp-textfield id="inspect-background-color"></sp-textfield>
                                         <sp-color-handle for="inspect-background-color"></sp-color-handle>
-                                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-background-color" size="m">
+                                        <sp-action-button for="inspect-background-color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-overlay-background-color" size="m">Overlay Background color</sp-field-label>
-                                        <sp-textfield id="inspect-overlay-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                        <sp-color-handle for="inspect-overlay-background-color"></sp-color-handle>
-                                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-overlay-background-color" size="m">
-                                            <sp-icon-anchor-select></sp-icon-anchor-select>
-                                        </sp-action-button>
-                                    </div>
-                                    <div class="row">
-                                        <sp-field-label for="inspect-highlight-background-color" size="m">Highlight Background color</sp-field-label>
-                                        <sp-textfield id="inspect-highlight-background-color" style="width: 80px" class="inspect-var-field"></sp-textfield>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-highlight-background-color">Highlight background color</sp-field-label>
+                                        <sp-textfield id="inspect-highlight-background-color"></sp-textfield>
                                         <sp-color-handle for="inspect-highlight-background-color"></sp-color-handle>
-                                        <sp-action-button class="picker backgroundcolorpicker" disabled for="inspect-highlight-background-color" size="m">
+                                        <sp-action-button for="inspect-highlight-background-color" disabled>
                                             <sp-icon-anchor-select></sp-icon-anchor-select>
                                         </sp-action-button>
                                     </div>
@@ -257,118 +256,129 @@
                             </sp-tab-panel>
                             <sp-tab-panel value="inspect-fonts-sizes">
                                 <div>
-                                    <div class="fonts">
-                                        <h2>Fonts and sizes</h2>
-                                        <div class="row">
-                                            <sp-field-label for="inspect-heading-font-family" size="m">Heading font family</sp-field-label>
-                                            <sp-textfield id="inspect-heading-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                                            <sp-action-button class="picker fontpicker" disabled for="inspect-heading-font-family" size="m">
-                                                <sp-icon-anchor-select></sp-icon-anchor-select>
-                                            </sp-action-button>
-                                        </div>
-                                        <div class="row">
-                                            <sp-field-label for="inspect-body-font-family" size="m">Body font family</sp-field-label>
-                                            <sp-textfield id="inspect-body-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                                            <sp-action-button class="picker fontpicker" disabled for="inspect-body-font-family" size="m">
-                                                <sp-icon-anchor-select></sp-icon-anchor-select>
-                                            </sp-action-button>
-                                        </div>
-                                        <div class="row">
-                                            <sp-field-label for="inspect-fixed-font-family" size="m">Fixed font family</sp-field-label>
-                                            <sp-textfield id="inspect-fixed-font-family" style="width: 400px" class="inspect-var-field"></sp-textfield>
-                                            <sp-action-button class="picker fontpicker" disabled for="inspect-fixed-font-family" size="m">
-                                                <sp-icon-anchor-select></sp-icon-anchor-select>
-                                            </sp-action-button>
-                                        </div>
-                                        <div class="cols">
-                                            <div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-xxl" size="m">Heading font size XXL</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xxl" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-xl" size="m">Heading font size XL</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xl" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-l" size="m">Heading font size L</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-l" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-m" size="m">Heading font size M</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-m" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-s" size="m">Heading font size S</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-s" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-heading-font-size-xs" size="m">Heading font size XS</sp-field-label>
-                                                    <sp-textfield id="inspect-heading-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-heading-font-size-xs" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-heading-font-family">Heading font family</sp-field-label>
+                                        <sp-textfield id="inspect-heading-font-family"></sp-textfield>
+                                        <sp-action-button for="inspect-heading-font-family" disabled>
+                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                        </sp-action-button>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-body-font-family">Body font family</sp-field-label>
+                                        <sp-textfield id="inspect-body-font-family"></sp-textfield>
+                                        <sp-action-button for="inspect-body-font-family" disabled>
+                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                        </sp-action-button>
+                                    </div>
+
+                                    <div class="field-group">
+                                        <sp-field-label for="inspect-fixed-font-family">Fixed font family</sp-field-label>
+                                        <sp-textfield id="inspect-fixed-font-family"></sp-textfield>
+                                        <sp-action-button for="inspect-fixed-font-family" disabled>
+                                            <sp-icon-anchor-select></sp-icon-anchor-select>
+                                        </sp-action-button>
+                                    </div>
+
+                                    <div class="field-cols">
+                                        <div class="field-col">
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-xxl">Heading font size XXL</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-xxl"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-xxl" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
                                             </div>
-                                            <div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-xxl" size="m">body font size XXL</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-xxl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xxl" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-xl" size="m">body font size XL</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-xl" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xl" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-l" size="m">body font size L</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-l" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-l" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-m" size="m">body font size M</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-m" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-m" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-s" size="m">body font size S</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-s" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-s" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
-                                                <div class="row">
-                                                    <sp-field-label for="inspect-body-font-size-xs" size="m">body font size XS</sp-field-label>
-                                                    <sp-textfield id="inspect-body-font-size-xs" style="width: 80px" class="inspect-var-field"></sp-textfield>
-                                                    <sp-action-button class="picker sizepicker" disabled for="inspect-body-font-size-xs" size="m">
-                                                        <sp-icon-anchor-select></sp-icon-anchor-select>
-                                                    </sp-action-button>
-                                                </div>
+    
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-xl">Heading font size XL</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-xl"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-xl" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
                                             </div>
+    
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-l">Heading font size L</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-l"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-l" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+    
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-m">Heading font size M</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-m"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-m" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+    
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-s">Heading font size S</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-s"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-s" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+    
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-heading-font-size-xs">Heading font size XS</sp-field-label>
+                                                <sp-textfield id="inspect-heading-font-size-xs"></sp-textfield>
+                                                <sp-action-button for="inspect-heading-font-size-xs" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                        </div>
+                                        <div class="field-col">
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-xxl">Body font size XXL</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-xxl"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-xxl" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+        
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-xl">Body font size XL</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-xl"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-xl" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+        
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-l">Body font size L</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-l"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-l" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+        
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-m">Body font size M</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-m"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-m" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+        
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-s">Body font size S</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-s"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-s" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+        
+                                            <div class="field-group">
+                                                <sp-field-label for="inspect-body-font-size-xs">Body font size XS</sp-field-label>
+                                                <sp-textfield id="inspect-body-font-size-xs"></sp-textfield>
+                                                <sp-action-button for="inspect-body-font-size-xs" disabled>
+                                                    <sp-icon-anchor-select></sp-icon-anchor-select>
+                                                </sp-action-button>
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
@@ -380,8 +390,8 @@
                     </div>
                 </div>
             </section>
-            <div id="alert-container"></div>
         </main>
+        <div id="alert-container"></div>
     </sp-theme>
 </body>
 

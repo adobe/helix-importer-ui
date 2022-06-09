@@ -60,7 +60,8 @@ header a {
 
 header svg {
   height: 32px;
-  margin: 4px 16px 16px 0;
+  margin-right: 16px;
+  margin-bottom: 16px;
 }
 
 header h1 {
@@ -92,7 +93,6 @@ footer svg {
 main {
   grid-area: main;
   max-height: 100vh;
-  /* padding: 0 24px; */
   padding: 24px 56px;
   overflow-y: auto;
 }
@@ -113,8 +113,47 @@ main .form-field + sp-checkbox {
   margin-top: 6px;
 }
 
+main .field-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+main .field-group + .field-group {
+  margin-top: 12px;
+}
+
+main .field-group sp-field-label {
+  flex: 1;
+}
+
+main .field-group sp-textfield {
+  flex: 1;
+  margin: auto 9px;
+}
+
+main .field-group sp-color-handle {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  margin: 0 9px 0 0;
+}
+
+main .field-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr; 
+  gap: 0 12px; 
+  margin-top: 12px;
+}
+
 main sp-button-group {
   margin-top: 12px;
+}
+
+main sp-button[disabled] {
+  cursor: not-allowed;
 }
 
 /* SECTIONS */
@@ -128,14 +167,14 @@ section .section-title {
 
 section .section-cols {
   display: grid;
-  grid-template-columns: 1fr 1fr; 
+  grid-template-columns: 3fr 4fr; 
   grid-template-rows: 1fr; 
   gap: 0 40px; 
-  height: calc(100% - 32px);
 }
 
 section .section-cols .section-col {
   height: 100%;
+  overflow-x: auto;
 }
 
 section form {
@@ -153,84 +192,34 @@ section sp-accordion sp-accordion-item sp-checkbox {
   width: calc(100% + 16px);
 }
 
-section sp-tab-panel {
+section sp-tabs sp-tab-panel {
   padding-top: 12px;
 }
 
-/* IMPORT SECTION */
-.import .import-preview {
-  height: calc(100% - 164px - 12px);
-}
-
-.import .import-preview iframe {
+section sp-tabs sp-tab-panel div {
   width: 100%;
-  height: calc(100% - 19px - 16px);
 }
 
-/* CRAWL SECTION */
-
-/* EYEDROPPER SECTION */
-
-
-sp-tab {
-  /* margin-right: 40px; */
+section .page-preview {
+  height: calc(100vh - 289px);
+  overflow: hidden;
 }
 
-sp-tab-panel {
-  /* min-height: 400px; */
+section .page-preview iframe {
+  height: calc(100% / .45);
+  width: calc(100% / .45);
+  transform: scale(0.45);
+  transform-origin: 0 0;
+  background-color: var(--spectrum-global-color-gray-75);
+  overflow-x: auto;
 }
 
-sp-tab-panel div {
-  /* width: 100%; */
-  /* margin-top: 5px; */
-}
-
-.flex {
-  /* display: flex; */
-  /* width: 100%; */
-}
-
-.hidden {
-  /* display: none; */
-}
-
-.row {
-  /* display: flex; */
-}
-
-.row sp-field-label {
-  /* width: 150px; */
-  /* line-height: 32px; */
-  /* vertical-align: middle; */
-}
-
-.row > * {
-  /* margin-right: 20px; */
-}
-
-.row sp-color-handle {
-  /* margin-top: 4px; */
-  /* position: relative; */
-    /* height: 24px; */
-    /* width: 24px; */
-}
-
-.logo {
-  /* min-width: 100px; */
-  /* min-height: 100px; */
-  /* margin-right: 20px; */
-}
-
-.cols {
-  /* display: grid; */
-  /* grid-template-columns: auto auto; */
-}
-
+/* ALERT CONTAINER */
 #alert-container {
-  /* position: fixed; */
-  /* bottom: 0; */
-  /* width: 100%; */
-  /* display: flex; */
-  /* align-items: center; */
-  /* justify-content: center; */
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
