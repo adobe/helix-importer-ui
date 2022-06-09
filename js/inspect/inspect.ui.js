@@ -57,6 +57,7 @@ const doDrop = async () => {
 
     document.querySelector('sp-dropzone').classList.add('hidden');
     document.querySelector('sp-asset').classList.remove('hidden');
+    COPYCSS_BUTTON.classList.remove('hidden');
     document.querySelector('sp-asset img').src = vars.logo;
 
     enablePickers();
