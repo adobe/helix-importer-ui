@@ -2,7 +2,7 @@
   box-sizing: border-box;
 }
 
-body, sp-theme {
+body, sp-theme[color="dark"] {
   min-height: 100vh;
   margin: 0;
   background-color: var(--spectrum-global-color-gray-50);
@@ -10,7 +10,7 @@ body, sp-theme {
   font-family: var(--spectrum-global-font-family-base);
 }
 
-sp-theme {
+body > sp-theme {
   display: grid; 
   grid-template-columns: 240px 1fr; 
   grid-template-rows: 1fr; 
