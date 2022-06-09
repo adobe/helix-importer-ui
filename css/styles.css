@@ -201,8 +201,13 @@ section sp-tabs sp-tab-panel div {
 }
 
 section .page-preview {
-  height: calc(100vh - 293px);
+  height: calc(100vh - 305px);
+  margin-top: 12px;
   overflow: hidden;
+}
+
+section .page-preview h3 {
+  padding-top: 12px;
 }
 
 section .page-preview iframe {

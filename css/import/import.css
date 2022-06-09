@@ -45,10 +45,6 @@
   padding: 1rem;
 } */
 
-.import .folder-name-wrapper {
-  margin-bottom: 12px;
-}
-
 .import .code {
   position: relative;
   /* flex: 1 1 auto; */

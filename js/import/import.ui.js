@@ -146,7 +146,7 @@ const attachListeners = () => {
           mode: 'readwrite',
         });
         FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
-        FOLDERNAME_SPAN.parentNode.classList.remove('hidden');
+        FOLDERNAME_SPAN.classList.remove('hidden');
       } catch (error) {
         // eslint-disable-next-line no-console
         console.log('No directory selected');
