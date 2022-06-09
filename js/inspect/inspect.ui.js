@@ -1,6 +1,6 @@
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { drop, generateCSS, rgb2hex } from './inspect.js';
-import { success, error } from '../shared/alert.js';
+import alert from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.inspect';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} .config`;
@@ -36,7 +36,7 @@ const disablePickers = () => {
 const doDrop = async () => {
   window.setTimeout(() => {
     if (!CONTENT_FRAME.contentDocument || !CONTENT_FRAME.contentDocument.documentElement) {
-      error('Cannot read frame document - check security context or disable Javascript (see Options)');
+      alert.error('Cannot read frame document - check security context or disable Javascript (see Options)');
       return;
     }
 
@@ -152,7 +152,7 @@ const doCopyCSS = async () => {
 
   if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
     await navigator.clipboard.writeText(css);
-    success('CSS copied to clipboard');
+    alert.success('CSS copied to clipboard');
   }
 };
 

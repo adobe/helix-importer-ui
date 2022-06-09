@@ -20,6 +20,7 @@ export default class PollImporter {
     };
     this.poll = this.config.poll;
     this.listeners = [];
+    this.errorListeners = [];
     this.transformation = {};
 
     this.#init();
@@ -70,30 +71,39 @@ export default class PollImporter {
   }
 
   async transform() {
-    let out;
-    if (this.transformation.includeDocx) {
-      out = await WebImporter.html2docx(
-        this.transformation.url,
-        this.transformation.document,
-        this.projectTransform,
-      );
+    try {
+      let out;
+      if (this.transformation.includeDocx) {
+        out = await WebImporter.html2docx(
+          this.transformation.url,
+          this.transformation.document,
+          this.projectTransform,
+        );
 
-      const { path } = out;
-      out.filename = `${path}.docx`;
-    } else {
-      out = await WebImporter.html2md(
-        this.transformation.url,
-        this.transformation.document,
-        this.projectTransform,
-      );
-    }
+        const { path } = out;
+        out.filename = `${path}.docx`;
+      } else {
+        out = await WebImporter.html2md(
+          this.transformation.url,
+          this.transformation.document,
+          this.projectTransform,
+        );
+      }
 
-    this.listeners.forEach((listener) => {
-      listener({
-        ...out,
-        url: this.transformation.url,
+      this.listeners.forEach((listener) => {
+        listener({
+          ...out,
+          url: this.transformation.url,
+        });
       });
-    });
+    } catch (err) {
+      this.errorListeners.forEach((listener) => {
+        listener({
+          url: this.transformation.url,
+          error: err,
+        });
+      });
+    }
   }
 
   setTransformationInput({ url, document, includeDocx = false }) {
@@ -110,5 +120,9 @@ export default class PollImporter {
 
   addListener(listener) {
     this.listeners.push(listener);
+  }
+
+  addErrorListener(listener) {
+    this.errorListeners.push(listener);
   }
 }
