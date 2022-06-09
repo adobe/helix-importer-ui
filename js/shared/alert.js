@@ -21,7 +21,7 @@ const info = (message) => {
   doAlert(message, 'info');
 };
 
-export {
+export default {
   success,
   error,
   info,

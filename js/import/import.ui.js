@@ -13,6 +13,7 @@
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import PollImporter from '../shared/pollimporter.js';
+import alert from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -134,6 +135,13 @@ const attachListeners = () => {
       data.docx = filename;
     }
     importStatus.rows.push(data);
+    alert.success(`Import of page ${frame.dataset.originalURL} completed.`);
+  });
+
+  config.importer.addErrorListener(({ url, error: err }) => {
+    // eslint-disable-next-line no-console
+    console.error(`Error importing ${url}: ${err.message}`, err);
+    alert.error(`Error importing ${url}: ${err.message}`);
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -147,7 +155,7 @@ const attachListeners = () => {
         });
         FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         FOLDERNAME_SPAN.classList.remove('hidden');
-      } catch (error) {
+      } catch (e) {
         // eslint-disable-next-line no-console
         console.log('No directory selected');
       }
@@ -208,13 +216,13 @@ const attachListeners = () => {
                       includeDocx,
                     });
                     await config.importer.transform();
-                  } catch (error) {
+                  } catch (e) {
                     // eslint-disable-next-line no-console
-                    console.error(`Cannot transform ${originalURL} - transformation error ?`, error);
+                    console.error(`Cannot transform ${originalURL} - transformation error ?`, e);
                     // fallback, probably transformation error
                     importStatus.rows.push({
                       url: originalURL,
-                      status: `Error: ${error.message}`,
+                      status: `Error: ${e.message}`,
                     });
                   }
                 }
