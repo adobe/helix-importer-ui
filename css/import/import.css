@@ -67,7 +67,8 @@
   padding-top: 0;
   padding: 1rem;
   max-width: 718px;
-  height: 600px;
+  height: 563px;
+  margin-bottom: 20px;
 }
 
 .import .CodeMirror {
@@ -93,7 +94,7 @@
   flex: 1 1 auto;
   width: 100%;
   height: 100%;
-  max-height: 600px;
+  height: 600px;
   line-height: var(--hlx-importer-line-height);
   overflow-x: hidden;
   overflow-y: auto;
