@@ -103,8 +103,8 @@
                                 <sp-button id="import-doimport-button">Import</sp-button>
                             </sp-button-group>
                         </form>
-                        <div>
-                          <span id="folder-name" class="hidden"></span>
+                        <div class="folder-name-wrapper hidden">
+                          <span id="folder-name"></span>
                           <sp-divider size="s"></sp-divider>
                         </div>
                         <div class="page-preview hidden">
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                     <div class="section-col">
-                        <sp-tabs selected="import-preview" size="m">
+                        <sp-tabs selected="import-preview">
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
@@ -185,7 +185,7 @@
 
                     </div>
                     <div class="section-col">
-                        <sp-tabs selected="inspect-fonts-sizes">
+                        <sp-tabs selected="inspect-logo">
                             <sp-tab label="Logo" value="inspect-logo"></sp-tab>
                             <sp-tab label="Colors" value="inspect-colors"></sp-tab>
                             <sp-tab label="Fonts & sizes" value="inspect-fonts-sizes"></sp-tab>
