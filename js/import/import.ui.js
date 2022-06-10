@@ -31,6 +31,8 @@ const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-ht
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
 
+const SPTABS = document.querySelector('.import sp-tabs');
+
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
 
 const ui = {};
@@ -64,9 +66,6 @@ const setupUI = () => {
 
 const updateImporterUI = (out) => {
   const { md, html: outputHTML } = out;
-
-  console.log('md:', md);
-  console.log('html:', outputHTML);
 
   ui.transformedEditor.setValue(html_beautify(outputHTML));
   ui.markdownEditor.setValue(md || '');
@@ -292,6 +291,14 @@ const attachListeners = () => {
     a.setAttribute('download', 'import_report.xlsx');
     a.click();
   }));
+
+  SPTABS.addEventListener('change', () => {
+    // required for code to load in editors
+    setTimeout(() => {
+      ui.transformedEditor.refresh();
+      ui.markdownEditor.refresh();
+    }, 1);
+  });
 };
 
 const init = () => {
