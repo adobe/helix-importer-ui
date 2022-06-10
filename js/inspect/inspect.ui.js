@@ -3,34 +3,36 @@ import { drop, generateCSS, rgb2hex } from './inspect.js';
 import alert from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.inspect';
-const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} .config`;
-const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} .vars`;
-const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .preview`);
-const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
-const DROP_BUTTON = document.querySelector(`${CONFIG_PARENT_SELECTOR} #inspect-drop-button`);
+const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
+const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} sp-tab-panel div`;
+
+const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
+const DROP_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-drop-button`);
 const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-css-button`);
 const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-content-frame`);
-const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} .inspect-var-field`);
-const PICKERS = document.querySelectorAll(`${PARENT_SELECTOR} .picker`);
+
+const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
+const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-textfield`);
+const PICKERS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-action-button`);
 
 const config = {
   vars: {},
 };
 
 const enableButton = () => {
-  DROP_BUTTON.removeAttribute('disabled');
+  DROP_BUTTON.disabled = false;
 };
 
 const disableButton = () => {
-  DROP_BUTTON.setAttribute('disabled', 'true');
+  DROP_BUTTON.disabled = true;
 };
 
 const enablePickers = () => {
-  PICKERS.forEach((picker) => { picker.removeAttribute('disabled'); });
+  PICKERS.forEach((picker) => { picker.disabled = false; });
 };
 
 const disablePickers = () => {
-  PICKERS.forEach((picker) => { picker.setAttribute('disabled', 'true'); });
+  PICKERS.forEach((picker) => { picker.disabled = true; });
 };
 
 const doDrop = async () => {
@@ -55,6 +57,7 @@ const doDrop = async () => {
 
     document.querySelector('sp-dropzone').classList.add('hidden');
     document.querySelector('sp-asset').classList.remove('hidden');
+    COPYCSS_BUTTON.classList.remove('hidden');
     document.querySelector('sp-asset img').src = vars.logo;
 
     enablePickers();
@@ -128,15 +131,8 @@ const startCapturing = (picker) => {
 
   disablePickers();
 
-  if (currentPicker.classList.contains('colorpicker')) {
-    pickerType = 'color';
-  } else if (currentPicker.classList.contains('backgroundcolorpicker')) {
-    pickerType = 'backgroundcolor';
-  } else if (currentPicker.classList.contains('fontpicker')) {
-    pickerType = 'font';
-  } else if (currentPicker.classList.contains('sizepicker')) {
-    pickerType = 'size';
-  }
+  pickerType = currentPicker.getAttribute('data-picker');
+
   currentPicker.removeAttribute('disabled');
   currentPicker.setAttribute('selected', 'true');
   currentPicker.setAttribute('emphasized', 'true');

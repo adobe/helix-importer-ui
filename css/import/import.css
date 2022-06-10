@@ -3,65 +3,30 @@
 
 :host,
 :root {
-  --hlx-importer-bg: #f1f1f1;
-  --hlx-importer-color: #0f0f0f;
-  --hlx-importer-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  --hlx-importer-font-size: 16px;
-  --hlx-importer-line-height: 1.4;
-  --hlx-importer-button-bg: #1473e6;
-  --hlx-importer-button-pressed-bg: #1267CE;
-  --hlx-importer-button-color: var(--hlx-importer-bg);
-  --hlx-importer-menu-bg: #EBEBEB;
-  --hlx-importer-menu-border: #D6D6D6;
-  --hlx-importer-menu-highlight: #C2C2C2;
-  --hlx-import-markdown-ff: Arial, Helvetica, sans-serif;
-  --hlx-import-markdown-bg: #f1f1f1;
-  --hlx-import-markdown-color: #0f0f0f;
-  --hlx-import-markdown-th-bg: #F4CCCD;
+  /* COLORS */
+  --hlx-import-text-color: #000;
+  --hlx-import-link-color: #0563C1;
+  --hlx-import-secondary-heading-color: #434343;
+  --hlx-import-tertiary-heading-color: #666;
+  --hlx-import-background-color: #fff;
+  --hlx-import-table-head-background-color: #F5CBCD;
+  /* FONTS */
+  --hlx-import-font-family: 'Arial', sans-serif;
+  /* FONT SIZES */
+  --hlx-import-body-font-size: 14px;
+  --hlx-import-h1-font-size: 25px;
+  --hlx-import-h2-font-size: 20px;
+  --hlx-import-h3-font-size: 18px;
+  --hlx-import-h4-font-size: 15px;
+  --hlx-import-h5-font-size: var(--hlx-import-body-font-size);
+  --hlx-import-h6-font-size: var(--hlx-import-body-font-size);
 }
-
-@media (prefers-color-scheme: dark) {
-  :host,
-  :root {
-    --hlx-importer-bg: #0f0f0f;
-    --hlx-importer-color: #f1f1f1;
-    --hlx-importer-button-color: var(--hlx-importer-color);
-    --hlx-importer-menu-bg: #1e1e1e;
-    --hlx-importer-menu-border: #2d2d2d;
-    --hlx-importer-menu-highlight: #323232;
-  }
-}
-
-.import .preview {
-  width: 100%;
-  height: 600px;
-  overflow: hidden;
-}
-
-.import iframe {
-  height: calc(100% / .50);
-  width: calc(100% / .50);
-  transform: scale(0.45);
-  transform-origin: 0 0;
-  background-color: white;
-  overflow-x: auto;
-}
-
-/* .import .result {
-  min-width: 258px;
-  color: var(--hlx-importer-color);
-}
-
-.import .container .result .panels {
-  padding: 0;
-}
-
-.import .container .result [data-panel=markdown], .container .result [data-panel=crawled] {
-  padding: 1rem;
-} */
 
 .import .code {
   position: relative;
+<<<<<<< HEAD
+  height: calc(100vh - 206px);
+=======
   flex: 1 1 auto;
   height: 100%;
   padding-top: 0;
@@ -69,64 +34,145 @@
   max-width: 718px;
   height: 563px;
   margin-bottom: 20px;
+>>>>>>> main
 }
 
 .import .CodeMirror {
   position: absolute;
   top: 0;
-  bottom: 0;
   left: 0;
+  bottom: 0;
   right: 0;
-  height: 100%;
-  padding-top: 1rem;
+}
+
+.import .cm-s-base16-dark.CodeMirror,
+.import .cm-s-base16-dark .CodeMirror-gutters {
+  background-color: var(--spectrum-global-color-gray-75);
 }
 
 .import .cm-s-base16-dark.CodeMirror {
-  background: #1e1e1e;
+  border: 1px solid var(--spectrum-global-color-gray-100);
 }
 
-.import .cm-s-base16-dark .CodeMirror-gutters {
-  background: #1e1e1e;
-}
-
-#import-markdown-preview {
-  position: relative;
-  flex: 1 1 auto;
+.import sp-theme[color="light"] {
   width: 100%;
+<<<<<<< HEAD
+  background-color: var(--spectrum-global-color-gray-50);
+  color: var(--spectrum-global-color-gray-800);
+}
+
+.import #import-markdown-preview {
+  height: calc(100vh - 206px);
+  border: 1px solid var(--spectrum-global-color-gray-100);
+  padding: 12px;
+  background-color: var(--hlx-import-background-color);
+  color: var(--hlx-import-text-color);
+  font-family: var(--hlx-import-font-family);
+  font-size: var(--hlx-import-body-font-size);
+  line-height: 1.15;
+=======
   height: 100%;
   height: 600px;
   line-height: var(--hlx-importer-line-height);
   overflow-x: hidden;
+>>>>>>> main
   overflow-y: auto;
-  color: var(--hlx-import-markdown-color);
-  background-color: var(--hlx-import-markdown-bg);
-  font-family: var(--hlx-import-markdown-ff);
-  padding: 10px;
 }
 
-#import-markdown-preview h2 {
-  margin: unset;
+.import #import-markdown-preview h1,
+.import #import-markdown-preview h2,
+.import #import-markdown-preview h3,
+.import #import-markdown-preview h4,
+.import #import-markdown-preview h5,
+.import #import-markdown-preview h6 {
+  margin: 0;
+  padding-bottom: 6px;
+  font-weight: normal;
 }
 
-#import-markdown-preview img {
+.import #import-markdown-preview h1 {
+  padding-top: 20px;
+  font-size: var(--hlx-import-h1-font-size);
+}
+
+.import #import-markdown-preview h2 {
+  padding-top: 18px;
+  font-size: var(--hlx-import-h2-font-size);
+}
+
+.import #import-markdown-preview h3 {
+  padding-top: 16px;
+  padding-bottom: 4px;
+  color: var(--hlx-import-secondary-heading-color);
+  font-size: var(--hlx-import-h3-font-size);
+}
+
+.import #import-markdown-preview h4 {
+  padding-top: 14px;
+  padding-bottom: 4px;
+  color: var(--hlx-import-tertiary-heading-color);
+  font-size: var(--hlx-import-h4-font-size);
+}
+
+.import #import-markdown-preview h5 {
+  padding-top: 12px;
+  padding-bottom: 4px;
+  color: var(--hlx-import-tertiary-heading-color);
+  font-size: var(--hlx-import-h5-font-size);
+}
+
+.import #import-markdown-preview h6 {
+  padding-top: 12px;
+  padding-bottom: 4px;
+  color: var(--hlx-import-tertiary-heading-color);
+  font-size: var(--hlx-import-h6-font-size);
+  font-style: italic;
+}
+
+.import #import-markdown-preview p {
+  margin: 3px 0;
+}
+
+.import #import-markdown-preview a:any-link {
+  color: var(--hlx-import-link-color);
+}
+
+.import #import-markdown-preview ul {
+  padding-inline-start: 20px;
+  list-style-type: none;
+}
+
+.import #import-markdown-preview ul li {
+  position: relative;
+}
+
+.import #import-markdown-preview ul li::before {
+  position: absolute;
+  margin-left: -20px;
+  content: '\2011';
+}
+
+.import #import-markdown-preview img {
   max-width: 100%;
 }
 
-#import-markdown-preview table,
-#import-markdown-preview th,
-#import-markdown-preview td {
+.import #import-markdown-preview table,
+.import #import-markdown-preview th,
+.import #import-markdown-preview td {
   max-width: 100%;
-  border: 1px solid var(--hlx-importer-menu-highlight);
+  border: 1px solid var(--hlx-import-text-color);
   border-collapse: collapse;
-  color: var(--hlx-import-markdown-color);
-  font-family: var(--hlx-import-markdown-ff);
 }
 
-#import-markdown-preview table {
+.import #import-markdown-preview table {
   width: 100%;
-  margin: 1rem 0;
 }
 
-#import-markdown-preview th {
-  background: var(--hlx-import-markdown-th-bg);
+.import #import-markdown-preview tr:first-of-type {
+  background-color: var(--hlx-import-table-head-background-color);
+}
+
+.import #import-markdown-preview th,
+.import #import-markdown-preview td {
+  padding: 0 6px;
 }

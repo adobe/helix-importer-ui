@@ -16,15 +16,16 @@ import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.import';
+const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 
-const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .preview`);
+const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 
 const URLS_INPUT = document.getElementById('import-url');
 const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 
 // const SAVEASWORD_BUTTON = document.getElementById('saveAsWord');
-const FOLDERNAME_SPAN = document.getElementById('folderName');
+const FOLDERNAME_SPAN = document.getElementById('folder-name');
 
 const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-html');
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
@@ -63,6 +64,9 @@ const setupUI = () => {
 
 const updateImporterUI = (out) => {
   const { md, html: outputHTML } = out;
+
+  console.log('md:', md);
+  console.log('html:', outputHTML);
 
   ui.transformedEditor.setValue(html_beautify(outputHTML));
   ui.markdownEditor.setValue(md || '');
@@ -292,7 +296,7 @@ const attachListeners = () => {
 
 const init = () => {
   config.origin = window.location.origin;
-  config.fields = initOptionFields(PARENT_SELECTOR);
+  config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   createImporter();
 
