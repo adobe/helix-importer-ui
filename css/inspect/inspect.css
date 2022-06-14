@@ -1,28 +1,3 @@
-.inspect .brand {
-  /* display: grid; */
-  /* grid-template-columns: auto auto auto; */
-  /* padding: 10px; */
-}
-
-.inspect .brand > div {
-  /* min-width: 200px; */
-}
-
-.inspect .preview {
-  /* width: 100%; */
-  /* height: 600px; */
-  /* overflow: hidden; */
-}
-
-.inspect iframe {
-  /* height: calc(100% / .50); */
-  /* width: calc(100% / .50); */
-  /* transform: scale(0.45); */
-  /* transform-origin: 0 0; */
-  /* background-color: white; */
-  /* overflow-x: auto; */
-}
-
-.vars {
-  /* margin-left: 20px */
+.inspect sp-asset img {
+  max-height: 300px;
 }

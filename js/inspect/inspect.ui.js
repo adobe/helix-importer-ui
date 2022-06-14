@@ -14,6 +14,8 @@ const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-conten
 const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
 const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-textfield`);
 const PICKERS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-action-button`);
+const LOGO_FIELD = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo`);
+const LOGO_IMG = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo img`);
 
 const config = {
   vars: {},
@@ -55,10 +57,10 @@ const doDrop = async () => {
       }
     });
 
-    document.querySelector('sp-dropzone').classList.add('hidden');
-    document.querySelector('sp-asset').classList.remove('hidden');
     COPYCSS_BUTTON.classList.remove('hidden');
-    document.querySelector('sp-asset img').src = vars.logo;
+
+    LOGO_FIELD.value = vars.logo;
+    LOGO_FIELD.handleChange();
 
     enablePickers();
   }, 2000);
@@ -68,6 +70,10 @@ const doDrop = async () => {
 
 const getStyle = (win, x, y, type) => {
   const element = win.document.elementFromPoint(x, y);
+  if (!element) return null;
+  if (type === 'img' && element.tagName === 'IMG') {
+    return element.src;
+  }
   const style = win.getComputedStyle(element);
   if (type === 'color') {
     return rgb2hex(style.getPropertyValue('color'));
@@ -80,6 +86,13 @@ const getStyle = (win, x, y, type) => {
   }
   if (type === 'size') {
     return style.getPropertyValue('font-size');
+  }
+  if (type === 'img') {
+    const bg = style.getPropertyValue('background-image');
+    if (bg.startsWith('url')) {
+      return bg.slice(5, -2);
+    }
+    return bg;
   }
   return 'Unknown';
 };
@@ -97,10 +110,14 @@ const capture = (event) => {
 
 const saveCapture = (event) => {
   if (pickerField) {
-    const style = capture(event);
-    pickerField.value = style;
-    // pickerField.dispatchEvent(new window.top.CustomEvent('change', { value: style }));
-    pickerField.handleChange();
+    try {
+      const style = capture(event);
+      console.log('style', style);
+      pickerField.value = style;
+      pickerField.handleChange();
+    } catch (e) {
+      console.warning(`Error while trying to capture style: ${e.message}`);
+    }
   }
   event.preventDefault();
   event.stopPropagation();
@@ -114,7 +131,7 @@ const stopCapturing = () => {
   currentPicker.removeAttribute('selected');
   currentPicker.removeAttribute('emphasized');
   CONTENT_FRAME.contentDocument.removeEventListener('mousemove', capture);
-  CONTENT_FRAME.contentDocument.removeEventListener('mousedown', saveCapture);
+  CONTENT_FRAME.contentDocument.removeEventListener('click', saveCapture);
 };
 
 const startCapturing = (picker) => {
@@ -137,7 +154,7 @@ const startCapturing = (picker) => {
   currentPicker.setAttribute('selected', 'true');
   currentPicker.setAttribute('emphasized', 'true');
   CONTENT_FRAME.contentDocument.addEventListener('mousemove', capture);
-  CONTENT_FRAME.contentDocument.addEventListener('mousedown', saveCapture);
+  CONTENT_FRAME.contentDocument.addEventListener('click', saveCapture);
 };
 
 const doCopyCSS = async () => {
@@ -184,11 +201,22 @@ const attachListeners = () => {
 
     CONTENT_FRAME.src = `http://localhost:3001${url.pathname}?host=${url.origin}`;
   });
+
   PICKERS.forEach((picker) => {
     picker.addEventListener('click', () => {
       startCapturing(picker);
     });
   });
+
+  LOGO_FIELD.handleChange = () => {
+    const { value } = LOGO_FIELD;
+    if (value && value !== 'none') {
+      LOGO_IMG.src = value;
+      LOGO_FIELD.classList.remove('hidden');
+    } else {
+      LOGO_FIELD.classList.add('hidden');
+    }
+  };
 };
 
 const init = () => {
