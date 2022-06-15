@@ -60,6 +60,11 @@ const displayCrawledURL = (url) => {
   CRAWLED_URLS_HEADING.innerText = `Crawled URLs (${crawlStatus.crawled}):`;
 };
 
+const clearResultPanel = () => {
+  CRAWLED_URLS_LIST.innerHTML = '';
+  CRAWLED_URLS_HEADING.innerText = 'Crawling...';
+};
+
 const disableProcessButtons = () => {
   PROCESS_BUTTONS.forEach((button) => {
     button.disabled = true;
@@ -96,12 +101,14 @@ const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
   CRAWL_BUTTON.addEventListener('click', (async () => {
+    disableProcessButtons();
+    clearResultPanel();
+
     if (config.fields['crawl-show-preview']) {
       CRAWL_CONTAINER.classList.remove('hidden');
     } else {
       CRAWL_CONTAINER.classList.add('hidden');
     }
-    disableProcessButtons();
 
     CRAWL_REPORT_BUTTON.classList.remove('hidden');
 
@@ -272,6 +279,9 @@ const attachListeners = () => {
   }));
 
   GETURLSFROMROBOTS_BUTTON.addEventListener('click', (async () => {
+    disableProcessButtons();
+    clearResultPanel();
+
     crawlStatus.crawled = 0;
     crawlStatus.rows = [];
     crawlStatus.urls = [];
@@ -293,6 +303,7 @@ const attachListeners = () => {
     });
 
     CRAWL_REPORT_BUTTON.classList.remove('hidden');
+    enableProcessButtons();
   }));
 };
 

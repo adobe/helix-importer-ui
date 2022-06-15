@@ -6,6 +6,15 @@ const doAlert = (message, variant) => {
   toast.setAttribute('variant', variant);
   toast.setAttribute('open', true);
   toast.innerHTML = message;
+  toast.addEventListener('close', () => {
+    toast.remove();
+  });
+
+  if (ALERT.hasChildNodes()) {
+    ALERT.childNodes.forEach((node) => {
+      node.remove();
+    });
+  }
   ALERT.append(toast);
 };
 
