@@ -9,6 +9,7 @@ const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} sp-tab-panel div`;
 const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 const DROP_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-drop-button`);
 const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-css-button`);
+const DOWNLOAD_LOGO_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-download-logo-button`);
 const CONTENT_FRAME = document.querySelector(`${PARENT_SELECTOR} #inspect-content-frame`);
 
 const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
@@ -112,10 +113,10 @@ const saveCapture = (event) => {
   if (pickerField) {
     try {
       const style = capture(event);
-      console.log('style', style);
       pickerField.value = style;
       pickerField.handleChange();
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.warning(`Error while trying to capture style: ${e.message}`);
     }
   }
@@ -169,6 +170,17 @@ const doCopyCSS = async () => {
   }
 };
 
+const downloadLogo = async () => {
+  if (!LOGO_FIELD.value) return;
+  const u = new URL(LOGO_FIELD.value);
+  const el = document.createElement('a');
+  el.setAttribute('href', LOGO_FIELD.value);
+  el.setAttribute('download', u.pathname.split('/').pop());
+  document.body.appendChild(el);
+  el.click();
+  el.remove();
+};
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, CONFIG_PARENT_SELECTOR);
 
@@ -185,8 +197,8 @@ const attachListeners = () => {
   });
 
   CONTENT_FRAME.addEventListener('load', doDrop);
-  // GENERATE_BUTTON.addEventListener('click', doGenerateSite);
   COPYCSS_BUTTON.addEventListener('click', doCopyCSS);
+  DOWNLOAD_LOGO_BUTTON.addEventListener('click', downloadLogo);
   DROP_BUTTON.addEventListener('click', async () => {
     PREVIEW_PANEL.classList.remove('hidden');
     disableButton();
@@ -213,8 +225,10 @@ const attachListeners = () => {
     if (value && value !== 'none') {
       LOGO_IMG.src = value;
       LOGO_FIELD.classList.remove('hidden');
+      DOWNLOAD_LOGO_BUTTON.classList.remove('hidden');
     } else {
       LOGO_FIELD.classList.add('hidden');
+      DOWNLOAD_LOGO_BUTTON.classList.add('hidden');
     }
   };
 };
