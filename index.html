@@ -7,6 +7,7 @@
     <title>Helix Importer Tools</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="./css/import/import.css" />
+    <link rel="stylesheet" href="./css/crawl/crawl.css" />
     <link rel="stylesheet" href="./css/inspect/inspect.css" />
 
     <script src="https://jspm.dev/@spectrum-web-components/bundle/elements.js" type="module"></script>
@@ -27,6 +28,7 @@
 
     <script src="./js/script.js" type="module"></script>
     <script src="./js/import/import.ui.js" type="module"></script>
+    <script src="./js/crawl/crawl.ui.js" type="module"></script>
     <script src="./js/inspect/inspect.ui.js" type="module"></script>
 </head>
 
@@ -140,7 +142,6 @@
                         </sp-button-group>
                     </div>
                 </div>
-                </div>
             </section>
             <!-- CRAWL SECTION -->
             <section value="Crawl" class="crawl hidden">
@@ -150,7 +151,47 @@
                 </div>
                 <div class="section-cols">
                     <div class="section-col">
-                        Under construction
+                        <form class="crawl-form">
+                            <sp-field-label for="crawl-url" required>Host / Page URL</sp-field-label>
+                            <sp-textfield class="option-field" id="crawl-url" type="url">
+                                <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
+                                <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
+                            </sp-textfield>
+                            <sp-accordion>
+                                <sp-accordion-item label="Crawl Options">
+                                    <div>
+                                        <sp-field-label for="crawl-pageload-timeout">Page load timeout</sp-field-label>
+                                        <sp-number-field class="option-field" id="crawl-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+
+                                        <sp-checkbox class="option-field" id="crawl-enable-js" checked>
+                                            Enable JavaScript
+                                        </sp-checkbox>
+
+                                        <sp-checkbox class="option-field" id="crawl-show-preview" checked>
+                                            Show preview
+                                        </sp-checkbox>
+                                    </div>
+                                </sp-accordion-item>
+                            </sp-accordion>
+                            <sp-button-group>
+                                <sp-button id="crawl-docrawl-button">Crawl</sp-button>
+                                <sp-button id="crawl-getfromrobot-button">Get from robots.txt</sp-button>
+                            </sp-button-group>
+                        </form>
+                        <div class="page-preview hidden">
+                            <sp-divider size="s"></sp-divider>
+                            <h3>Page preview</h3>
+                            <iframe id="crawl-content-frame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="section-col">
+                        <div id="crawl-result">
+                            <h2></h2>
+                            <ul></ul>
+                        </div>
+                        <sp-button-group>
+                            <sp-button id="crawl-downloadCrawlReport" class="hidden">Download crawl report</sp-button>
+                        </sp-button-group>
                     </div>
                 </div>
             </section>

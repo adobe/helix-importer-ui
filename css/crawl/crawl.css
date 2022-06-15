@@ -1,0 +1,5 @@
+.crawl #crawl-result {
+  position: relative;
+  height: calc(100vh - 172px);
+  overflow-y: auto;
+}
