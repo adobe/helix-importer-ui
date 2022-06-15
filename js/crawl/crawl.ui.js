@@ -12,6 +12,7 @@
 /* global ExcelJS */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { loadURLsFromRobots } from '../shared/sitemap.js';
+import alert from '../shared/alert.js';
 
 const PARENT_SELECTOR = '.crawl';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -107,6 +108,7 @@ const attachListeners = () => {
     crawlStatus.crawled = 0;
     crawlStatus.rows = [];
     crawlStatus.urls = [];
+    crawlStatus.hasExtra = true;
 
     const urlsArray = [URLS_INPUT.value];
     const processNext = () => {
@@ -205,7 +207,7 @@ const attachListeners = () => {
 
             const event = new Event('crawling-complete');
             frame.dispatchEvent(event);
-          }, config.pageLoadTimeout || 1);
+          }, config.fields['crawl-pageload-timeout'] || 1);
         };
 
         frame.addEventListener('load', onLoad);
@@ -235,8 +237,14 @@ const attachListeners = () => {
   CRAWL_REPORT_BUTTON.addEventListener('click', (async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
+
+    let headers = ['URL'];
+    if (crawlStatus.hasExtra) {
+      headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'];
+    }
+
     worksheet.addRows([
-      ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'],
+      headers,
     ].concat(crawlStatus.rows.map(({
       // eslint-disable-next-line max-len
       url,
@@ -247,9 +255,14 @@ const attachListeners = () => {
       nbLinksExternalHost,
       nbLinksToFollow,
       linksToFollow,
-    }) => [
-      url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
-    ])));
+    }) => {
+      if (crawlStatus.hasExtra) {
+        return [url];
+      }
+      return [
+        url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
+      ];
+    })));
     const buffer = await workbook.xlsx.writeBuffer();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -259,24 +272,27 @@ const attachListeners = () => {
   }));
 
   GETURLSFROMROBOTS_BUTTON.addEventListener('click', (async () => {
+    crawlStatus.crawled = 0;
+    crawlStatus.rows = [];
+    crawlStatus.urls = [];
+    crawlStatus.hasExtra = false;
+
     // eslint-disable-next-line no-alert
-    const urls = await loadURLsFromRobots(config.origin, URLS_INPUT.value);
-    if (urls === 0) {
-      // eslint-disable-next-line no-alert
-      alert(`No urls found. robots.txt or sitemap might not exist on ${config.origin}`);
-    } else {
-      const workbook = new ExcelJS.Workbook();
-      const worksheet = workbook.addWorksheet('Sheet 1');
-      worksheet.addRows([
-        ['URL'],
-      ].concat(urls.map((u) => [u])));
-      const buffer = await workbook.xlsx.writeBuffer();
-      const a = document.createElement('a');
-      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-      a.setAttribute('href', URL.createObjectURL(blob));
-      a.setAttribute('download', 'urls.xlsx');
-      a.click();
-    }
+    crawlStatus.urls = await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
+      log: alert.success,
+      sitemap: config.fields['crawl-sitemap-file'],
+    });
+
+    crawlStatus.urls.forEach((url) => {
+      displayCrawledURL(url);
+
+      const row = {
+        url,
+      };
+      crawlStatus.rows.push(row);
+    });
+
+    CRAWL_REPORT_BUTTON.classList.remove('hidden');
   }));
 };
 

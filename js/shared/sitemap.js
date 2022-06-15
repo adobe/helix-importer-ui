@@ -9,20 +9,23 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-async function loadSitemap(sitemapURL, origin, host) {
+async function loadSitemap(sitemapURL, origin, host, config = {}) {
   const url = new URL(sitemapURL, origin);
   if (!url.searchParams.get('host')) {
     url.searchParams.append('host', host);
   }
   const resp = await fetch(`${origin}${url.pathname}${url.search}`);
   if (resp.ok) {
+    if (config.log) {
+      config.log(`Extracting URLs from sitemap: ${sitemapURL}`);
+    }
     const xml = await resp.text();
     const sitemap = (new window.DOMParser()).parseFromString(xml, 'text/xml');
     const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
     let urls = [];
     const promises = subSitemaps.map((loc) => new Promise((resolve) => {
       const subSitemapURL = new URL(loc.textContent, origin);
-      loadSitemap(subSitemapURL.pathname, origin, host).then((result) => {
+      loadSitemap(subSitemapURL.pathname, origin, host, config).then((result) => {
         urls = urls.concat(result);
         resolve(true);
       });
@@ -41,11 +44,14 @@ async function loadSitemap(sitemapURL, origin, host) {
   return [];
 }
 
-async function loadURLsFromRobots(origin, host) {
+async function loadURLsFromRobots(origin, host, config = {}) {
   let urls = [];
   const url = new URL(`/robots.txt?host=${host}`, origin);
   const res = await fetch(url.toString());
-  if (false || res.ok) {
+  if (res.ok) {
+    if (config.log) {
+      config.log('Found a robots.txt');
+    }
     const text = await res.text();
     // eslint-disable-next-line no-console
     console.log('found robots.txt', text);
@@ -62,7 +68,7 @@ async function loadURLsFromRobots(origin, host) {
     }
 
     const promises = sitemaps.map((sitemap) => new Promise((resolve) => {
-      loadSitemap(sitemap, origin, host).then((u) => {
+      loadSitemap(sitemap, origin, host, config).then((u) => {
         urls = urls.concat(u);
         resolve();
       });
@@ -71,8 +77,12 @@ async function loadURLsFromRobots(origin, host) {
     await Promise.all(promises);
   } else {
     // eslint-disable-next-line no-console
-    console.log('No robots.txt found - trying sitemap.xml');
-    return loadSitemap('/sitemap.xml', origin, host);
+    const sitemapFile = config.sitemapFile || '/sitemap.xml';
+    if (config.log) {
+      config.log(`No robots.txt found - trying ${sitemapFile}`);
+    }
+    const u = await loadSitemap(sitemapFile, origin, host, config);
+    urls = urls.concat(u);
   }
   return [...new Set(urls)];
 }

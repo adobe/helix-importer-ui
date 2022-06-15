@@ -170,12 +170,15 @@
                                         <sp-checkbox class="option-field" id="crawl-show-preview" checked>
                                             Show preview
                                         </sp-checkbox>
+
+                                        <sp-field-label for="crawl-sitemap-file" required>Sitemap</sp-field-label>
+                                        <sp-textfield class="option-field" id="crawl-sitemap-file" value="/sitemap.xml"></sp-textfield>
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
                             <sp-button-group>
                                 <sp-button id="crawl-docrawl-button">Crawl</sp-button>
-                                <sp-button id="crawl-getfromrobot-button">Get from robots.txt</sp-button>
+                                <sp-button id="crawl-getfromrobot-button">Get from robots.txt or sitemap</sp-button>
                             </sp-button-group>
                         </form>
                         <div class="page-preview hidden">

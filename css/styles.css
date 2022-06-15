@@ -227,4 +227,6 @@ section .page-preview iframe {
   align-items: center;
   justify-content: center;
   width: 100%;
+  flex-direction: column;
+  row-gap: 4px;
 }
