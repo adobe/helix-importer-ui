@@ -193,7 +193,7 @@ const attachListeners = () => {
             processNext();
           } else {
             const frame = document.createElement('iframe');
-            frame.id = 'contentFrame';
+            frame.id = 'import-content-frame';
 
             if (config.fields['import-enable-js']) {
               frame.removeAttribute('sandbox');
