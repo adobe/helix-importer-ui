@@ -348,11 +348,6 @@ const init = () => {
 
   if (!IS_BULK) setupUI();
   attachListeners();
-
-  if (SPTABS) {
-    // required now. Not sure why default selection doesn't work
-    SPTABS.selected = 'import-preview';
-  }
 };
 
 init();
