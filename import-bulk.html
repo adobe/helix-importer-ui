@@ -4,23 +4,12 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Import - Workbench Tool</title>
+    <title>Import (Bulk) Tool</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="./css/import/import.css" />
 
     <script src="https://jspm.dev/@spectrum-web-components/bundle/elements.js" type="module"></script>
     <script src="https://jspm.dev/@spectrum-web-components/icons-workflow/icons/sp-icon-anchor-select.js" type="module"></script>
-
-    <script src="./js/libs/vendors/codemirror/codemirror.js"></script>
-    <script src="./js/libs/vendors/codemirror/xml.js"></script>
-    <script src="./js/libs/vendors/codemirror/javascript.js"></script>
-    <script src="./js/libs/vendors/codemirror/css.js"></script>
-    <script src="./js/libs/vendors/codemirror/htmlmixed.js"></script>
-    <script src="./js/libs/vendors/codemirror/markdown.js"></script>
-    <script src="./js/libs/vendors/js-beautify/beautify-html.min.js"></script>
-    <script src="./js/libs/vendors/showdown/showdown.min.js"></script>
-    <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
-    <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
 
     <script src="./js/libs/hlx/importer-bundle.js"></script>
 
@@ -29,20 +18,21 @@
 
 <body class="tool">
     <sp-theme color="dark" scale="medium">
+        <!-- MAIN CONTENT -->
         <main>
-            <!-- IMPORT SECTION -->
-            <section class="import">
+            <!-- IMPORT BULK SECTION -->
+            <section class="import import-bulk">
                 <div class="section-title">
-                    <h2>Import - Workbench</h2>
+                    <h2>Import - Bulk</h2>
                     <sp-divider size="l"></sp-divider>
                 </div>
                 <div class="section-cols">
                     <div class="section-col">
                         <form class="import-form">
-                            <sp-field-label for="import-url" required>URL</sp-field-label>
-                            <sp-textfield class="option-field" id="import-url" type="url">
-                                <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
-                                <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
+                            <sp-field-label for="import-urls" required>URLs</sp-field-label>
+                            <sp-textfield class="option-field" multiline id="import-urls">
+                                <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
+                                <sp-help-text slot="negative-help-text">Please enter valid URLs.</sp-help-text>
                             </sp-textfield>
                             <sp-accordion>
                                 <sp-accordion-item label="Import Options">
@@ -60,6 +50,10 @@
                                         <sp-checkbox class="option-field" id="import-enable-js" checked>
                                             Enable JavaScript
                                         </sp-checkbox>
+
+                                        <sp-checkbox class="option-field" id="import-show-preview" checked>
+                                            Show preview
+                                        </sp-checkbox>
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
@@ -76,30 +70,10 @@
                         </div>
                     </div>
                     <div class="section-col">
-                        <sp-tabs>
-                            <sp-tab label="Preview" value="import-preview"></sp-tab>
-                            <sp-tab label="Markdown" value="import-markdown"></sp-tab>
-                            <sp-tab label="HTML" value="import-html"></sp-tab>
-                            <sp-tab-panel value="import-preview">
-                                <sp-theme color="light" scale="medium">
-                                    <div id="import-markdown-preview"></div>
-                                </sp-theme>
-                            </sp-tab-panel>
-                            <sp-tab-panel value="import-markdown">
-                                <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                                  </div>
-                                </div>
-                            </sp-tab-panel>
-                            <sp-tab-panel value="import-html">
-                                <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
-                                  </div>
-                                </div>
-                            </sp-tab-panel>
-                        </sp-tabs>
+                        <div id="import-result">
+                            <h2></h2>
+                            <ul></ul>
+                        </div>
                         <sp-button-group>
                             <sp-button id="import-downloadImportReport" class="hidden">Download import report</sp-button>
                         </sp-button-group>

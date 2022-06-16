@@ -66,7 +66,9 @@ export default class PollImporter {
 
     if (!this.projectTransformInterval) {
       await poll();
-      this.projectTransformInterval = setInterval(poll, 5000);
+      if (this.poll) {
+        this.projectTransformInterval = setInterval(poll, 5000);
+      }
     }
   }
 

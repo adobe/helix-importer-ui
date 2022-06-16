@@ -20,7 +20,6 @@ const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 
-const URLS_INPUT = document.getElementById('import-url');
 const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 
@@ -35,10 +34,15 @@ const SPTABS = document.querySelector('.import sp-tabs');
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
 
+const IS_BULK = document.querySelector('.import-bulk') !== null;
+const BULK_URLS_HEADING = document.querySelector('#import-result h2');
+const BULK_URLS_LIST = document.querySelector('#import-result ul');
+
 const ui = {};
 const config = {};
 const importStatus = {
   imported: 0,
+  total: 0,
   rows: [],
 };
 
@@ -65,19 +69,36 @@ const setupUI = () => {
 };
 
 const updateImporterUI = (out) => {
-  const { md, html: outputHTML } = out;
+  const { md, html: outputHTML, originalURL } = out;
+  if (!IS_BULK) {
+    ui.transformedEditor.setValue(html_beautify(outputHTML));
+    ui.markdownEditor.setValue(md || '');
 
-  ui.transformedEditor.setValue(html_beautify(outputHTML));
-  ui.markdownEditor.setValue(md || '');
+    const mdPreview = ui.showdownConverter.makeHtml(md);
+    ui.markdownPreview.innerHTML = mdPreview;
 
-  const mdPreview = ui.showdownConverter.makeHtml(md);
-  ui.markdownPreview.innerHTML = mdPreview;
+    // remove existing classes and styles
+    Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
+      t.removeAttribute('class');
+      t.removeAttribute('style');
+    });
+  } else {
+    const li = document.createElement('li');
+    const link = document.createElement('sp-link');
+    link.setAttribute('size', 'm');
+    link.setAttribute('target', '_blank');
+    link.setAttribute('href', originalURL);
+    link.innerHTML = originalURL;
+    li.append(link);
 
-  // remove existing classes and styles
-  Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
-    t.removeAttribute('class');
-    t.removeAttribute('style');
-  });
+    BULK_URLS_LIST.append(li);
+    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}):`;
+  }
+};
+
+const clearResultPanel = () => {
+  BULK_URLS_LIST.innerHTML = '';
+  BULK_URLS_HEADING.innerText = 'Importing...';
 };
 
 const disableProcessButtons = () => {
@@ -109,7 +130,7 @@ const getProxyURLSetup = (url, origin) => {
 const createImporter = () => {
   config.importer = new PollImporter({
     origin: config.origin,
-    poll: false,
+    poll: !IS_BULK,
     importFileURL: config.fields['import-file-url'],
   });
 };
@@ -120,12 +141,15 @@ const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
   config.importer.addListener(async (out) => {
-    const includeDocx = !!out.docx;
-    updateImporterUI(out, includeDocx);
     const frame = getContentFrame();
+    out.originalURL = frame.dataset.originalURL;
+    const includeDocx = !!out.docx;
+
+    updateImporterUI(out, includeDocx);
+
     const data = {
       status: 'Success',
-      url: frame.dataset.originalURL,
+      url: out.originalURL,
       path: out.path,
     };
     if (includeDocx) {
@@ -144,7 +168,19 @@ const attachListeners = () => {
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
-    PREVIEW_CONTAINER.classList.remove('hidden');
+    if (IS_BULK) {
+      clearResultPanel();
+      if (config.fields['import-show-preview']) {
+        PREVIEW_CONTAINER.classList.remove('hidden');
+      } else {
+        PREVIEW_CONTAINER.classList.add('hidden');
+      }
+      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
+    } else {
+      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
+      PREVIEW_CONTAINER.classList.remove('hidden');
+    }
+
     disableProcessButtons();
     if (config.fields['import-local-save'] && !dirHandle) {
       try {
@@ -160,11 +196,12 @@ const attachListeners = () => {
       }
     }
 
-    DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
     importStatus.imported = 0;
     importStatus.rows = [];
 
-    const urlsArray = URLS_INPUT.value.split('\n').reverse().filter((u) => u.trim() !== '');
+    const field = IS_BULK ? 'import-urls' : 'import-url';
+    const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
+    importStatus.total = urlsArray.length;
     const processNext = async () => {
       if (urlsArray.length > 0) {
         const url = urlsArray.pop();
@@ -292,13 +329,15 @@ const attachListeners = () => {
     a.click();
   }));
 
-  SPTABS.addEventListener('change', () => {
-    // required for code to load in editors
-    setTimeout(() => {
-      ui.transformedEditor.refresh();
-      ui.markdownEditor.refresh();
-    }, 1);
-  });
+  if (SPTABS) {
+    SPTABS.addEventListener('change', () => {
+      // required for code to load in editors
+      setTimeout(() => {
+        ui.transformedEditor.refresh();
+        ui.markdownEditor.refresh();
+      }, 1);
+    });
+  }
 };
 
 const init = () => {
@@ -307,8 +346,13 @@ const init = () => {
 
   createImporter();
 
-  setupUI();
+  if (!IS_BULK) setupUI();
   attachListeners();
+
+  if (SPTABS) {
+    // required now. Not sure why default selection doesn't work
+    SPTABS.selected = 'import-preview';
+  }
 };
 
 init();
