@@ -14,6 +14,7 @@
   "dependencies": {
     "@adobe/helix-importer": "1.13.1",
     "@spectrum-web-components/bundle": "0.24.11",
+    "@spectrum-web-components/icons-workflow": "0.8.9",
     "parcel": "2.5.0",
     "path-browserify": "1.0.1"
   },

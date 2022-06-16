@@ -15,7 +15,7 @@ const path = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const { NormalModuleReplacementPlugin } = require('webpack');
 
-module.exports = {
+const importer = {
   target: ['web', 'es2020'],
   entry: './module/importer.js',
   output: {
@@ -71,3 +71,15 @@ module.exports = {
     ],
   },
 };
+
+const swc = {
+  target: ['web', 'es2020'],
+  entry: './swc/index.js',
+  output: {
+    filename: 'swc.js',
+    path: path.resolve(__dirname, 'dist/lib'),
+    publicPath: './js/libs/hlx/',
+  },
+};
+
+module.exports = { importer, swc };
