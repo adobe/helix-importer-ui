@@ -10,11 +10,19 @@ body, sp-theme[color="dark"] {
   font-family: var(--spectrum-global-font-family-base);
 }
 
-body > sp-theme {
+body.parent > sp-theme {
   display: grid; 
   grid-template-columns: 240px 1fr; 
   grid-template-rows: 1fr; 
   grid-template-areas: 'sidebar main';
+}
+
+body.parent iframe {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -90,10 +98,15 @@ footer svg {
 }
 
 /* MAIN */
-main {
+.parent main {
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+.tool main {
   grid-area: main;
   max-height: 100vh;
-  padding: 24px 56px;
+  padding: 24px 56px 0 56px;
   overflow-y: auto;
 }
 
