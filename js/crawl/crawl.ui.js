@@ -293,6 +293,7 @@ const attachListeners = () => {
       sitemap: config.fields['crawl-sitemap-file'],
     });
 
+    crawlStatus.crawled = crawlStatus.urls.length;
     crawlStatus.urls.forEach((url) => {
       displayCrawledURL(url);
 
