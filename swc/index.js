@@ -30,3 +30,5 @@ import '@spectrum-web-components/accordion/sp-accordion-item.js';
 import '@spectrum-web-components/sidenav/sp-sidenav.js';
 import '@spectrum-web-components/sidenav/sp-sidenav-heading.js';
 import '@spectrum-web-components/sidenav/sp-sidenav-item.js';
+
+import '@spectrum-web-components/toast/sp-toast.js';
