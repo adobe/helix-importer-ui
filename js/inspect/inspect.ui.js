@@ -64,9 +64,8 @@ const doDrop = async () => {
     LOGO_FIELD.handleChange();
 
     enablePickers();
+    enableButton();
   }, 2000);
-
-  enableButton();
 };
 
 const getStyle = (win, x, y, type) => {
