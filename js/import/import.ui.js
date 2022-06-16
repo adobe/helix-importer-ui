@@ -30,7 +30,7 @@ const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-ht
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
 
-const SPTABS = document.querySelector('.import sp-tabs');
+const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
 

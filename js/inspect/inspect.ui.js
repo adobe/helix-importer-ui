@@ -18,6 +18,8 @@ const PICKERS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-action-but
 const LOGO_FIELD = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo`);
 const LOGO_IMG = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo img`);
 
+const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
+
 const config = {
   vars: {},
 };
@@ -237,6 +239,11 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   attachListeners();
+
+  if (SPTABS) {
+    // required now. Not sure why default selection doesn't work
+    SPTABS.selected = 'inspect-logo';
+  }
 };
 
 init();
