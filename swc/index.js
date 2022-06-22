@@ -17,6 +17,7 @@ import '@spectrum-web-components/button/sp-button.js';
 
 import '@spectrum-web-components/field-label/sp-field-label.js';
 import '@spectrum-web-components/textfield/sp-textfield.js';
+import '@spectrum-web-components/number-field/sp-number-field.js';
 import '@spectrum-web-components/checkbox/sp-checkbox.js';
 import '@spectrum-web-components/link/sp-link.js';
 import '@spectrum-web-components/asset/sp-asset.js';
