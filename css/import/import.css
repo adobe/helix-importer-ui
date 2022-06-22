@@ -149,6 +149,7 @@
 
 .import #import-markdown-preview table {
   width: 100%;
+  margin-bottom: 20px;
 }
 
 .import #import-markdown-preview tr:first-of-type {
