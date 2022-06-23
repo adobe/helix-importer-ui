@@ -35,6 +35,10 @@ A default html to Markdown is applied by you can / need to provide your own. Ini
 
 https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
 
+### Guidelines
+
+You can find some guidelines, best practices and code samples in the [Importer Guidelines](./importer-guidelines.md).
+
 ### Options
 
 - `Local save as docx`: enable / disable the save as docx to the local file system. Disabling is useful when working on the `import.js` transformation and checking the docx is not necessarily at that time.
@@ -46,7 +50,10 @@ https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
 
 ## Crawler
 
-WIP
+Allows to find URLs on a given host. 2 processes:
+
+- `Get from robots.txt or sitemap`: the crawler will try to get the `robots.txt` file on the given host, follow the referenced sitemap(s) if any and extract URLs from all the sitemaps and sub-sitemaps. If it does not find a `robots.txt` file, it will try the `sitemap.xml` file (name can be changed in the options) and follow the references the same way.
+- `Crawl`: the crawler will open the give URL and construct a list of URLs by recursively following all the links on the same hosts.
 
 ### Inspect
 
