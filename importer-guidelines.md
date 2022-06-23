@@ -239,8 +239,6 @@ Output is then:
 # Hello World
 ![](https://www.sample.com/images/helloworld.png);
 ```
-
-
 ### More samples
 
 Sites in the https://github.com/hlxsites/ organisation have all be imported. There are many different implementation cover a lot of use cases.
@@ -256,3 +254,37 @@ While more documentation will be written, you can already find how to use them v
 
 - https://github.com/adobe/helix-importer/blob/main/test/utils/DOMUtils.spec.js
 - https://github.com/adobe/helix-importer/blob/main/test/utils/Blocks.spec.js
+
+## Security constraints
+
+When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
+When running `hlx import`, a proxy is started and all requests to the host are re-written clientside and go through the proxy. This allows to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
+
+That's a generic solution that might not work in some cases, some sites being pretty imaginative on how to prevent to be loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face to such a problem, you can contact the Helix team and we can look at some workarounds and / or integrate more logic in the proxy to handle more of those cases.
+
+One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
+
+### Images
+
+When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Helix Media bus. When images are stored on the same host, this is usually not an issue but in a lot of cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (todo: create a helper for it or even integrate to the process): 
+
+```js
+const makeProxySrcs = (main, host) => {
+  main.querySelectorAll('img').forEach((img) => {
+    if (img.src.startsWith('/')) {
+      // make absolute
+      const cu = new URL(host);
+      img.src = `${cu.origin}${img.src}`;
+    }
+    try {
+      const u = new URL(img.src);
+      u.searchParams.append('host', u.origin);
+      img.src = `http://localhost:3001${u.pathname}${u.search}`;
+    } catch (error) {
+      console.warn(`Unable to make proxy src for ${img.src}: ${error.message}`);
+    }
+  });
+};
+```
+
+This simply transforms the image srcs to use the proxy: `https://www.sample.com/images/helloworld.png` becomes `http://localhost:3001/images/helloworld.png?host=https://www.sample.com`
