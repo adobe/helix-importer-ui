@@ -255,7 +255,7 @@ While more documentation will be written, you can already find how to use them v
 - https://github.com/adobe/helix-importer/blob/main/test/utils/DOMUtils.spec.js
 - https://github.com/adobe/helix-importer/blob/main/test/utils/Blocks.spec.js
 
-## Security constraints
+## Security and memory
 
 When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
 When running `hlx import`, a proxy is started and all requests to the host are re-written clientside and go through the proxy. This allows to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
@@ -288,3 +288,12 @@ const makeProxySrcs = (main, host) => {
 ```
 
 This simply transforms the image srcs to use the proxy: `https://www.sample.com/images/helloworld.png` becomes `http://localhost:3001/images/helloworld.png?host=https://www.sample.com`
+
+### Javascript or not Javascript: memory consumption
+
+Disabling Javascript in the option is the best solution for speed and memory consumption. You can then import thousands of pages.
+With Javascript enabled, things become more complicated for the browser. It depends on the amount of code to load and execute, but in general, you can only import around one hundred pages before the browser crashes (too much memory consumed).
+
+Having Javascript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
+
+We are also working on a cli version of the importer (see https://github.com/adobe/helix-importer/issues/23) where memory can be handled properly.
