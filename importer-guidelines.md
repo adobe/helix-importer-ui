@@ -6,7 +6,9 @@ The general idea of the importer is pretty straight forward: it takes a page DOM
 
 As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. Only special case is `table` which stays a `table` HTML element in the Markdown output and become a table in Word (which is the foundation for Blocks). 
 
-The point is really to extract the content only from the original page. And the importer objectif is to help digesting a large amount of pages from an existing website. If you have one page on the website, it is easy to manually copy/paste the content and save it into a Word document. But in the case of a blog site for example, with thousands of blog articles looking very similar, it would be fastidious to manullay copy/paste all pages. If a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
+The point is really to only extract the content from the original page. And the importer objectif is to help digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easy and faster to manually copy/paste the content into Word documents. But in the case of large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manullay copy/paste all pages. 
+
+To summuarise: if a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
 
 ### `import.js` transformation file
 
