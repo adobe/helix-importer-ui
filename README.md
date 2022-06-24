@@ -1,21 +1,21 @@
-# Helix Importer Tools
+# Helix Importer - UI
 
-WIP - a collection of tools to support Helix project imports.
+A collection of tools to support Helix project imports.
 
 ## Setup
 
-In your Helix project, create folders `tools/importer`, clone and build the `helix-importer-tools` project. Run:
+In your Helix project, create folders `tools/importer`, clone and build the `helix-importer-ui` project. Run:
 
 ```
 mkdir tools && mkdir tools/importer
 cd tools/importer
-git clone https://github.com/kptdobe/helix-importer-tools
-cd helix-importer-tools
+git clone https://github.com/adobe/helix-importer-ui
+cd helix-importer-ui
 npm run build
 cd ../../..
 ```
 
-You may want to use `npm run build:dev` to get a "debuggable" version of the `helix-importer-tools` project.
+You may want to use `npm run build:dev` to get a "debuggable" version of the `helix-importer-ui` project.
 
 At the root of the project, run:
 
@@ -23,7 +23,7 @@ At the root of the project, run:
 hlx import
 ```
 
-Browse to http://localhost:3001/tools/importer/helix-importer-tools/index.html (current page opened points the older version of the tool).
+Browse to http://localhost:3001/tools/importer/helix-importer-ui/index.html (current page opened points the older version of the tool).
 
 ## Import
 
