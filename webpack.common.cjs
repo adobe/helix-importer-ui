@@ -21,8 +21,8 @@ const importer = {
   entry: './modules/importer.js',
   output: {
     filename: 'helix-importer.js',
-    path: path.resolve(__dirname, 'js/libs/dist'),
-    publicPath: './js/libs/dist/',
+    path: path.resolve(__dirname, 'js/dist'),
+    publicPath: './js/dist/',
     library: {
       name: 'WebImporter',
       type: 'umd',
@@ -79,8 +79,8 @@ const swc = {
   entry: './modules/swc.js',
   output: {
     filename: 'spectrum-web-components.js',
-    path: path.resolve(__dirname, 'js/libs/dist'),
-    publicPath: './js/libs/dist/',
+    path: path.resolve(__dirname, 'js/dist'),
+    publicPath: './js/dist/',
   },
 };
 

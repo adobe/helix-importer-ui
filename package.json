@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "helix-bulk-lit",
   "scripts": {
-    "clean": "rm -fr ./js/libs/dist",
+    "clean": "rm -fr ./js/dist",
     "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs",
     "build:dev": "npm run clean && npm i && webpack --config webpack.dev.cjs",
     "build": "npm run build:prod",

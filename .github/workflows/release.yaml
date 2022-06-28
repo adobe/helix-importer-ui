@@ -1,23 +1,20 @@
-name: Release
-on: push
+name: Semantic Release
+on:
+  push:
+    branches:
+      - 'main'
+
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
-    if: "${{ !contains(github.event.head_commit.message, '[skip ci]') }}"
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
-      - name: Checkout source repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v3
         with:
-          ssh-key: ${{ secrets.SSH-KEY }}
-      - name: Build for production
-        run: |
-          npm run build
-      - name: Commit build files
-        run: |
-          git add js/libs/dist
-          git commit -m "chore(helix-import-ui): release - commiting latest build [skip ci]"
-          git push origin main
-      - name: Release
-        run: |
-          npm run semantic-release
-      
+          node-version: '14.x'
+      - run: npm run build
+      - run: npm run semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

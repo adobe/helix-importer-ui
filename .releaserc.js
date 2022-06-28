@@ -9,7 +9,7 @@ module.exports = {
       npmPublish: false,
     }],
     ['@semantic-release/git', {
-      'assets': ['package.json', 'CHANGELOG.md'],
+      'assets': ['package.json', 'package-lock.json', 'CHANGELOG.md', 'js/dist/spectrum-web-components.js', 'js/dist/helix-importer.js'],
       'message': 'chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}',
     }],
     ['@semantic-release/github', {}],
