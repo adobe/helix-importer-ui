@@ -15,13 +15,14 @@ const path = require('path');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const { NormalModuleReplacementPlugin } = require('webpack');
 
+// helix-importer module
 const importer = {
   target: ['web', 'es2020'],
-  entry: './module/importer.js',
+  entry: './modules/importer.js',
   output: {
-    filename: 'importer-bundle.js',
-    path: path.resolve(__dirname, 'dist/lib'),
-    publicPath: '/lib',
+    filename: 'helix-importer.js',
+    path: path.resolve(__dirname, 'js/libs/dist'),
+    publicPath: './js/libs/dist/',
     library: {
       name: 'WebImporter',
       type: 'umd',
@@ -72,13 +73,14 @@ const importer = {
   },
 };
 
+// Spectrum Web Components module
 const swc = {
   target: ['web', 'es2020'],
-  entry: './swc/index.js',
+  entry: './modules/swc.js',
   output: {
-    filename: 'swc.js',
-    path: path.resolve(__dirname, 'dist/lib'),
-    publicPath: './js/libs/hlx/',
+    filename: 'spectrum-web-components.js',
+    path: path.resolve(__dirname, 'js/libs/dist'),
+    publicPath: './js/libs/dist/',
   },
 };
 
