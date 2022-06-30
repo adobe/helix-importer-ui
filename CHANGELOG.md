@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/adobe/helix-importer-ui/compare/v1.0.0...v1.0.1) (2022-06-30)
+
+
+### Bug Fixes
+
+* release needs install ([5866450](https://github.com/adobe/helix-importer-ui/commit/586645077da79a36c06193b511eb031feb8d7033))
+
 # 1.0.0 (2022-06-28)
 
 
