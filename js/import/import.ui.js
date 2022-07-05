@@ -39,7 +39,7 @@ const IS_BULK = document.querySelector('.import-bulk') !== null;
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
 const BULK_URLS_LIST = document.querySelector('#import-result ul');
 
-const IMPORT_FILE_PICKER = document.getElementById('import-file-picker');
+const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 const ui = {};
 const config = {};
@@ -87,7 +87,7 @@ const loadResult = ({ md, html: outputHTML }) => {
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
-    IMPORT_FILE_PICKER.innerHTML = '';
+    IMPORT_FILE_PICKER_CONTAINER.innerHTML = '';
     const picker = document.createElement('sp-picker');
     picker.setAttribute('size', 'm');
 
@@ -105,7 +105,7 @@ const updateImporterUI = (results, originalURL) => {
       picker.appendChild(item);
     });
 
-    IMPORT_FILE_PICKER.append(picker);
+    IMPORT_FILE_PICKER_CONTAINER.append(picker);
 
     picker.addEventListener('change', (e) => {
       const r = results.filter((i) => i.path === e.target.value)[0];
@@ -130,6 +130,12 @@ const updateImporterUI = (results, originalURL) => {
 const clearResultPanel = () => {
   BULK_URLS_LIST.innerHTML = '';
   BULK_URLS_HEADING.innerText = 'Importing...';
+};
+
+const clearImportStatus = () => {
+  importStatus.imported = 0;
+  importStatus.total = 0;
+  importStatus.rows = [];
 };
 
 const disableProcessButtons = () => {
@@ -192,7 +198,7 @@ const attachListeners = () => {
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
 
-    updateImporterUI(results);
+    updateImporterUI(results, originalURL);
     postImportProcess(results, originalURL);
 
     alert.success(`Import of page ${originalURL} completed.`);
@@ -205,6 +211,8 @@ const attachListeners = () => {
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
+    clearImportStatus();
+
     if (IS_BULK) {
       clearResultPanel();
       if (config.fields['import-show-preview']) {
@@ -232,9 +240,6 @@ const attachListeners = () => {
         console.log('No directory selected');
       }
     }
-
-    importStatus.imported = 0;
-    importStatus.rows = [];
 
     const field = IS_BULK ? 'import-urls' : 'import-url';
     const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
