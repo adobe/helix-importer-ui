@@ -12,6 +12,7 @@
 /* global CodeMirror, showdown, html_beautify, ExcelJS */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
+import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 
@@ -157,21 +158,21 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
-const postImportProcess = async (out, originalURL) => {
-  const data = {
-    status: 'Success',
-    url: originalURL,
-    path: out.path,
-  };
+const postImportProcess = async (results, originalURL) => {
+  await asyncForEach(results, async ({ docx, filename, path }) => {
+    const data = {
+      status: 'Success',
+      url: originalURL,
+      path,
+    };
 
-  const includeDocx = !!out.docx;
-  if (includeDocx) {
-    const { docx, filename } = out;
-    await saveFile(dirHandle, filename, docx);
-    data.docx = filename;
-  }
-  importStatus.rows.push(data);
-  alert.success(`Import of page ${originalURL} completed.`);
+    const includeDocx = !!docx;
+    if (includeDocx) {
+      await saveFile(dirHandle, filename, docx);
+      data.docx = filename;
+    }
+    importStatus.rows.push(data);
+  });
 };
 
 const createImporter = () => {
@@ -193,6 +194,8 @@ const attachListeners = () => {
 
     updateImporterUI(results);
     postImportProcess(results, originalURL);
+
+    alert.success(`Import of page ${originalURL} completed.`);
   });
 
   config.importer.addErrorListener(({ url, error: err }) => {
@@ -283,6 +286,7 @@ const attachListeners = () => {
                       url: replacedURL,
                       document: frame.contentDocument,
                       includeDocx,
+                      params: { originalURL },
                     });
                     await config.importer.transform();
                   } catch (e) {

@@ -73,13 +73,18 @@ export default class PollImporter {
   }
 
   async transform() {
+    const {
+      includeDocx, url, document, params,
+    } = this.transformation;
+
     try {
       let results;
-      if (this.transformation.includeDocx) {
+      if (includeDocx) {
         const out = await WebImporter.html2docx(
-          this.transformation.url,
-          this.transformation.document,
+          url,
+          document,
           this.projectTransform,
+          params,
         );
 
         results = Array.isArray(out) ? out : [out];
@@ -89,9 +94,10 @@ export default class PollImporter {
         });
       } else {
         const out = await WebImporter.html2md(
-          this.transformation.url,
-          this.transformation.document,
+          url,
+          document,
           this.projectTransform,
+          params,
         );
         results = Array.isArray(out) ? out : [out];
       }
@@ -99,24 +105,30 @@ export default class PollImporter {
       this.listeners.forEach((listener) => {
         listener({
           results,
-          url: this.transformation.url,
+          url,
         });
       });
     } catch (err) {
       this.errorListeners.forEach((listener) => {
         listener({
-          url: this.transformation.url,
+          url,
           error: err,
         });
       });
     }
   }
 
-  setTransformationInput({ url, document, includeDocx = false }) {
+  setTransformationInput({
+    url,
+    document,
+    includeDocx = false,
+    params,
+  }) {
     this.transformation = {
       url,
       document,
       includeDocx,
+      params,
     };
   }
 

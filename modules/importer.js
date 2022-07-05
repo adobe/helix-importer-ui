@@ -63,18 +63,12 @@ const options = {
   }),
 };
 
-async function html2mdWrapper(url, document, transformCfg, preprocess) {
-  return html2md(url, document, transformCfg, {
-    ...options,
-    preprocess,
-  });
+async function html2mdWrapper(url, document, transformCfg, params) {
+  return html2md(url, document, transformCfg, options, params);
 }
 
-async function html2docxWrapper(url, document, transformCfg, preprocess) {
-  return html2docx(url, document, transformCfg, {
-    ...options,
-    preprocess,
-  });
+async function html2docxWrapper(url, document, transformCfg, params) {
+  return html2docx(url, document, transformCfg, options, params);
 }
 
 export {
