@@ -16,15 +16,33 @@ Out of the box, the importer should be able to consume any page and output a Mar
 
 Such a rule is very straight forward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
 
-In your `import.js` transformation file, you can implement 2 methods:
+In your `import.js` transformation file, you can implement 2 modes: 
+- one input / one output
+- one input / multiple outputs
 
-- `transformDOM: ({ document, url, html }) => {}`: implement here your transformation rules and return the DOM element that needs to be transformed to Markdown (default is `document.body` but usually a `main` element is more relevant).
+#### one input / one output
+
+You must implement those 2 methods:
+
+- `transformDOM: ({ document, url, html, params }) => {}`: implement here your transformation rules and return the DOM element that needs to be transformed to Markdown (default is `document.body` but usually a `main` element is more relevant).
   - `document`: the incoming DOM
   - `url`: the current URL being imported
   - `html`: the original HTML source (when loading the DOM as a document, some things are cleaned up, having the raw original HTML is sometimes useful)
-- `generateDocumentPath: ({ document, url }) => {}`: return a path that describes the document being transformed - allows you to define / filter the page name and the folder structure in which the document should be stored (default is the current url pathname with the trailing slash and the `.html`)
+  - `params`: some params given by the importer. Only param so far is the `originalURL` which is the url of the page being imported (url is the one to the proxy)
+- `generateDocumentPath: ({ document, url, html, params }) => {}`: return a path that describes the document being transformed - allows you to define / filter the page name and the folder structure in which the document should be stored (default is the current url pathname with the trailing slash and the `.html`). Params are the same than above.
+
+This is simpler version of the implementation. You can achieve the same by implementing the `transform` method as describe below.
+
+#### one input / multiple outputsw
+
+You must implement this method:
+- `transform: ({ document, url, html, params }) => {}`: implement here your transformation rules and return an array of pairs `{ element, path }` where element is a DOM DOM element that needs to be transformed to Markdown and path is the path to the exported file.
   - `document`: the incoming DOM
   - `url`: the current URL being imported
+  - `html`: the original HTML source (when loading the DOM as a document, some things are cleaned up, having the raw original HTML is sometimes useful)
+  - `params`: some params given by the importer. Only param so far is the `originalURL` which is the url of the page being imported (url is the one to the proxy)
+
+The idea is simple: return a list of elements that will be converted to docx and stored at the path location.
 
 ## Rule examples
 
@@ -241,6 +259,68 @@ Output is then:
 # Hello World
 ![](https://www.sample.com/images/helloworld.png);
 ```
+
+### Mutiple output
+
+If you need to transform one page into multiple Word documents (fragments, banners, author pages...), you can use the `transform` method.
+
+Input DOM:
+
+```html
+<html>
+  <head></head>
+  <body>
+    <main>
+      <h1>Hello World</h1>
+      <div class="hero" style="background-image: url(https://www.sample.com/images/helloworld.png);"></div>
+    </main>
+  </body>
+</html>
+```
+
+With the following `import.js`, you will get 2 md / docx documents:
+
+```js
+{
+  transform: ({ document, params }) => {
+    const main = document.querySelector('main');
+    // keep a reference to the image
+    const image = main.querySelector('.hero')
+
+    //remove the image from the main, otherwise we'll get it in the 2 documents
+    WebImporter.DOMUtils.remove(main, [
+      '.hero',
+    ]);
+
+    return [{
+      element: main,
+      path: '/main',
+    }, {
+      element: image,
+      path: '/image',
+    }];
+  },
+}
+```
+
+Outputs are:
+
+`/main.md`
+
+```md
+# Hello World
+```
+
+`/image.md`
+
+```md
+![](https://www.sample.com/images/helloworld.png);
+```
+
+Note:
+- be careful with the DOM elements you are working with. You always work on the same document thus you may destruct elements for one output which may have an inpact on the other outputs.
+- you may have as many outputs as you want (limit not tested yet).
+
 ### More samples
 
 Sites in the https://github.com/hlxsites/ organisation have all be imported. There are many different implementation cover a lot of use cases.
