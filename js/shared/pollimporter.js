@@ -74,27 +74,31 @@ export default class PollImporter {
 
   async transform() {
     try {
-      let out;
+      let results;
       if (this.transformation.includeDocx) {
-        out = await WebImporter.html2docx(
+        const out = await WebImporter.html2docx(
           this.transformation.url,
           this.transformation.document,
           this.projectTransform,
         );
 
-        const { path } = out;
-        out.filename = `${path}.docx`;
+        results = Array.isArray(out) ? out : [out];
+        results.forEach((result) => {
+          const { path } = result;
+          result.filename = `${path}.docx`;
+        });
       } else {
-        out = await WebImporter.html2md(
+        const out = await WebImporter.html2md(
           this.transformation.url,
           this.transformation.document,
           this.projectTransform,
         );
+        results = Array.isArray(out) ? out : [out];
       }
 
       this.listeners.forEach((listener) => {
         listener({
-          ...out,
+          results,
           url: this.transformation.url,
         });
       });

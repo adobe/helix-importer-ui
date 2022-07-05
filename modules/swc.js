@@ -22,6 +22,8 @@ import '@spectrum-web-components/checkbox/sp-checkbox.js';
 import '@spectrum-web-components/link/sp-link.js';
 import '@spectrum-web-components/asset/sp-asset.js';
 import '@spectrum-web-components/color-handle/sp-color-handle.js';
+import '@spectrum-web-components/picker/sp-picker.js';
+import '@spectrum-web-components/menu/sp-menu-item.js';
 
 import '@spectrum-web-components/divider/sp-divider.js';
 import '@spectrum-web-components/help-text/sp-help-text.js';
