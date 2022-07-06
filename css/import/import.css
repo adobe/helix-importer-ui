@@ -160,3 +160,11 @@
 .import #import-markdown-preview td {
   padding: 0 6px;
 }
+
+.import #import-file-picker-container {
+  width: 100%;
+}
+
+.import #import-file-picker-container sp-picker {
+  width: 100%;
+}

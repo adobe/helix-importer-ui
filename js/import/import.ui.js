@@ -12,6 +12,7 @@
 /* global CodeMirror, showdown, html_beautify, ExcelJS */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
+import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 
@@ -37,6 +38,8 @@ const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadIm
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
 const BULK_URLS_LIST = document.querySelector('#import-result ul');
+
+const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 const ui = {};
 const config = {};
@@ -68,20 +71,48 @@ const setupUI = () => {
   ui.markdownPreview.innerHTML = ui.showdownConverter.makeHtml('Run an import to see some markdown.');
 };
 
-const updateImporterUI = (out) => {
-  const { md, html: outputHTML, originalURL } = out;
+const loadResult = ({ md, html: outputHTML }) => {
+  ui.transformedEditor.setValue(html_beautify(outputHTML));
+  ui.markdownEditor.setValue(md || '');
+
+  const mdPreview = ui.showdownConverter.makeHtml(md);
+  ui.markdownPreview.innerHTML = mdPreview;
+
+  // remove existing classes and styles
+  Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
+    t.removeAttribute('class');
+    t.removeAttribute('style');
+  });
+};
+
+const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
-    ui.transformedEditor.setValue(html_beautify(outputHTML));
-    ui.markdownEditor.setValue(md || '');
+    IMPORT_FILE_PICKER_CONTAINER.innerHTML = '';
+    const picker = document.createElement('sp-picker');
+    picker.setAttribute('size', 'm');
 
-    const mdPreview = ui.showdownConverter.makeHtml(md);
-    ui.markdownPreview.innerHTML = mdPreview;
+    results.forEach((result, index) => {
+      const { path } = result;
 
-    // remove existing classes and styles
-    Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
-      t.removeAttribute('class');
-      t.removeAttribute('style');
+      // add result to picker list
+      const item = document.createElement('sp-menu-item');
+      item.innerHTML = path;
+      if (index === 0) {
+        item.setAttribute('selected', true);
+        picker.setAttribute('label', path);
+        picker.setAttribute('value', path);
+      }
+      picker.appendChild(item);
     });
+
+    IMPORT_FILE_PICKER_CONTAINER.append(picker);
+
+    picker.addEventListener('change', (e) => {
+      const r = results.filter((i) => i.path === e.target.value)[0];
+      loadResult(r);
+    });
+
+    loadResult(results[0]);
   } else {
     const li = document.createElement('li');
     const link = document.createElement('sp-link');
@@ -99,6 +130,12 @@ const updateImporterUI = (out) => {
 const clearResultPanel = () => {
   BULK_URLS_LIST.innerHTML = '';
   BULK_URLS_HEADING.innerText = 'Importing...';
+};
+
+const clearImportStatus = () => {
+  importStatus.imported = 0;
+  importStatus.total = 0;
+  importStatus.rows = [];
 };
 
 const disableProcessButtons = () => {
@@ -127,6 +164,23 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
+const postImportProcess = async (results, originalURL) => {
+  await asyncForEach(results, async ({ docx, filename, path }) => {
+    const data = {
+      status: 'Success',
+      url: originalURL,
+      path,
+    };
+
+    const includeDocx = !!docx;
+    if (includeDocx) {
+      await saveFile(dirHandle, filename, docx);
+      data.docx = filename;
+    }
+    importStatus.rows.push(data);
+  });
+};
+
 const createImporter = () => {
   config.importer = new PollImporter({
     origin: config.origin,
@@ -140,25 +194,14 @@ const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
-  config.importer.addListener(async (out) => {
+  config.importer.addListener(async ({ results }) => {
     const frame = getContentFrame();
-    out.originalURL = frame.dataset.originalURL;
-    const includeDocx = !!out.docx;
+    const { originalURL } = frame.dataset;
 
-    updateImporterUI(out, includeDocx);
+    updateImporterUI(results, originalURL);
+    postImportProcess(results, originalURL);
 
-    const data = {
-      status: 'Success',
-      url: out.originalURL,
-      path: out.path,
-    };
-    if (includeDocx) {
-      const { docx, filename } = out;
-      await saveFile(dirHandle, filename, docx);
-      data.docx = filename;
-    }
-    importStatus.rows.push(data);
-    alert.success(`Import of page ${frame.dataset.originalURL} completed.`);
+    alert.success(`Import of page ${originalURL} completed.`);
   });
 
   config.importer.addErrorListener(({ url, error: err }) => {
@@ -168,6 +211,8 @@ const attachListeners = () => {
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
+    clearImportStatus();
+
     if (IS_BULK) {
       clearResultPanel();
       if (config.fields['import-show-preview']) {
@@ -195,9 +240,6 @@ const attachListeners = () => {
         console.log('No directory selected');
       }
     }
-
-    importStatus.imported = 0;
-    importStatus.rows = [];
 
     const field = IS_BULK ? 'import-urls' : 'import-url';
     const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
@@ -242,14 +284,14 @@ const attachListeners = () => {
               const includeDocx = !!dirHandle;
 
               window.setTimeout(async () => {
-                const { originalURL } = frame.dataset;
-                const { replacedURL } = frame.dataset;
+                const { originalURL, replacedURL } = frame.dataset;
                 if (frame.contentDocument) {
                   try {
                     config.importer.setTransformationInput({
                       url: replacedURL,
                       document: frame.contentDocument,
                       includeDocx,
+                      params: { originalURL },
                     });
                     await config.importer.transform();
                   } catch (e) {
