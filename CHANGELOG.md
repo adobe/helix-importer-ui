@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/adobe/helix-importer-ui/compare/v1.1.0...v1.2.0) (2022-07-06)
+
+
+### Features
+
+* **import:** disable picker if only one entry ([3767447](https://github.com/adobe/helix-importer-ui/commit/37674477d8d302d70743ddb4bae6ddfbb03ba039))
+
 # [1.1.0](https://github.com/adobe/helix-importer-ui/compare/v1.0.1...v1.1.0) (2022-07-06)
 
 
