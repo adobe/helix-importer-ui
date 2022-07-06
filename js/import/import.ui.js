@@ -91,6 +91,11 @@ const updateImporterUI = (results, originalURL) => {
     const picker = document.createElement('sp-picker');
     picker.setAttribute('size', 'm');
 
+    if (results.length < 2) {
+      picker.setAttribute('quiet', true);
+      picker.setAttribute('disabled', true);
+    }
+
     results.forEach((result, index) => {
       const { path } = result;
 
