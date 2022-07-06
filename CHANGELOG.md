@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/adobe/helix-importer-ui/compare/v1.0.1...v1.1.0) (2022-07-06)
+
+
+### Features
+
+* **import:** multiple docx output files ([fa4610b](https://github.com/adobe/helix-importer-ui/commit/fa4610b5c191bf8bdb80874f25ca02711132324b))
+
 ## [1.0.1](https://github.com/adobe/helix-importer-ui/compare/v1.0.0...v1.0.1) (2022-06-30)
 
 
