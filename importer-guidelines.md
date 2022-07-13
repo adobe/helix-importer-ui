@@ -2,13 +2,13 @@
 
 ## General idea
 
-The general idea of the importer is pretty straight forward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file). For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file thus next references to Markdown or docx are equivalent "to the output of the transformation process".
+The general idea of the importer is pretty straight forward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file. For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file thus the next references to Markdown or docx are equivalent to "the output of the transformation process".
 
-As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. Only special case is `table` which stays a `table` HTML element in the Markdown output and become a table in Word (which is the foundation for Blocks). 
+As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. The only special case is `table` which stays a `table` HTML element in the Markdown output and become a table in Word (which is the foundation for Blocks). 
 
-The point is really to only extract the content from the original page. And the importer objectif is to help digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easy and faster to manually copy/paste the content into Word documents. But in the case of large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manullay copy/paste all pages. 
+The point is really to only extract the content from the original page. And the importers primary objective is to help in digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
 
-To summuarise: if a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
+To summarize: if a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
 
 ### `import.js` transformation file
 
@@ -33,7 +33,7 @@ You must implement those 2 methods:
 
 This is simpler version of the implementation. You can achieve the same by implementing the `transform` method as describe below.
 
-#### one input / multiple outputsw
+#### one input / multiple outputs
 
 You must implement this method:
 - `transform: ({ document, url, html, params }) => {}`: implement here your transformation rules and return an array of pairs `{ element, path }` where element is a DOM DOM element that needs to be transformed to Markdown and path is the path to the exported file.
@@ -104,7 +104,7 @@ export default {
 
 Notes on those 2 different implementations:
 - you need to return a DOM element, otherwise the `document.body` is used.
-- you can either work on the full `body` element or focus on the `main` element. This is really up to you. Sometimes removing everything not necessary can be tidious.
+- you can either work on the full `body` element or focus on the `main` element. This is really up to you. Sometimes removing everything not necessary and can be tedious.
 - you do not need to transform the `div` into a `p` to get a text paragraph.
 
 ### Create a block
@@ -323,7 +323,7 @@ Note:
 
 ### More samples
 
-Sites in the https://github.com/hlxsites/ organisation have all be imported. There are many different implementation cover a lot of use cases.
+Sites in the https://github.com/hlxsites/ organization have all be imported. There are many different implementations that cover a lot of use cases.
 
 ## Helpers
 
@@ -340,9 +340,9 @@ While more documentation will be written, you can already find how to use them v
 ## Security and memory
 
 When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
-When running `hlx import`, a proxy is started and all requests to the host are re-written clientside and go through the proxy. This allows to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
+When running `hlx import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
 
-That's a generic solution that might not work in some cases, some sites being pretty imaginative on how to prevent to be loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face to such a problem, you can contact the Helix team and we can look at some workarounds and / or integrate more logic in the proxy to handle more of those cases.
+This is a generic solution that might not work in some cases, some sites are pretty imaginative in how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Helix team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
@@ -376,6 +376,6 @@ This simply transforms the image srcs to use the proxy: `https://www.sample.com/
 Disabling Javascript in the option is the best solution for speed and memory consumption. You can then import thousands of pages.
 With Javascript enabled, things become more complicated for the browser. It depends on the amount of code to load and execute, but in general, you can only import around one hundred pages before the browser crashes (too much memory consumed).
 
-Having Javascript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
+Having Javascript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create a small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
 
 We are also working on a cli version of the importer (see https://github.com/adobe/helix-importer/issues/23) where memory can be handled properly.
