@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global CodeMirror, showdown, html_beautify, ExcelJS */
+/* global CodeMirror, showdown, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
@@ -331,20 +331,20 @@ const attachListeners = () => {
               current.removeEventListener('transformation-complete', processNext);
 
               current.replaceWith(frame);
-            } else {
-              if (IS_BULK && DOWNLOAD_BINARY_TYPES.filter((t) => contentType.includes(t)).length > 0) {
-                const blob = await res.blob();
-                const u = new URL(src);
-                const filename = u.pathname;
-                await saveFile(dirHandle, filename, blob);
-                importStatus.rows.push({
-                  url,
-                  status: 'Success',
-                  path: filename,
-                });
-                updateImporterUI(null, url);
-                processNext();
-              }
+            } else if (IS_BULK
+              && DOWNLOAD_BINARY_TYPES.filter((t) => contentType.includes(t)).length > 0) {
+              const blob = await res.blob();
+              const u = new URL(src);
+              const path = WebImporter.FileUtils.sanitizePath(u.pathname);
+
+              await saveFile(dirHandle, path, blob);
+              importStatus.rows.push({
+                url,
+                status: 'Success',
+                path,
+              });
+              updateImporterUI(null, url);
+              processNext();
             }
           }
         } else {
