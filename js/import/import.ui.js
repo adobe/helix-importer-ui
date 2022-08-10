@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global CodeMirror, showdown, html_beautify, ExcelJS */
+/* global CodeMirror, showdown, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
@@ -40,6 +40,8 @@ const BULK_URLS_HEADING = document.querySelector('#import-result h2');
 const BULK_URLS_LIST = document.querySelector('#import-result ul');
 
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
+
+const DOWNLOAD_BINARY_TYPES = ['pdf'];
 
 const ui = {};
 const config = {};
@@ -276,57 +278,74 @@ const attachListeners = () => {
             });
             processNext();
           } else {
-            const frame = document.createElement('iframe');
-            frame.id = 'import-content-frame';
+            const contentType = res.headers.get('content-type');
+            if (contentType.includes('html')) {
+              const frame = document.createElement('iframe');
+              frame.id = 'import-content-frame';
 
-            if (config.fields['import-enable-js']) {
-              frame.removeAttribute('sandbox');
-            } else {
-              frame.setAttribute('sandbox', 'allow-same-origin');
-            }
+              if (config.fields['import-enable-js']) {
+                frame.removeAttribute('sandbox');
+              } else {
+                frame.setAttribute('sandbox', 'allow-same-origin');
+              }
 
-            const onLoad = async () => {
-              const includeDocx = !!dirHandle;
+              const onLoad = async () => {
+                const includeDocx = !!dirHandle;
 
-              window.setTimeout(async () => {
-                const { originalURL, replacedURL } = frame.dataset;
-                if (frame.contentDocument) {
-                  try {
-                    config.importer.setTransformationInput({
-                      url: replacedURL,
-                      document: frame.contentDocument,
-                      includeDocx,
-                      params: { originalURL },
-                    });
-                    await config.importer.transform();
-                  } catch (e) {
-                    // eslint-disable-next-line no-console
-                    console.error(`Cannot transform ${originalURL} - transformation error ?`, e);
-                    // fallback, probably transformation error
-                    importStatus.rows.push({
-                      url: originalURL,
-                      status: `Error: ${e.message}`,
-                    });
+                window.setTimeout(async () => {
+                  const { originalURL, replacedURL } = frame.dataset;
+                  if (frame.contentDocument) {
+                    try {
+                      config.importer.setTransformationInput({
+                        url: replacedURL,
+                        document: frame.contentDocument,
+                        includeDocx,
+                        params: { originalURL },
+                      });
+                      await config.importer.transform();
+                    } catch (e) {
+                      // eslint-disable-next-line no-console
+                      console.error(`Cannot transform ${originalURL} - transformation error ?`, e);
+                      // fallback, probably transformation error
+                      importStatus.rows.push({
+                        url: originalURL,
+                        status: `Error: ${e.message}`,
+                      });
+                    }
                   }
-                }
 
-                const event = new Event('transformation-complete');
-                frame.dispatchEvent(event);
-              }, config.fields['import-pageload-timeout'] || 100);
-            };
+                  const event = new Event('transformation-complete');
+                  frame.dispatchEvent(event);
+                }, config.fields['import-pageload-timeout'] || 100);
+              };
 
-            frame.addEventListener('load', onLoad);
-            frame.addEventListener('transformation-complete', processNext);
+              frame.addEventListener('load', onLoad);
+              frame.addEventListener('transformation-complete', processNext);
 
-            frame.dataset.originalURL = url;
-            frame.dataset.replacedURL = src;
-            frame.src = src;
+              frame.dataset.originalURL = url;
+              frame.dataset.replacedURL = src;
+              frame.src = src;
 
-            const current = getContentFrame();
-            current.removeEventListener('load', onLoad);
-            current.removeEventListener('transformation-complete', processNext);
+              const current = getContentFrame();
+              current.removeEventListener('load', onLoad);
+              current.removeEventListener('transformation-complete', processNext);
 
-            current.replaceWith(frame);
+              current.replaceWith(frame);
+            } else if (IS_BULK
+              && DOWNLOAD_BINARY_TYPES.filter((t) => contentType.includes(t)).length > 0) {
+              const blob = await res.blob();
+              const u = new URL(src);
+              const path = WebImporter.FileUtils.sanitizePath(u.pathname);
+
+              await saveFile(dirHandle, path, blob);
+              importStatus.rows.push({
+                url,
+                status: 'Success',
+                path,
+              });
+              updateImporterUI(null, url);
+              processNext();
+            }
           }
         } else {
           // eslint-disable-next-line no-console

@@ -13,6 +13,7 @@
 
 import {
   DOMUtils,
+  FileUtils,
   Blocks,
   html2docx,
   html2md,
@@ -74,6 +75,7 @@ async function html2docxWrapper(url, document, transformCfg, params) {
 export {
   Blocks,
   DOMUtils,
+  FileUtils,
   html2mdWrapper as html2md,
   html2docxWrapper as html2docx,
 };
