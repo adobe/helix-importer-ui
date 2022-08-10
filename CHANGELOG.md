@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/adobe/helix-importer-ui/compare/v1.2.0...v1.3.0) (2022-08-10)
+
+
+### Features
+
+* download pdfs during bulk import ([cc5b041](https://github.com/adobe/helix-importer-ui/commit/cc5b0418dfd6dbe9aa543fc5d13091c5ef0e91ee))
+
 # [1.2.0](https://github.com/adobe/helix-importer-ui/compare/v1.1.0...v1.2.0) (2022-07-06)
 
 
