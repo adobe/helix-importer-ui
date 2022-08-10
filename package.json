@@ -1,6 +1,6 @@
 {
   "name": "helix-import-ui",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "helix-import-ui",
   "scripts": {
     "clean": "rm -fr ./js/dist",

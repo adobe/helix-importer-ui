@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/adobe/helix-importer-ui/compare/v1.3.0...v1.4.0) (2022-08-10)
+
+
+### Features
+
+* trigger release ([34470dc](https://github.com/adobe/helix-importer-ui/commit/34470dcea8bf79bf8c41e050103cd06617300ed5))
+
 # [1.3.0](https://github.com/adobe/helix-importer-ui/compare/v1.2.0...v1.3.0) (2022-08-10)
 
 
