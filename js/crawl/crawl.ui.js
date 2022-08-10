@@ -251,7 +251,7 @@ const attachListeners = () => {
     const worksheet = workbook.addWorksheet('Sheet 1');
 
     let headers = ['URL'];
-    if (!crawlStatus.hasExtra) {
+    if (crawlStatus.hasExtra) {
       headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'];
     }
 
@@ -269,11 +269,11 @@ const attachListeners = () => {
       linksToFollow,
     }) => {
       if (crawlStatus.hasExtra) {
-        return [url];
+        return [
+          url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
+        ];
       }
-      return [
-        url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
-      ];
+      return [url];
     })));
     const buffer = await workbook.xlsx.writeBuffer();
     const a = document.createElement('a');
