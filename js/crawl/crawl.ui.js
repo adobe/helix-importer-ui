@@ -35,6 +35,9 @@ const IGNORED_EXTENSIONS = [
   'jpeg',
   'webp',
   'eps',
+];
+
+const NOFOLLOW_EXTENSIONS = [
   'pdf',
 ];
 
@@ -157,7 +160,9 @@ const attachListeners = () => {
                       // eslint-disable-next-line max-len
                       if (!crawlStatus.urls.includes(found) && !urlsArray.includes(found) && current !== found) {
                         urlsArray.push(found);
-                        linksToFollow.push(found);
+                        if (NOFOLLOW_EXTENSIONS.indexOf(extension) === -1) {
+                          linksToFollow.push(found);
+                        }
                       } else {
                         nbLinksAlreadyProcessed += 1;
                       }
@@ -246,7 +251,7 @@ const attachListeners = () => {
     const worksheet = workbook.addWorksheet('Sheet 1');
 
     let headers = ['URL'];
-    if (crawlStatus.hasExtra) {
+    if (!crawlStatus.hasExtra) {
       headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'];
     }
 
