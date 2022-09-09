@@ -122,8 +122,6 @@ const attachListeners = () => {
       if (urlsArray.length > 0) {
         const url = urlsArray.pop();
 
-        console.log('Crawling', url);
-
         const { proxy } = getProxyURLSetup(url, config.origin);
         const src = proxy.url;
 
