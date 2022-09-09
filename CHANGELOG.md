@@ -1,3 +1,10 @@
+# [1.5.0](https://github.com/adobe/helix-importer-ui/compare/v1.4.0...v1.5.0) (2022-09-09)
+
+
+### Features
+
+* allow to filter the crawling (16) ([935773d](https://github.com/adobe/helix-importer-ui/commit/935773d7fdabc01eeb4ba63b891f5c24406c583c))
+
 # [1.4.0](https://github.com/adobe/helix-importer-ui/compare/v1.3.0...v1.4.0) (2022-08-10)
 
 
