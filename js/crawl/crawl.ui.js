@@ -121,6 +121,7 @@ const attachListeners = () => {
     const processNext = () => {
       if (urlsArray.length > 0) {
         const url = urlsArray.pop();
+
         const { proxy } = getProxyURLSetup(url, config.origin);
         const src = proxy.url;
 
@@ -155,7 +156,10 @@ const attachListeners = () => {
                     const extension = u.pathname.split('.').pop();
                     if (IGNORED_EXTENSIONS.indexOf(extension) === -1) {
                       // eslint-disable-next-line max-len
-                      if (!crawlStatus.urls.includes(found) && !urlsArray.includes(found) && current !== found) {
+                      if (!crawlStatus.urls.includes(found) && 
+                        !urlsArray.includes(found) &&
+                        current !== found &&
+                        u.pathname.startsWith(config.fields['crawl-filter-pathname'])) {
                         urlsArray.push(found);
                         linksToFollow.push(found);
                       } else {
@@ -288,9 +292,12 @@ const attachListeners = () => {
     crawlStatus.hasExtra = false;
 
     // eslint-disable-next-line no-alert
-    crawlStatus.urls = await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
+    crawlStatus.urls = (await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
       log: alert.success,
       sitemap: config.fields['crawl-sitemap-file'],
+    })).filter((url) => {
+      const u = new URL(url);
+      return u.pathname.startsWith(config.fields['crawl-filter-pathname'])
     });
 
     crawlStatus.crawled = crawlStatus.urls.length;
