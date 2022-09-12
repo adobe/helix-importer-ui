@@ -35,7 +35,7 @@
     "mini-css-extract-plugin": "2.6.1",
     "node-polyfill-webpack-plugin": "1.1.4",
     "semantic-release": "19.0.5",
-    "stylelint": "14.5.3",
+    "stylelint": "14.11.0",
     "stylelint-config-prettier": "9.0.3",
     "stylelint-config-standard": "25.0.0",
     "webpack": "5.67.0",
