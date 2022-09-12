@@ -268,11 +268,11 @@ const attachListeners = () => {
       linksToFollow,
     }) => {
       if (crawlStatus.hasExtra) {
-        return [url];
+        return [
+          url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
+        ];
       }
-      return [
-        url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
-      ];
+      return [url];
     })));
     const buffer = await workbook.xlsx.writeBuffer();
     const a = document.createElement('a');
