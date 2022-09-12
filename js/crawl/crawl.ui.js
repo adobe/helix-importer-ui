@@ -252,6 +252,15 @@ const attachListeners = () => {
     let headers = ['URL'];
     if (crawlStatus.hasExtra) {
       headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'];
+      worksheet.autoFilter = {
+        from: 'A1',
+        to: 'H1',
+      };
+    } else {
+      worksheet.autoFilter = {
+        from: 'A1',
+        to: 'A1',
+      };
     }
 
     worksheet.addRows([

@@ -378,6 +378,12 @@ const attachListeners = () => {
   DOWNLOAD_IMPORT_REPORT_BUTTON.addEventListener('click', (async () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
+
+    worksheet.autoFilter = {
+      from: 'A1',
+      to: 'E1',
+    };
+
     worksheet.addRows([
       ['URL', 'path', 'docx', 'status', 'redirect'],
     ].concat(importStatus.rows.map(({
