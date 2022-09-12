@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/adobe/helix-importer-ui/compare/v1.5.0...v1.5.1) (2022-09-12)
+
+
+### Bug Fixes
+
+* add missing extra ([#20](https://github.com/adobe/helix-importer-ui/issues/20)) ([c3f5c0d](https://github.com/adobe/helix-importer-ui/commit/c3f5c0dd83e0c54a9377dfc2af643d564e7c8360))
+
 # [1.5.0](https://github.com/adobe/helix-importer-ui/compare/v1.4.0...v1.5.0) (2022-09-09)
 
 
