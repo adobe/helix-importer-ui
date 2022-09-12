@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/adobe/helix-importer-ui/compare/v1.5.1...v1.6.0) (2022-09-12)
+
+
+### Features
+
+* worksheet auto filter ([126f1ac](https://github.com/adobe/helix-importer-ui/commit/126f1ac371cfce99ca42533eac9f8d4ebd27a37e))
+
 ## [1.5.1](https://github.com/adobe/helix-importer-ui/compare/v1.5.0...v1.5.1) (2022-09-12)
 
 
