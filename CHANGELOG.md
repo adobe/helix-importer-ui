@@ -1,3 +1,10 @@
+# [1.7.0](https://github.com/adobe/helix-importer-ui/compare/v1.6.0...v1.7.0) (2022-09-13)
+
+
+### Features
+
+* scroll to bottom ([#28](https://github.com/adobe/helix-importer-ui/issues/28)) ([033a58c](https://github.com/adobe/helix-importer-ui/commit/033a58c2fae6fa27dfd4df994e99792b2133f62e))
+
 # [1.6.0](https://github.com/adobe/helix-importer-ui/compare/v1.5.1...v1.6.0) (2022-09-12)
 
 
