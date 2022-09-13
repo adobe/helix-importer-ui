@@ -292,6 +292,10 @@ const attachListeners = () => {
               const onLoad = async () => {
                 const includeDocx = !!dirHandle;
 
+                if (config.fields['import-scroll-to-bottom']) {
+                  frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: "smooth" });
+                }
+
                 window.setTimeout(async () => {
                   const { originalURL, replacedURL } = frame.dataset;
                   if (frame.contentDocument) {
