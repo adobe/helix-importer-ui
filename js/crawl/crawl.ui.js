@@ -135,6 +135,11 @@ const attachListeners = () => {
         }
 
         const onLoad = async () => {
+
+          if (config.fields['import-scroll-to-bottom']) {
+            frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: "smooth" });
+          }
+
           window.setTimeout(async () => {
             const current = frame.dataset.originalURL;
             const originalURL = new URL(current);
