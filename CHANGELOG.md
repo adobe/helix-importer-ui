@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/adobe/helix-importer-ui/compare/v1.7.1...v1.8.0) (2022-09-14)
+
+
+### Features
+
+* scroll on crawl ([6e0e58f](https://github.com/adobe/helix-importer-ui/commit/6e0e58f6c51b697a8967542f48cd6bdb11a2417d))
+
 ## [1.7.1](https://github.com/adobe/helix-importer-ui/compare/v1.7.0...v1.7.1) (2022-09-13)
 
 
