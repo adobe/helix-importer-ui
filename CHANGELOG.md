@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/adobe/helix-importer-ui/compare/v1.10.0...v1.11.0) (2022-09-15)
+
+
+### Features
+
+* update dependency ([9cbb662](https://github.com/adobe/helix-importer-ui/commit/9cbb6621fbd9f2f63461887fb951b54c50cf768e))
+
 # [1.10.0](https://github.com/adobe/helix-importer-ui/compare/v1.9.0...v1.10.0) (2022-09-15)
 
 
