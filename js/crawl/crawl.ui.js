@@ -135,9 +135,8 @@ const attachListeners = () => {
         }
 
         const onLoad = async () => {
-
           if (config.fields['import-scroll-to-bottom']) {
-            frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: "smooth" });
+            frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: 'smooth' });
           }
 
           window.setTimeout(async () => {
@@ -161,10 +160,10 @@ const attachListeners = () => {
                     const extension = u.pathname.split('.').pop();
                     if (IGNORED_EXTENSIONS.indexOf(extension) === -1) {
                       // eslint-disable-next-line max-len
-                      if (!crawlStatus.urls.includes(found) && 
-                        !urlsArray.includes(found) &&
-                        current !== found &&
-                        u.pathname.startsWith(config.fields['crawl-filter-pathname'])) {
+                      if (!crawlStatus.urls.includes(found)
+                        && !urlsArray.includes(found)
+                        && current !== found
+                        && u.pathname.startsWith(config.fields['crawl-filter-pathname'])) {
                         urlsArray.push(found);
                         linksToFollow.push(found);
                       } else {
@@ -311,7 +310,7 @@ const attachListeners = () => {
       sitemap: config.fields['crawl-sitemap-file'],
     })).filter((url) => {
       const u = new URL(url);
-      return u.pathname.startsWith(config.fields['crawl-filter-pathname'])
+      return u.pathname.startsWith(config.fields['crawl-filter-pathname']);
     });
 
     crawlStatus.crawled = crawlStatus.urls.length;

@@ -293,7 +293,7 @@ const attachListeners = () => {
                 const includeDocx = !!dirHandle;
 
                 if (config.fields['import-scroll-to-bottom']) {
-                  frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: "smooth" });
+                  frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: 'smooth' });
                 }
 
                 window.setTimeout(async () => {
