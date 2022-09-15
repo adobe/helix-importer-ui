@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/adobe/helix-importer-ui/compare/v1.8.0...v1.9.0) (2022-09-15)
+
+
+### Features
+
+* errors are not reported in report ([834cf25](https://github.com/adobe/helix-importer-ui/commit/834cf2596ca084cd9cec827858896c2b932ab6fc))
+
 # [1.8.0](https://github.com/adobe/helix-importer-ui/compare/v1.7.1...v1.8.0) (2022-09-14)
 
 
