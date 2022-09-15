@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/adobe/helix-importer-ui/compare/v1.9.0...v1.10.0) (2022-09-15)
+
+
+### Features
+
+* report orignal url ([3b9a5db](https://github.com/adobe/helix-importer-ui/commit/3b9a5db2f91fe6d292300fa426325bb94897f65e))
+
 # [1.9.0](https://github.com/adobe/helix-importer-ui/compare/v1.8.0...v1.9.0) (2022-09-15)
 
 
