@@ -106,6 +106,7 @@ export default class PollImporter {
         listener({
           results,
           url,
+          params,
         });
       });
     } catch (err) {
@@ -113,6 +114,7 @@ export default class PollImporter {
         listener({
           url,
           error: err,
+          params,
         });
       });
     }

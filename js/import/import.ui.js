@@ -211,13 +211,13 @@ const attachListeners = () => {
     alert.success(`Import of page ${originalURL} completed.`);
   });
 
-  config.importer.addErrorListener(({ url, error: err }) => {
+  config.importer.addErrorListener(({ url, error: err, params }) => {
     // eslint-disable-next-line no-console
     console.error(`Error importing ${url}: ${err.message}`, err);
     alert.error(`Error importing ${url}: ${err.message}`);
 
     importStatus.rows.push({
-      url,
+      url: params.originalURL,
       status: `Error: ${err.message}`,
     });
   });
