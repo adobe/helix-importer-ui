@@ -215,6 +215,11 @@ const attachListeners = () => {
     // eslint-disable-next-line no-console
     console.error(`Error importing ${url}: ${err.message}`, err);
     alert.error(`Error importing ${url}: ${err.message}`);
+
+    importStatus.rows.push({
+      url,
+      status: `Error: ${err.message}`,
+    });
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -299,23 +304,13 @@ const attachListeners = () => {
                 window.setTimeout(async () => {
                   const { originalURL, replacedURL } = frame.dataset;
                   if (frame.contentDocument) {
-                    try {
-                      config.importer.setTransformationInput({
-                        url: replacedURL,
-                        document: frame.contentDocument,
-                        includeDocx,
-                        params: { originalURL },
-                      });
-                      await config.importer.transform();
-                    } catch (e) {
-                      // eslint-disable-next-line no-console
-                      console.error(`Cannot transform ${originalURL} - transformation error ?`, e);
-                      // fallback, probably transformation error
-                      importStatus.rows.push({
-                        url: originalURL,
-                        status: `Error: ${e.message}`,
-                      });
-                    }
+                    config.importer.setTransformationInput({
+                      url: replacedURL,
+                      document: frame.contentDocument,
+                      includeDocx,
+                      params: { originalURL },
+                    });
+                    await config.importer.transform();
                   }
 
                   const event = new Event('transformation-complete');
