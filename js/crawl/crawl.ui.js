@@ -60,6 +60,12 @@ const displayCrawledURL = (url) => {
   CRAWLED_URLS_HEADING.innerText = `Crawled URLs (${crawlStatus.crawled}):`;
 };
 
+const displayTooManyURLs = () => {
+  const li = document.createElement('li');
+  li.innerHTML = 'Too many urls to display. Please download the crawl report to access the full list.';
+  CRAWLED_URLS_LIST.append(li);
+};
+
 const clearResultPanel = () => {
   CRAWLED_URLS_LIST.innerHTML = '';
   CRAWLED_URLS_HEADING.innerText = 'Crawling...';
@@ -189,7 +195,11 @@ const attachListeners = () => {
               crawlStatus.rows.push(row);
               crawlStatus.crawled += 1;
 
-              displayCrawledURL(current);
+              if (crawlStatus.urls.length === 1000) {
+                displayTooManyURLs();
+              } else if (crawlStatus.urls.length < 1000) {
+                displayCrawledURL(current);
+              }
             } catch (error) {
               // try to detect redirects
               const res = await fetch(replacedURL);
@@ -314,8 +324,12 @@ const attachListeners = () => {
     });
 
     crawlStatus.crawled = crawlStatus.urls.length;
-    crawlStatus.urls.forEach((url) => {
-      displayCrawledURL(url);
+    crawlStatus.urls.forEach((url, index) => {
+      if (index === 1000) {
+        displayTooManyURLs();
+      } else if (index < 1000) {
+        displayCrawledURL(url);
+      }
 
       const row = {
         url,
