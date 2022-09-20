@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/adobe/helix-importer-ui/compare/v1.11.0...v1.12.0) (2022-09-20)
+
+
+### Features
+
+* do not display more than 1000 urls ([e2f068a](https://github.com/adobe/helix-importer-ui/commit/e2f068a0e90c0088afadcd91dd5e0e515a089358))
+
 # [1.11.0](https://github.com/adobe/helix-importer-ui/compare/v1.10.0...v1.11.0) (2022-09-15)
 
 
