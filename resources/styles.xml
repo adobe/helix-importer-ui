@@ -1379,6 +1379,11 @@
       w:styleId="Normal">
     <w:name w:val="Normal"/>
     <w:qFormat/>
+    <w:pPr>
+      <w:spacing
+          w:before="75"
+          w:after="75"/>
+    </w:pPr>
   </w:style>
   <w:style
       w:type="paragraph"
