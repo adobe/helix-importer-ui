@@ -1,3 +1,10 @@
+# [1.13.0](https://github.com/adobe/helix-importer-ui/compare/v1.12.0...v1.13.0) (2022-09-22)
+
+
+### Features
+
+* add more spacing to Normal style ([963453e](https://github.com/adobe/helix-importer-ui/commit/963453e0238c065ad9623953fddfa8b246d7dc33))
+
 # [1.12.0](https://github.com/adobe/helix-importer-ui/compare/v1.11.0...v1.12.0) (2022-09-20)
 
 
