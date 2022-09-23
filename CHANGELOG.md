@@ -1,3 +1,10 @@
+# [1.14.0](https://github.com/adobe/helix-importer-ui/compare/v1.13.0...v1.14.0) (2022-09-23)
+
+
+### Features
+
+* adding support for avif images ([#32](https://github.com/adobe/helix-importer-ui/issues/32)) ([9ae01a9](https://github.com/adobe/helix-importer-ui/commit/9ae01a9d027a4db5ce011ac0721bd066cb4a49b5))
+
 # [1.13.0](https://github.com/adobe/helix-importer-ui/compare/v1.12.0...v1.13.0) (2022-09-22)
 
 
