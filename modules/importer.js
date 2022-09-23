@@ -23,45 +23,45 @@ import docxStylesXML from '../resources/styles.xml';
 
 const options = {
   docxStylesXML,
-  svg2png: async (svg) => new Promise((resolve) => {
-    const svgBlob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-    const svgUrl = URL.createObjectURL(svgBlob);
+  image2png: async ({ src, data, type }) => {
     const img = new Image();
-    img.src = svgUrl;
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
+    const blob = new Blob([data], { type });
+    img.src = URL.createObjectURL(blob);
+    img.crossOrigin = 'anonymous';
+    await img.decode();
 
+    let width = img.naturalWidth;
+    let height = img.naturalHeight;
+
+    // for some svgs, the natural width / height are not correctly computed
+    if (type === 'image/svg+xml') {
       const parser = new DOMParser();
+      const svg = data.toString('utf-8');
       const svgDoc = parser.parseFromString(svg, 'text/html');
-
       const svgTag = svgDoc.querySelector('svg');
       const viewBox = svgTag?.getAttribute('viewBox');
-
-      let width = img.naturalWidth;
-      let height = img.naturalHeight;
       if (viewBox) {
         const [, , w, h] = viewBox.split(' ').map(Number);
         if (w > img.naturalWidth || h > img.naturalHeight) {
-          // for some svgs, the natural width / height are not correctly computed
           width = w;
           height = h;
         }
       }
+    }
 
-      canvas.width = width;
-      canvas.height = height;
-      img.width = width;
-      img.height = height;
-
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.drawImage(img, 0, 0);
-      }
-      const canvasData = canvas.toDataURL('image/png');
-      const canvas64 = canvasData.replace(/^data:image\/(png|jpg);base64,/, '');
-      resolve(canvas64);
+    // note: OffscreenCanvas is not supported on safari
+    const canvas = new OffscreenCanvas(width, height);
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+    const newBlob = await canvas.convertToBlob();
+    console.log('converted', type, 'to png', src, width, height, blob.size);
+    return {
+      data: newBlob.arrayBuffer(),
+      width,
+      height,
+      type: 'image/png',
     };
-  }),
+  },
 };
 
 async function html2mdWrapper(url, document, transformCfg, params) {
