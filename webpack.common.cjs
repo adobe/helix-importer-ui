@@ -56,7 +56,7 @@ const importer = {
       }
     }),
     new NodePolyfillPlugin(),
-    new NormalModuleReplacementPlugin(/@adobe\/helix-fetch/, (resource) => {
+    new NormalModuleReplacementPlugin(/@adobe\/fetch/, (resource) => {
       resource.request = path.resolve(__dirname, './polyfills/fetch-constructor-polyfill.cjs');
     }),
     new NormalModuleReplacementPlugin(/node-fetch/, (resource) => {
