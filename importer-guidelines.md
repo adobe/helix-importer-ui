@@ -222,7 +222,7 @@ const table = WebImporter.DOMUtils.createTable(cells, document);
 This code would produce almost the same table (does not deal with the colspan) than the Metadata table above.
 
 #### Special Note for `blockquote`
-While exporting HTML contents enclosed within [blockquote](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote) to word docs, the `table` may not get exported correctly (like reported in https://github.com/adobe/helix-importer/issues/29). For such situations, consider removing or replacing `blockquote` enclosing the `table`.
+While exporting HTML contents enclosed within [blockquote](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote) to Word docs, the `table` may not get exported correctly (like reported in https://github.com/adobe/helix-importer/issues/29). For such situations, consider removing or replacing `blockquote` enclosing the `table`.
 
 ### Convert background images
 
