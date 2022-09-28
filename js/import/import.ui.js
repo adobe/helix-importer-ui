@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global CodeMirror, showdown, html_beautify, ExcelJS, WebImporter */
+/* global CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
@@ -68,16 +68,15 @@ const setupUI = () => {
   });
   ui.markdownEditor.setSize('100%', '100%');
 
-  ui.showdownConverter = new showdown.Converter();
   ui.markdownPreview = MD_PREVIEW_PANEL;
-  ui.markdownPreview.innerHTML = ui.showdownConverter.makeHtml('Run an import to see some markdown.');
+  ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
   ui.transformedEditor.setValue(html_beautify(outputHTML));
   ui.markdownEditor.setValue(md || '');
 
-  const mdPreview = ui.showdownConverter.makeHtml(md);
+  const mdPreview = WebImporter.md2html(md);
   ui.markdownPreview.innerHTML = mdPreview;
 
   // remove existing classes and styles
@@ -355,7 +354,7 @@ const attachListeners = () => {
           });
           processNext();
         }
-        // ui.markdownPreview.innerHTML = ui.showdownConverter.makeHtml('Import in progress...');
+        // ui.markdownPreview.innerHTML = md2html('Import in progress...');
         // ui.transformedEditor.setValue('');
         // ui.markdownEditor.setValue('');
       } else {

@@ -2,6 +2,7 @@
   "name": "helix-import-ui",
   "version": "1.14.0",
   "description": "helix-import-ui",
+  "type": "module",
   "scripts": {
     "clean": "rm -fr ./js/dist",
     "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs",
@@ -13,11 +14,19 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "2.0.0",
+    "@adobe/helix-importer": "2.1.0",
+    "@adobe/helix-markdown-support": "5.0.8",
     "@spectrum-web-components/bundle": "0.27.3",
     "@spectrum-web-components/icons-workflow": "0.9.0",
+    "hast-util-raw": "7.2.2",
+    "hast-util-to-html": "8.0.3",
+    "mdast-util-to-hast": "12.2.3",
     "parcel": "2.7.0",
-    "path-browserify": "1.0.1"
+    "path-browserify": "1.0.1",
+    "rehype-format": "4.0.1",
+    "remark-gfm": "3.0.1",
+    "remark-parse": "10.0.1",
+    "unified": "10.1.2"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.3.2",
@@ -29,6 +38,7 @@
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "11.0.0",
     "eslint": "8.24.0",
+    "eslint-import-resolver-exports": "1.0.0-beta.3",
     "eslint-plugin-header": "3.1.1",
     "eslint-plugin-import": "2.26.0",
     "html-webpack-plugin": "5.5.0",

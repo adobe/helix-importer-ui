@@ -152,7 +152,7 @@
   margin-bottom: 20px;
 }
 
-.import #import-markdown-preview tr:first-of-type {
+.import #import-markdown-preview thead tr {
   background-color: var(--hlx-import-table-head-background-color);
 }
 

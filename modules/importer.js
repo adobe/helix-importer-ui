@@ -72,6 +72,8 @@ async function html2docxWrapper(url, document, transformCfg, params) {
   return html2docx(url, document, transformCfg, options, params);
 }
 
+export { default as md2html } from '../js/shared/md2html.js';
+
 export {
   Blocks,
   DOMUtils,
