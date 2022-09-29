@@ -3,13 +3,18 @@ module.exports = {
   extends: 'airbnb-base',
   env: {
     browser: true,
+    es6: true,
   },
-  parser: '@babel/eslint-parser',
+//  parser: '@babel/eslint-parser',
   parserOptions: {
-    allowImportExportEverywhere: true,
     sourceType: 'module',
-    requireConfigFile: false,
+    ecmaVersion: 'latest',
   },
+  // parserOptions: {
+  //   allowImportExportEverywhere: true,
+  //   sourceType: 'module',
+  //   requireConfigFile: false,
+  // },
   rules: {
     // allow reassigning param
     'no-param-reassign': [2, { props: false }],
@@ -17,5 +22,11 @@ module.exports = {
     'import/extensions': ['error', {
       js: 'always',
     }],
+  },
+  plugins: ['import'],
+  settings: {
+    'import/resolver': {
+      exports: {},
+    },
   },
 };
