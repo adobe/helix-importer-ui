@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/adobe/helix-importer-ui/compare/v1.14.0...v1.15.0) (2022-09-29)
+
+
+### Features
+
+* properly render gridtables as html ([86172b0](https://github.com/adobe/helix-importer-ui/commit/86172b0648a49ded17f8f486cb9e337aba41bd58))
+
 # [1.14.0](https://github.com/adobe/helix-importer-ui/compare/v1.13.0...v1.14.0) (2022-09-23)
 
 
