@@ -39,6 +39,8 @@ You can find some guidelines, best practices and code samples in the [Importer G
 - `Enable Javascript`: 
   - page to import may have a Javascript redirect to the remote domain (to make sure you stay on their site). This then blocks the tool to access the content via the iframe. Disabling Javascript may help here. 
   - if the remote page is an SPA (React, Angular) or require Javascript to load some pieces of the content, Javascript is then required. Enabling Javascript may help here.
+  - more generally, disabling Javascript speeds up the import process and reduces the memory consumed.
+- `Scroll to bottom`: forces a scroll to the bottom of the page. This might allow images set with earger to be loaded or any element loaded with Javascript below the fold. Increasing the `Page load timeout` might give more time to those element to be loaded.
 
 ## Crawler
 
@@ -47,9 +49,9 @@ Allows to find URLs on a given host. 2 processes:
 - `Get from robots.txt or sitemap`: the crawler will try to get the `robots.txt` file on the given host, follow the referenced sitemap(s) if any and extract URLs from all the sitemaps and sub-sitemaps. If it does not find a `robots.txt` file, it will try the `sitemap.xml` file (name can be changed in the options) and follow the references the same way.
 - `Crawl`: the crawler will open the give URL and construct a list of URLs by recursively following all the links on the same hosts.
 
-### Inspect
+### Eyedropper
 
-Allows to extract the CSS styles (font, colors) from a give page and to be used with the https://github.com/adobe/helix-project-boilerplate project. 
+Allows to extract the CSS styles (font, colors) for an give page. Those styles can be used with the https://github.com/adobe/helix-project-boilerplate project.
 
 ## Cache
 
