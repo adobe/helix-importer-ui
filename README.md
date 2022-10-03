@@ -1,10 +1,10 @@
-# Helix Importer - UI
+# Franklin Importer - UI
 
-A collection of tools to support Helix project imports.
+A collection of tools to support Franklin project imports.
 
 ## Usage
 
-Check first the [Helix cli installation](https://github.com/adobe/helix-cli#installation).
+Check first the [Franklin cli installation](https://github.com/adobe/helix-cli#installation).
 
 At the root of the project, simply run:
 

@@ -109,7 +109,7 @@ Notes on those 2 different implementations:
 
 ### Create a block
 
-One important step of the content migration is to transform some existing "components" into Helix blocks. While the Helix philosophy is to use the maximum of the standard Markdown semantic (text, title, images, links...), sometimes blocks are needed to combine of several of those default elements.
+One important step of the content migration is to transform some existing "components" into Franklin blocks. While the Franklin philosophy is to use the maximum of the standard Markdown semantic (text, title, images, links...), sometimes blocks are needed to combine of several of those default elements.
 
 In Word, a block is a table. To create a block during the import, you simply then need to create an HTML table. You can do that manually (create `<table>`, `tr`, `td`... elements) but a helper is provided. A block you will almost always need is a metadata table:
 
@@ -345,13 +345,13 @@ While more documentation will be written, you can already find how to use them v
 When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
 When running `hlx import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
 
-This is a generic solution that might not work in some cases, some sites are pretty imaginative in how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Helix team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
+This is a generic solution that might not work in some cases, some sites are pretty imaginative in how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Franklin team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
 ### Images
 
-When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Helix Media bus. When images are stored on the same host, this is usually not an issue but in a lot of cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (todo: create a helper for it or even integrate to the process): 
+When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus. When images are stored on the same host, this is usually not an issue but in a lot of cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (todo: create a helper for it or even integrate to the process): 
 
 ```js
 const makeProxySrcs = (main, host) => {
