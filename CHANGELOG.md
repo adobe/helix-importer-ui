@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/adobe/helix-importer-ui/compare/v1.15.0...v1.16.0) (2022-10-03)
+
+
+### Features
+
+* rename ([#39](https://github.com/adobe/helix-importer-ui/issues/39)) ([cae7fb8](https://github.com/adobe/helix-importer-ui/commit/cae7fb8e0b14395df69851f6366f13f41f7010a8))
+
 # [1.15.0](https://github.com/adobe/helix-importer-ui/compare/v1.14.0...v1.15.0) (2022-09-29)
 
 
