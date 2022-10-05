@@ -1,3 +1,10 @@
+## [1.16.1](https://github.com/adobe/helix-importer-ui/compare/v1.16.0...v1.16.1) (2022-10-05)
+
+
+### Bug Fixes
+
+* correctly show report buttons ([7a3165c](https://github.com/adobe/helix-importer-ui/commit/7a3165c4c845a6227fcc9396261c8f5e9cb02dda))
+
 # [1.16.0](https://github.com/adobe/helix-importer-ui/compare/v1.15.0...v1.16.0) (2022-10-03)
 
 
