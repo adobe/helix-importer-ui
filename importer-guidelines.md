@@ -17,8 +17,8 @@ Out of the box, the importer should be able to consume any page and output a Mar
 Such a rule is very straight forward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
 
 In your `import.js` transformation file, you can implement 2 modes: 
-- one input / one output
-- one input / multiple outputs
+- one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
+- one input / multiple outputs - default file snippet: https://gist.github.com/kptdobe/7bf50b69194884171b12874fc5c74588
 
 #### one input / one output
 
