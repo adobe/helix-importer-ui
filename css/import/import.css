@@ -24,7 +24,7 @@
 
 .import .code {
   position: relative;
-  height: calc(100vh - 206px);
+  height: calc(100vh - 232px);
 }
 
 .import .CodeMirror {
@@ -51,7 +51,7 @@
 }
 
 .import #import-markdown-preview {
-  height: calc(100vh - 206px);
+  height: calc(100vh - 232px);
   border: 1px solid var(--spectrum-global-color-gray-100);
   padding: 12px;
   background-color: var(--hlx-import-background-color);
@@ -167,4 +167,9 @@
 
 .import #import-file-picker-container sp-picker {
   width: 100%;
+}
+
+.import #import-result {
+  height: calc(100vh - 212px);
+  overflow-y: auto;
 }
