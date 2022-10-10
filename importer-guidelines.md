@@ -4,7 +4,7 @@
 
 The general idea of the importer is pretty straight forward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file. For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file thus the next references to Markdown or docx are equivalent to "the output of the transformation process".
 
-As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. The only special case is `table` which becomes a `gridtable` element in the Markdown output and becomes a table in Word (which is the foundation for [Blocks](https://www.hlx.live/developer/markup-sections-blocks)).
+As Markdown is a pretty simple format, the DOM transformation is really basic: a `<h1>` becomes a `Heading 1`, a paragraph or text in a `<span>` or `<div>` becomes a paragraph, an `<a>` stays a link, an `<img>` an image... All styling, layout or `<div>` nesting disappears in the Markdown output. The only special case is `<table>` which becomes a `gridtable` element in the Markdown output and becomes a table in Word (which is the foundation for [Blocks](https://www.hlx.live/developer/markup-sections-blocks)).
 
 The point is really to only extract the content from the original page. And the importer primary objective is to help in digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
 
@@ -200,14 +200,17 @@ Output:
 # Hello World
 This is an example.
 
-<table>
-  <tbody>
-    <tr><th colspan="2">Metadata</th></tr>
-    <tr><td>Title</td><td>The Hello World page</td></tr>
-    <tr><td>Description</td><td>This is a really cool Hello World page.</td></tr>
-    <tr><td>Image</td><td><img src="https://www.sample.com/images/helloworld.png"></td></tr>
-  </tbody>
-</table>
++-------------------------------------------------------+
+| Metadata                                              |
++=============+=========================================+
+| Title       | The Hello World page                    |
++-------------+-----------------------------------------+
+| Description | This is a really cool Hello World page. |
++-------------+-----------------------------------------+
+| Image       | ![][image0]                             |
++-------------+-----------------------------------------+
+
+[image0]: https://www.sample.com/images/helloworld.png
 ```
 
 `WebImporter.Blocks.getMetadataBlock(document, meta);` is an helper to create the specific Metadata block.
@@ -263,18 +266,17 @@ main.prepend(table);
 Output:
 
 ```md
-<table>
-  <tbody>
-    <tr><th>Hero</th></tr>
-    <tr>
-      <td>
-        <img src="https://www.sample.com/images/helloworld.png">
-        <h1>Hello World</h1>
-      </td>
-    </tr>
-    </tbody>
-</table>
++---------------+
+| Hero          |
++===============+
+| ![][image0]   |
+|               |
+| # Hello World |
++---------------+
+
 This is an example.
+
+[image0]: https://www.sample.com/images/helloworld.png
 ```
 
 #### Special Note for `blockquote`
