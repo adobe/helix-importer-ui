@@ -4,11 +4,17 @@
 
 The general idea of the importer is pretty straight forward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file. For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file thus the next references to Markdown or docx are equivalent to "the output of the transformation process".
 
-As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. The only special case is `table` which stays a `table` HTML element in the Markdown output and become a table in Word (which is the foundation for Blocks). 
+As Markdown is a pretty simple format, the DOM transformation is really basic: a `h1` becomes a `Heading 1`, a paragraph or text in a `span` or `div` becomes a paragraph, an `a` stays a link, an `img` an image... All styling, layout or `div` nesting disappears in the Markdown output. The only special case is `table` which becomes a `gridtable` element in the Markdown output and becomes a table in Word (which is the foundation for [Blocks](https://www.hlx.live/developer/markup-sections-blocks)).
 
-The point is really to only extract the content from the original page. And the importers primary objective is to help in digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
+The point is really to only extract the content from the original page. And the importer primary objective is to help in digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
 
 To summarize: if a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
+
+The transformation file will contain a set of basic transformation rules. Writing those import transformation rules is an iterative process: you will first digest one page with a minimun of transformations. Then you should try to style this page: you will see that you might need some blocks for certain pieces. That's when you come back to your transformation rules and add more to automatically convert some areas of the DOM into blocks. Once the page is exactly what you expect in terms of content structure, try another one. You might find other blocks that could benefit from automatic transformations. Try with 2, 3 more. Then you can run the import on your whole set of pages!
+
+It is worth mentioning that this is a developer tool and requires some understanding of Javascript and the DOM. But nothing else.
+
+Reading this document before starting with content import is highly recommended. You'll find some [tips and tricks at the end](#tips-and-tricks).
 
 ### `import.js` transformation file
 
@@ -77,14 +83,15 @@ Implementation 1:
 ```js
 export default {
   transformDOM: ({ document }) => {
-    // remove header and footer from body
-    WebImporter.DOMUtils.remove(document.body, [
+    const main = document.querySelector('main');
+    // remove header and footer from main
+    WebImporter.DOMUtils.remove(main, [
       'header',
       'footer',
       '.disclaimer',
     ]);
 
-    return document.body;
+    return main;
   },
 };
 ```
@@ -95,8 +102,7 @@ Implementation 2:
 export default {
   transformDOM: ({ document }) => {
     const main = document.querySelector('main');
-    const disclaimer = main.querySelector('.disclaimer');
-    if (disclaimer) disclaimer.remove();
+    main.querySelector('header, footer, .disclaimer').forEach(el => el.remove());
     return main;
   },
 };
@@ -204,7 +210,8 @@ This is an example.
 </table>
 ```
 
-`WebImporter.Blocks.getMetadataBlock(document, meta);` is an helper to create the specific Metadata block. Another helper is available to create tables: 
+`WebImporter.Blocks.getMetadataBlock(document, meta);` is an helper to create the specific Metadata block.
+`WebImporter.DOMUtils.createTable(cells, document);` is another essential helper to create tables: 
 
 ```js
 const el = document.createElement('img');
@@ -217,9 +224,58 @@ const cells = [
   ['Image', el]
 ];
 const table = WebImporter.DOMUtils.createTable(cells, document);
+main.append(table);
 ```
 
-This code would produce almost the same table (does not deal with the colspan) than the Metadata table above.
+This code would do the same and produce the same table (almost - it does not deal yet with the colspan) than the Metadata table above.
+
+You can "move" elements in the table by simply adding the elements to the cells array:
+
+Input DOM:
+
+```html
+<html>
+  <head></head>
+  <body>
+    <main>
+      <img src="https://www.sample.com/images/hero.png">
+      <h1>Hello World</h1>
+      <p>This is an example.</p>
+    </main>
+    <footer>...</footer>
+  </body>
+</html>
+```
+
+Implementation:
+
+```js
+const title = document.querySelector('h1');
+const img = document.querySelector('img');
+const cells = [
+  ['Hero'],
+  [title, img],
+];
+const table = WebImporter.DOMUtils.createTable(cells, document);
+main.prepend(table);
+```
+
+Output:
+
+```md
+<table>
+  <tbody>
+    <tr><th>Hero</th></tr>
+    <tr>
+      <td>
+        <img src="https://www.sample.com/images/helloworld.png">
+        <h1>Hello World</h1>
+      </td>
+    </tr>
+    </tbody>
+</table>
+This is an example.
+```
 
 #### Special Note for `blockquote`
 While exporting HTML contents enclosed within [blockquote](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote) to Word docs, the `table` may not get exported correctly (like reported in https://github.com/adobe/helix-importer/issues/29). For such situations, consider removing or replacing `blockquote` enclosing the `table`.
@@ -340,18 +396,19 @@ While more documentation will be written, you can already find how to use them v
 - https://github.com/adobe/helix-importer/blob/main/test/utils/DOMUtils.spec.js
 - https://github.com/adobe/helix-importer/blob/main/test/utils/Blocks.spec.js
 
-## Security and memory
+## Proxy, security and memory
 
 When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
+
 When running `hlx import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
 
-This is a generic solution that might not work in some cases, some sites are pretty imaginative in how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Franklin team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
+This is a generic solution that works in 90% of the cases. But some sites are pretty imaginative on how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Franklin team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
 ### Images
 
-When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus. When images are stored on the same host, this is usually not an issue but in a lot of cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (todo: create a helper for it or even integrate to the process): 
+When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus. When images are stored on the same host, this is usually not an issue but in many cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (pending todo to integrate the code to the importer itself - see https://github.com/adobe/helix-importer-ui/issues/42):
 
 ```js
 const makeProxySrcs = (main, host) => {
@@ -381,4 +438,18 @@ With Javascript enabled, things become more complicated for the browser. It depe
 
 Having Javascript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create a small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
 
-We are also working on a cli version of the importer (see https://github.com/adobe/helix-importer/issues/23) where memory can be handled properly.
+We might also work on a cli version of the importer (see https://github.com/adobe/helix-importer/issues/23) where memory could be handled properly.
+
+## Tips and tricks
+
+Every new project has its own collection of new use cases which might be totally new. Here is a collection of tips and tricks based on things we have seens so far or known limitations.
+
+- Update the host of all the links during the import to match "https://main--<repo>--<ref>.hlx.page". This allow the naviguation on preview / live and the product domain.
+- In most of the cases, importing the homepage is useless because it is unique and different from the rest. Find sets of pages that are similar, this is where it makes most sense to write some code to import them.
+- Use the browser `console.log`, there might be some explicit import errors.
+- Use the import opportunity to append the Metadata block to all your pages - they tend to be forgotten but are key for SEO.
+- Linked images are not supported by Online Word thus they will be converted to image + link in Word.
+- Reuse the DOM elements from the orignal page, no need to re-create complete DOM structures, especially if the Markdown is what you need. Example: Text in a `div` will become a paragraph, no need to create a `p` tag and replace the `div`. More generally, the DOM can be dirty, as long as the output Markdown looks as expected, it does not matter.
+- If you import multiple page "types" for the project, you cannot either handle them in the same `import.js` file or have one `import-<type>.js` file per type (or any filename convention you lie). Use the UI options to point to a different import filename.
+- 
+

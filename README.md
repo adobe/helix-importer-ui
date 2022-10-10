@@ -18,18 +18,7 @@ The `import` command clones the helix-import-ui repo for you.
 
 In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://wwww.host_of_pages_to_be_imported.com/page_1.html}) and hit the import button. The page(s) will be loaded in the central frame and the Markdown transfomation will happen in the right frame. Result of the transformation will be saved as a Word document on your local file system (target folder is asked and tool needs permissions to write).
 
-### Transformation file
-
-A default html to Markdown is applied by you can / need to provide your own. Initially the import transformation file is fetched at http://localhost:3001/tools/importer/import.js (can be changed in the options). Create the file using the following templates:
-
-- if you need to create a single md/docx file out from each input page, you can use this template: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
-- if you need to crate multiple files md/docx out from each input page, you must use this template: https://gist.github.com/kptdobe/7bf50b69194884171b12874fc5c74588
-
-Note that in the current state, the 2 templates are doing the exact same thing. But the second one uses the `transform` method and the return array contain more than one element. See guidelines for an example.
-
-### Guidelines
-
-You can find some guidelines, best practices and code samples in the [Importer Guidelines](./importer-guidelines.md).
+You can find all the details regarding the import process in the [Importer Guidelines](./importer-guidelines.md).
 
 ### Options
 
