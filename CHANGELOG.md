@@ -1,3 +1,15 @@
+# [1.17.0](https://github.com/adobe/helix-importer-ui/compare/v1.16.3...v1.17.0) (2022-11-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-markdown-support to v6 ([#46](https://github.com/adobe/helix-importer-ui/issues/46)) ([9f8dd6a](https://github.com/adobe/helix-importer-ui/commit/9f8dd6a163cb9cf1a93746632b8f0925e0b2842d))
+
+
+### Features
+
+* update to latest helix-importer ([#49](https://github.com/adobe/helix-importer-ui/issues/49)) ([6452086](https://github.com/adobe/helix-importer-ui/commit/6452086cda23bc6020629ae4d432af852945444c))
+
 ## [1.16.3](https://github.com/adobe/helix-importer-ui/compare/v1.16.2...v1.16.3) (2022-10-29)
 
 
