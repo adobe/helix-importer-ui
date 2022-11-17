@@ -12,8 +12,8 @@
 
 import { toHast as mdast2hast, defaultHandlers } from 'mdast-util-to-hast';
 import { raw } from 'hast-util-raw';
-// eslint-disable-next-line import/extensions
-import { mdast2hastGridTableHandler, remarkGridTable, TYPE_TABLE } from '@adobe/helix-markdown-support/gridtable';
+import remarkGridTable from '@adobe/remark-gridtables';
+import { mdast2hastGridTablesHandler, TYPE_TABLE } from '@adobe/mdast-util-gridtables';
 import { toHtml } from 'hast-util-to-html';
 import rehypeFormat from 'rehype-format';
 import { unified } from 'unified';
@@ -32,7 +32,7 @@ export default function md2html(md) {
   const hast = mdast2hast(mdast, {
     handlers: {
       ...defaultHandlers,
-      [TYPE_TABLE]: mdast2hastGridTableHandler(),
+      [TYPE_TABLE]: mdast2hastGridTablesHandler(),
     },
     allowDangerousHtml: true,
   });
