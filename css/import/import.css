@@ -10,8 +10,10 @@
   --hlx-import-tertiary-heading-color: #666;
   --hlx-import-background-color: #fff;
   --hlx-import-table-head-background-color: #F5CBCD;
+
   /* FONTS */
   --hlx-import-font-family: 'Arial', sans-serif;
+
   /* FONT SIZES */
   --hlx-import-body-font-size: 14px;
   --hlx-import-h1-font-size: 25px;
@@ -27,6 +29,7 @@
   height: calc(100vh - 232px);
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .import .CodeMirror {
   position: absolute;
   top: 0;
@@ -35,11 +38,12 @@
   right: 0;
 }
 
-.import .cm-s-base16-dark.CodeMirror,
-.import .cm-s-base16-dark .CodeMirror-gutters {
+/* stylelint-disable-next-line selector-class-pattern */
+.import .cm-s-base16-dark.CodeMirror, .import .cm-s-base16-dark .CodeMirror-gutters {
   background-color: var(--spectrum-global-color-gray-75);
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
 .import .cm-s-base16-dark.CodeMirror {
   border: 1px solid var(--spectrum-global-color-gray-100);
 }
