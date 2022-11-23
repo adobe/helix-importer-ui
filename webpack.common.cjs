@@ -38,6 +38,7 @@ const importer = {
       worker_threads: false,
       'stream/web': false,
       url: false,
+      perf_hooks: false,
     },
     alias: {
       'fs-extra': 'fs',
