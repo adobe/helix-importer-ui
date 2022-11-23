@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/adobe/helix-importer-ui/compare/v1.18.0...v1.19.0) (2022-11-23)
+
+
+### Features
+
+* show project name and version ([#58](https://github.com/adobe/helix-importer-ui/issues/58)) ([74239cf](https://github.com/adobe/helix-importer-ui/commit/74239cfb6fd30f58aa63d8edcb088fbb4b553e33))
+
 # [1.18.0](https://github.com/adobe/helix-importer-ui/compare/v1.17.3...v1.18.0) (2022-11-23)
 
 
