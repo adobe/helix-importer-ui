@@ -16,7 +16,7 @@ SIDENAV_ITEMS?.forEach((item) => {
 async function updateVersion() {
   const res = await fetch('./package.json');
   const json = await res.json();
-  GITHUB_LINK.innerHTML += `v${json.version}`;
+  GITHUB_LINK.innerHTML += `${json.name}@${json.version}`;
 }
 
 updateVersion();
