@@ -45,11 +45,7 @@ const DOWNLOAD_BINARY_TYPES = ['pdf'];
 
 const ui = {};
 const config = {};
-const importStatus = {
-  imported: 0,
-  total: 0,
-  rows: [],
-};
+const importStatus = {};
 
 let dirHandle = null;
 
@@ -138,10 +134,11 @@ const clearResultPanel = () => {
   BULK_URLS_HEADING.innerText = 'Importing...';
 };
 
-const clearImportStatus = () => {
+const initImportStatus = () => {
   importStatus.imported = 0;
   importStatus.total = 0;
   importStatus.rows = [];
+  importStatus.extraCols = [];
 };
 
 const disableProcessButtons = () => {
@@ -171,7 +168,9 @@ const getProxyURLSetup = (url, origin) => {
 };
 
 const postImportProcess = async (results, originalURL) => {
-  await asyncForEach(results, async ({ docx, filename, path }) => {
+  await asyncForEach(results, async ({
+    docx, filename, path, report,
+  }) => {
     const data = {
       status: 'Success',
       url: originalURL,
@@ -183,6 +182,16 @@ const postImportProcess = async (results, originalURL) => {
       await saveFile(dirHandle, filename, docx);
       data.docx = filename;
     }
+
+    if (report) {
+      Object.keys(report).forEach((key) => {
+        if (!importStatus.extraCols.includes(key)) {
+          importStatus.extraCols.push(key);
+        }
+      });
+      data.report = report;
+    }
+
     importStatus.rows.push(data);
   });
 };
@@ -222,7 +231,7 @@ const attachListeners = () => {
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
-    clearImportStatus();
+    initImportStatus();
 
     if (IS_BULK) {
       clearResultPanel();
@@ -377,20 +386,35 @@ const attachListeners = () => {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Sheet 1');
 
+    const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
+
+    // create Excel auto Filters for the first row / header
     worksheet.autoFilter = {
       from: 'A1',
-      to: 'E1',
+      to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
     };
 
     worksheet.addRows([
-      ['URL', 'path', 'docx', 'status', 'redirect'],
-    ].concat(importStatus.rows.map(({
-      url,
-      path,
-      docx,
-      status,
-      redirect,
-    }) => [url, path, docx || '', status, redirect || ''])));
+      headers,
+    ].concat(importStatus.rows.map((row) => {
+      const {
+        url, path, docx, status, redirect, report,
+      } = row;
+      const extra = [];
+      if (report) {
+        importStatus.extraCols.forEach((col) => {
+          const e = report[col];
+          if (e) {
+            if (typeof e === 'string') {
+              extra.push(report[col]);
+            } else {
+              extra.push(JSON.stringify(report[col]));
+            }
+          }
+        });
+      }
+      return [url, path, docx || '', status, redirect || ''].concat(extra);
+    })));
     const buffer = await workbook.xlsx.writeBuffer();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
