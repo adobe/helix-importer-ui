@@ -1,3 +1,10 @@
+## [1.19.9](https://github.com/adobe/helix-importer-ui/compare/v1.19.8...v1.19.9) (2023-01-05)
+
+
+### Bug Fixes
+
+* do not ignore query parameters ([#71](https://github.com/adobe/helix-importer-ui/issues/71)) ([031a03a](https://github.com/adobe/helix-importer-ui/commit/031a03a1d9b39c11f0cb913644e771e8ef632997))
+
 ## [1.19.8](https://github.com/adobe/helix-importer-ui/compare/v1.19.7...v1.19.8) (2023-01-01)
 
 
