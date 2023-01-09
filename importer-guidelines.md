@@ -382,6 +382,42 @@ Note:
 - be careful with the DOM elements you are working with. You always work on the same document thus you may destruct elements for one output which may have an inpact on the other outputs.
 - you may have as many outputs as you want (limit not tested yet).
 
+### Reporting back
+
+The Importer UI offers a "Download import report" button (same behavior in the `Import - Workbench` and `Import - Bulk` UIs). The XLSX report generated gives you the list of URLs processed, the status of the import (might have failed) and some explanations on why it failed. You can add some extra columns to that report. For that, you have to use the `transform` method, presented in the [Multiple Output](./importer-guidelines.md#multiple-output) section above (for the obvious reason you can define the properties of the output object). You do not have to return mutliple objects, one object or an array of one object is enough (migrating from the usage of `transformDOM` / `generateDocumentPath` is straight forward).
+
+You can do something like:
+
+```js
+{
+  transform: ({ document, params }) => {
+    const main = document.querySelector('main');
+
+    WebImporter.DOMUtils.remove(main, [
+      '.hero',
+    ]);
+
+    const listOfAllImages = [...main.querySelectorAll('img')].map((img) => img.src);
+
+    return [{
+      element: main,
+      path: '/index',
+      report: {
+        title: document.title,
+        "List Of All Images": listOfAllImages
+      }
+    }];
+  },
+}
+```
+
+For each imported entry, this will add 2 columns to the report:
+- `title` column: the document title
+- `List Of All Images`column: a JSON stringified value of the list of all the images in the `main` element,
+
+The report extra columns will be created based on the top level properties in the `report` object. We recommand the value to be a string for easiness to consume in Excel but, in theory, it can be anything that can be `JSON.stringify`.
+You can be creative and customise the report as needed.
+
 ### More samples
 
 Sites in the https://github.com/hlxsites/ organization have all be imported. There are many different implementations that cover a lot of use cases.
