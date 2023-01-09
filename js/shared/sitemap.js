@@ -25,7 +25,7 @@ async function loadSitemap(sitemapURL, origin, host, config = {}) {
     let urls = [];
     const promises = subSitemaps.map((loc) => new Promise((resolve) => {
       const subSitemapURL = new URL(loc.textContent, origin);
-      loadSitemap(subSitemapURL.pathname, origin, host, config).then((result) => {
+      loadSitemap(subSitemapURL.toString(), origin, host, config).then((result) => {
         urls = urls.concat(result);
         resolve(true);
       });
