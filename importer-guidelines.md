@@ -394,31 +394,48 @@ You can do something like:
     const main = document.querySelector('main');
 
     const listOfAllImages = [...main.querySelectorAll('img')].map((img) => img.src);
+    const listOfAllMeta = [...document.querySelectorAll('meta')].map((meta) => { 
+      const name = meta.getAttribute('name') || meta.getAttribute('property');
+      if (name) {
+        return { name, content: meta.content }
+      }
+      return null;
+    }).filter((meta) => meta);
 
     return [{
       element: main,
       path: new URL(params.originalURL).pathname.replace(/\/$/, '').replace(/\.html$/, ''),
       report: {
         title: document.title,
-        "List Of All Images": listOfAllImages
-      }
+        "List of images": listOfAllImages,
+        metadata: listOfAllMeta,
+      },
     }];
   },
 }
 ```
 
-For each imported entry, this will add 2 columns to the report:
+For each imported entry, a `docx` file is created and 3 columns are added to the report:
 - `title` column: the document title
-- `List Of All Images`column: a JSON stringified value of the list of all the images in the `main` element,
+- `List of images`column: a JSON stringified value of the list of all the images in the `main` element
+- `metadata` column: a JSON stringified value of the list of all the metadata in the document
 
-The report extra columns will be created based on the top level properties in the `report` object. We recommand the value to be a string for easiness to consume in Excel but, in theory, it can be anything that can be `JSON.stringify`.
-You can be creative and customise the report as needed.
+The report would look like this:
+
+| URL | path | docx | status | redirect | title | List of images | metadata |
+|-------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
+| https://www.sample.com/ | / | | Success | | Sample page title | ["https://www.sample.com/img1", "https://www.sample.com/img2"] | [{"name":"viewport","content":"width=device-width,initial-scale=1"},{"name":"description","content":"Sample site homepage description"},...] |
+| https://www.sample.com/page1.html | /page1 | | Success | | Sample page 1 title | ["https://www.sample.com/img3", "https://www.otherdomain.com/img"] | [{"name":"viewport","content":"width=device-width,initial-scale=1"},{"name":"description","content":"Sample site page 1 description"},...] |
+
+The report extra columns are created based on the top level properties in the `report` object. We recommand the value to be a string for easiness to consume in Excel but, in theory, it can be anything that can be `JSON.stringify`.
+
+Depending on your Excel skills and your needs you can be creative and easily customise the report.
 
 ### Collect data vs importing content
 
 The report capability previously described can be used as another feature: collect site data in one Excel file. The `element` property of the returned object(s) is optional, i.e. if you omit it, you can create an import that will only collect some data on each page and report them back in the report file.
 
-You can do something like:
+With the same code as above, just remove the `element` property of the returned object:
 
 ```js
 {
@@ -435,10 +452,12 @@ You can do something like:
     }).filter((meta) => meta);
 
     return [{
+      // do not return an element
+      // element: main, 
       path: new URL(params.originalURL).pathname.replace(/\/$/, '').replace(/\.html$/, ''),
       report: {
         title: document.title,
-        images: listOfAllImages,
+        "List of images": listOfAllImages,
         metadata: listOfAllMeta,
       },
     }];
@@ -446,8 +465,9 @@ You can do something like:
 }
 ```
 
-For each URL of the import, this will not create a `docx` per URL but only feed the report with extra columns for each row / URL imported: `title`, `images` and `meta` columns will be appended to the report.
-With this method, you can construct an `xlsx` spreadsheet with the site data you want to collect without creating the corresponding `docx` files. If you provide an `element`, you can do both.
+For each URL of the import, this will NOT create a `docx` per URL but only feed the report with extra columns for each row / URL imported: `title`, `List of images` and `meta` columns will be appended to the report.
+
+With this method, you can construct an `xlsx` spreadsheet with the site data you want to collect without creating the corresponding `docx` files.
 
 ### More samples
 
