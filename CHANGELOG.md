@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/adobe/helix-importer-ui/compare/v1.19.11...v1.20.0) (2023-01-09)
+
+
+### Features
+
+* add extra report columns ([859ebb8](https://github.com/adobe/helix-importer-ui/commit/859ebb8676a7a982598ca1ee7bdffbac5284dd7d))
+
 ## [1.19.11](https://github.com/adobe/helix-importer-ui/compare/v1.19.10...v1.19.11) (2023-01-08)
 
 
