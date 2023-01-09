@@ -406,7 +406,14 @@ const attachListeners = () => {
           const e = report[col];
           if (e) {
             if (typeof e === 'string') {
-              extra.push(report[col]);
+              if (e.startsWith('=')) {
+                extra.push({
+                  formula: report[col].replace(/=/, '_xlfn.'),
+                  value: '', // cannot compute a default value
+                });
+              } else {
+                extra.push(report[col]);
+              }
             } else {
               extra.push(JSON.stringify(report[col]));
             }

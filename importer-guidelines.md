@@ -431,6 +431,36 @@ The report extra columns are created based on the top level properties in the `r
 
 Depending on your Excel skills and your needs you can be creative and easily customise the report.
 
+#### Advanced reporting trick
+
+You can create Excel formulas directly in your import.js! The value of the report property simply needs to start with `=`, like in Excel cell.
+
+Useful example:
+
+```js
+  transform: ({ document, params }) => {
+    return [{
+      path: new URL(params.originalURL).pathname.replace(/\/$/, '').replace(/\.html$/, ''),
+      report: {
+        title: document.title,
+        'hlx.page': '=HYPERLINK(CONCATENATE("https://main--repo--owner.hlx.page",INDIRECT(ADDRESS(ROW(),2))))',
+        'hlx.live': '=HYPERLINK(CONCATENATE("https://main--repo--owner.hlx.live",INDIRECT(ADDRESS(ROW(),2))))',
+      },
+    }];
+  },
+```
+
+If you change repo and owner in the 2 host urls, this computes your project specific `hlx.page` and `hlx.live` urls for each of the imported URL.
+
+Notes: 
+- `ROW()` is needed because you do not know the current row letter
+- `ADDRESS(ROW(),2)` computes the address of the cell: current row / second column (the path column) - e.g. `$B$2`
+- `INDIRECT(...)` reads the value of the cell computed above
+- Any error in a formula might completely break the Excel spreadsheet.
+- For some function, Excel adds the [Implicit intersection operator: @](https://support.microsoft.com/en-us/office/implicit-intersection-operator-ce3be07b-0101-4450-a24e-c1c999be2b34) which breaks the formula. You then need to use another function.
+
+This is more of a "hack" than a real solution and must be used carefully. You can always create the formula in the final Excel spreadsheet.
+
 ### Collect data vs importing content
 
 The report capability previously described can be used as another feature: collect site data in one Excel file. The `element` property of the returned object(s) is optional, i.e. if you omit it, you can create an import that will only collect some data on each page and report them back in the report file.
