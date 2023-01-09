@@ -1,3 +1,10 @@
+# [1.21.0](https://github.com/adobe/helix-importer-ui/compare/v1.20.0...v1.21.0) (2023-01-09)
+
+
+### Features
+
+* document how to collect site data without creating docx files ([09cbb03](https://github.com/adobe/helix-importer-ui/commit/09cbb03578de59d855976dfa18a4bb91ab009c73))
+
 # [1.20.0](https://github.com/adobe/helix-importer-ui/compare/v1.19.11...v1.20.0) (2023-01-09)
 
 
