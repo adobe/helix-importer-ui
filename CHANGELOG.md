@@ -1,3 +1,10 @@
+# [1.22.0](https://github.com/adobe/helix-importer-ui/compare/v1.21.0...v1.22.0) (2023-01-09)
+
+
+### Features
+
+* support for Excel formulas ([#77](https://github.com/adobe/helix-importer-ui/issues/77)) ([608c52b](https://github.com/adobe/helix-importer-ui/commit/608c52bb1d1f5d9611aef724df6f209c2c306400))
+
 # [1.21.0](https://github.com/adobe/helix-importer-ui/compare/v1.20.0...v1.21.0) (2023-01-09)
 
 
