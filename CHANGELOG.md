@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/adobe/helix-importer-ui/compare/v1.23.0...v1.23.1) (2023-01-24)
+
+
+### Bug Fixes
+
+* round image w/h and improve logging ([#91](https://github.com/adobe/helix-importer-ui/issues/91)) ([381f97e](https://github.com/adobe/helix-importer-ui/commit/381f97ecef0ae304168f9127731ee69f73c27815))
+
 # [1.23.0](https://github.com/adobe/helix-importer-ui/compare/v1.22.7...v1.23.0) (2023-01-23)
 
 
