@@ -49,18 +49,25 @@ const options = {
       }
     }
 
+    width = Math.round(width);
+    height = Math.round(height);
+
     // note: OffscreenCanvas is not supported on safari
     const canvas = new OffscreenCanvas(width, height);
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(img, 0, 0);
-    const newBlob = await canvas.convertToBlob();
-    console.log('converted', type, 'to png', src, width, height, blob.size);
-    return {
-      data: newBlob.arrayBuffer(),
-      width,
-      height,
-      type: 'image/png',
-    };
+    try {
+      ctx.drawImage(img, 0, 0);
+      const newBlob = await canvas.convertToBlob();
+      return {
+        data: newBlob.arrayBuffer(),
+        width,
+        height,
+        type: 'image/png',
+      };
+    } catch (e) {
+      console.warn(`Cannot convert image ${src} to png. It might corrupt the Word document and you should probably remove it from the DOM.`);
+      return null;
+    }
   },
 };
 
