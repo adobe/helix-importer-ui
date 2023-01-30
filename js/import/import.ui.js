@@ -126,10 +126,17 @@ const updateImporterUI = (results, originalURL) => {
 
     const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
     let name = 'sp-icon-checkmark-circle';
-    if (status === 'redirect') name = 'sp-icon-alias';
-    if (status === 'error') name = 'sp-icon-alert';
+    let label = 'Success';
+    if (status === 'redirect') {
+      name = 'sp-icon-alias';
+      label = 'Redirect';
+    } else if (status === 'error') {
+      name = 'sp-icon-alert';
+      label = 'Error';
+    }
 
     const icon = document.createElement(name);
+    icon.setAttribute('label', label);
     li.append(icon);
 
     BULK_URLS_LIST.append(li);
@@ -239,7 +246,7 @@ const attachListeners = () => {
       url: params.originalURL,
       status: `Error: ${err.message}`,
     });
-    
+
     updateImporterUI([{ status: 'error' }], originalURL);
   });
 
