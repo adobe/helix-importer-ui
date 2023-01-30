@@ -18,7 +18,7 @@ The `import` command clones the helix-import-ui repo for you.
 
 In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://wwww.host_of_pages_to_be_imported.com/page_1.html}) and hit the import button. The page(s) will be loaded in the central frame and the Markdown transfomation will happen in the right frame. Result of the transformation will be saved as a Word document on your local file system (target folder is asked and tool needs permissions to write).
 
-You can find all the details regarding the import process in the [Importer Guidelines](./importer-guidelines.md).
+PLEASE DO READ THE [Importer Guidelines](./importer-guidelines.md) before starting any import.
 
 ### Options
 
