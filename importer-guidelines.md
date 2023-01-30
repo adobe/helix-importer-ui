@@ -525,6 +525,12 @@ This is a generic solution that works in 90% of the cases. But some sites are pr
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
+You can also use Chrome extensions like:
+- [Allow CORS: Access-Control-Allow-Origin](https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf)
+- [ModHeader - Modify HTTP headers](https://chrome.google.com/webstore/detail/modheader-modify-http-hea/idgpnmonknjnojddfkpgkljpfnnfcklj)
+
+to disable CORS headers or set a custom cookie / referer for some of the requests made by the site.
+
 ### Images
 
 When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus. When images are stored on the same host, this is usually not an issue but in many cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (pending todo to integrate the code to the importer itself - see https://github.com/adobe/helix-importer-ui/issues/42):
