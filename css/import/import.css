@@ -177,3 +177,22 @@
   height: calc(100vh - 212px);
   overflow-y: auto;
 }
+
+.import #import-result sp-icon-checkmark-circle,
+.import #import-result sp-icon-alias,
+.import #import-result sp-icon-alert {
+  margin-bottom: -4px;
+  padding-left: 4px;
+}
+
+.import #import-result sp-icon-checkmark-circle {
+  color: rgb(0 125 78);
+}
+
+.import #import-result sp-icon-alias {
+  color: rgb(3 103 224);
+}
+
+.import #import-result sp-icon-alert {
+  color: rgb(215 25 19);
+}

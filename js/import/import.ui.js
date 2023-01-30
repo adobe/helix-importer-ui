@@ -124,6 +124,14 @@ const updateImporterUI = (results, originalURL) => {
     link.innerHTML = originalURL;
     li.append(link);
 
+    const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
+    let name = 'sp-icon-checkmark-circle';
+    if (status === 'redirect') name = 'sp-icon-alias';
+    if (status === 'error') name = 'sp-icon-alert';
+
+    const icon = document.createElement(name);
+    li.append(icon);
+
     BULK_URLS_LIST.append(li);
     BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}):`;
   }
@@ -220,6 +228,9 @@ const attachListeners = () => {
   });
 
   config.importer.addErrorListener(({ url, error: err, params }) => {
+    const frame = getContentFrame();
+    const { originalURL } = frame.dataset;
+
     // eslint-disable-next-line no-console
     console.error(`Error importing ${url}: ${err.message}`, err);
     alert.error(`Error importing ${url}: ${err.message}`);
@@ -228,6 +239,8 @@ const attachListeners = () => {
       url: params.originalURL,
       status: `Error: ${err.message}`,
     });
+    
+    updateImporterUI([{ status: 'error' }], originalURL);
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -289,6 +302,7 @@ const attachListeners = () => {
               status: 'Redirect',
               redirect,
             });
+            updateImporterUI([{ status: 'redirect' }], url);
             processNext();
           } else {
             const contentType = res.headers.get('content-type');
@@ -350,7 +364,7 @@ const attachListeners = () => {
                 status: 'Success',
                 path,
               });
-              updateImporterUI(null, url);
+              updateImporterUI([{ status: 'success' }], url);
               processNext();
             }
           }
