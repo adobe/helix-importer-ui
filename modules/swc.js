@@ -6,6 +6,7 @@ import '@spectrum-web-components/theme/sp-theme.js';
 
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-edit.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-anchor-select.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-alias.js';
 
 import '@spectrum-web-components/tabs/sp-tabs.js';
 import '@spectrum-web-components/tabs/sp-tab.js';
