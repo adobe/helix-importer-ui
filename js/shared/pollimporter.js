@@ -26,41 +26,45 @@ export default class PollImporter {
     this.#init();
   }
 
-  async #init() {
+  async #loadTransform() {
     const $this = this;
     const loadModule = async (projectTransformFileURL) => {
       try {
         const mod = await import(projectTransformFileURL);
         if (mod.default) {
-          this.projectTransform = mod.default;
+          $this.projectTransform = mod.default;
         }
       } catch (err) {
         // eslint-disable-next-line no-console
         console.warn('failed to load project transform module', err);
+        this.projectTransform = null;
       }
     };
-    const poll = async () => {
-      const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
-      try {
-        const res = await fetch(projectTransformFileURL);
-        const body = await res.text();
 
-        if (body !== $this.lastProjectTransformFileBody) {
-          $this.lastProjectTransformFileBody = body;
-          await loadModule(projectTransformFileURL);
-          if ($this.transformation.url && $this.transformation.document) {
-            $this.transform();
-          }
-        }
-      } catch (err) {
-        if ($this.lastProjectTransformFileBody !== 'nofilefound') {
-          // eslint-disable-next-line no-console
-          console.warn('failed to poll project transform module', err);
-          $this.lastProjectTransformFileBody = 'nofilefound';
-          if ($this.transformation.url && $this.transformation.document) {
-            $this.transform();
-          }
-        }
+    const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
+    try {
+      const res = await fetch(projectTransformFileURL);
+      const body = await res.text();
+
+      if (body !== $this.lastProjectTransformFileBody) {
+        this.lastProjectTransformFileBody = body;
+        await loadModule(projectTransformFileURL);
+      }
+    } catch (err) {
+      if (this.lastProjectTransformFileBody !== 'nofilefound') {
+        // eslint-disable-next-line no-console
+        console.warn('failed to poll project transform module', err);
+        this.lastProjectTransformFileBody = 'nofilefound';
+      }
+    }
+  }
+
+  async #init() {
+    const $this = this;
+    const poll = async () => {
+      await this.#loadTransform();
+      if ($this.transformation.url && $this.transformation.document) {
+        $this.transform();
       }
     };
 
@@ -134,8 +138,9 @@ export default class PollImporter {
     };
   }
 
-  setImportFileURL(importFileURL) {
+  async setImportFileURL(importFileURL) {
     this.config.importFileURL = importFileURL;
+    await this.#loadTransform();
   }
 
   addListener(listener) {
