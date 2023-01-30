@@ -1,3 +1,10 @@
+# [1.24.0](https://github.com/adobe/helix-importer-ui/compare/v1.23.7...v1.24.0) (2023-01-30)
+
+
+### Features
+
+* enhance bulk UI ([#98](https://github.com/adobe/helix-importer-ui/issues/98)) ([6604655](https://github.com/adobe/helix-importer-ui/commit/6604655a2265decd668d2acd1ba986573845634a))
+
 ## [1.23.7](https://github.com/adobe/helix-importer-ui/compare/v1.23.6...v1.23.7) (2023-01-29)
 
 
