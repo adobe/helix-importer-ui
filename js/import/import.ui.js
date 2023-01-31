@@ -221,23 +221,24 @@ const createImporter = () => {
 
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
-const sleep = (ms) => {
-  return new Promise(
-    (resolve) => {
-      setTimeout(resolve, ms);
-    },
-  );
-};
+const sleep = (ms) => new Promise(
+  (resolve) => {
+    setTimeout(resolve, ms);
+  },
+);
 
 const smartScroll = async (window) => {
   let scrolledOffset = 0;
-  while (window.document.body.scrollHeight > scrolledOffset) {
+  let maxLoops = 4;
+  while (maxLoops > 0 && window.document.body.scrollHeight > scrolledOffset) {
     const scrollTo = window.document.body.scrollHeight;
     window.scrollTo({ left: 0, top: scrollTo, behavior: 'smooth' });
     scrolledOffset = scrollTo;
+    maxLoops -= 1;
+    // eslint-disable-next-line no-await-in-loop
     await sleep(250);
   }
-}
+};
 
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
