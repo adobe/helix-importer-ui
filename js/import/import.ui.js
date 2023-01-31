@@ -221,6 +221,24 @@ const createImporter = () => {
 
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
+const sleep = (ms) => {
+  return new Promise(
+    (resolve) => {
+      setTimeout(resolve, ms);
+    },
+  );
+};
+
+const smartScroll = async (window) => {
+  let scrolledOffset = 0;
+  while (window.document.body.scrollHeight > scrolledOffset) {
+    const scrollTo = window.document.body.scrollHeight;
+    window.scrollTo({ left: 0, top: scrollTo, behavior: 'smooth' });
+    scrolledOffset = scrollTo;
+    await sleep(250);
+  }
+}
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
@@ -327,24 +345,28 @@ const attachListeners = () => {
                 const includeDocx = !!dirHandle;
 
                 if (config.fields['import-scroll-to-bottom']) {
-                  frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: 'smooth' });
+                  await smartScroll(frame.contentWindow.window);
                 }
 
-                window.setTimeout(async () => {
-                  const { originalURL, replacedURL } = frame.dataset;
-                  if (frame.contentDocument) {
-                    config.importer.setTransformationInput({
-                      url: replacedURL,
-                      document: frame.contentDocument,
-                      includeDocx,
-                      params: { originalURL },
-                    });
-                    await config.importer.transform();
-                  }
+                await sleep(config.fields['import-pageload-timeout'] || 100);
 
-                  const event = new Event('transformation-complete');
-                  frame.dispatchEvent(event);
-                }, config.fields['import-pageload-timeout'] || 100);
+                if (config.fields['import-scroll-to-bottom']) {
+                  await smartScroll(frame.contentWindow.window);
+                }
+
+                const { originalURL, replacedURL } = frame.dataset;
+                if (frame.contentDocument) {
+                  config.importer.setTransformationInput({
+                    url: replacedURL,
+                    document: frame.contentDocument,
+                    includeDocx,
+                    params: { originalURL },
+                  });
+                  await config.importer.transform();
+                }
+
+                const event = new Event('transformation-complete');
+                frame.dispatchEvent(event);
               };
 
               frame.addEventListener('load', onLoad);
