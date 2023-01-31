@@ -339,6 +339,11 @@ const attachListeners = () => {
                       includeDocx,
                       params: { originalURL },
                     });
+
+                    if (config.importer.projectTransform.postLoadScript) {
+                      await config.importer.projectTransform.postLoadScript(frame.contentDocument);
+                    }
+
                     await config.importer.transform();
                   }
 
