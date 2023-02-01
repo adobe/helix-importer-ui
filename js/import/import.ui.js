@@ -313,13 +313,13 @@ const attachListeners = () => {
     const { originalURL } = frame.dataset;
 
     updateImporterUI(results, originalURL);
-    postSuccessfulStep(results, originalURL);
-    postImportStep();
+    await postSuccessfulStep(results, originalURL);
+    await postImportStep();
 
     alert.success(`Import of page ${originalURL} completed.`);
   });
 
-  config.importer.addErrorListener(({ url, error: err, params }) => {
+  config.importer.addErrorListener(async ({ url, error: err, params }) => {
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
 
@@ -333,7 +333,7 @@ const attachListeners = () => {
     });
 
     updateImporterUI([{ status: 'error' }], originalURL);
-    postImportStep();
+    await postImportStep();
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
