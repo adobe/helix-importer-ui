@@ -1,3 +1,10 @@
+# [1.26.0](https://github.com/adobe/helix-importer-ui/compare/v1.25.0...v1.26.0) (2023-02-01)
+
+
+### Features
+
+* auto save report in directory in bulk mode ([#104](https://github.com/adobe/helix-importer-ui/issues/104)) ([35f37c6](https://github.com/adobe/helix-importer-ui/commit/35f37c62d9dc8b11a98f17c23231bbae87d7218b))
+
 # [1.25.0](https://github.com/adobe/helix-importer-ui/compare/v1.24.1...v1.25.0) (2023-02-01)
 
 
