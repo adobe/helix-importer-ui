@@ -42,6 +42,7 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 const DOWNLOAD_BINARY_TYPES = ['pdf'];
+const REPORT_FILENAME = 'import-report.xlsx';
 
 const ui = {};
 const config = {};
@@ -193,7 +194,7 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
-const postImportProcess = async (results, originalURL) => {
+const postSuccessfulStep = async (results, originalURL) => {
   await asyncForEach(results, async ({
     docx, filename, path, report,
   }) => {
@@ -220,6 +221,59 @@ const postImportProcess = async (results, originalURL) => {
 
     importStatus.rows.push(data);
   });
+};
+
+const autoSaveReport = () => dirHandle && IS_BULK;
+
+const getReport = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Sheet 1');
+
+  const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
+
+  // create Excel auto Filters for the first row / header
+  worksheet.autoFilter = {
+    from: 'A1',
+    to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
+  };
+
+  worksheet.addRows([
+    headers,
+  ].concat(importStatus.rows.map((row) => {
+    const {
+      url, path, docx, status, redirect, report,
+    } = row;
+    const extra = [];
+    if (report) {
+      importStatus.extraCols.forEach((col) => {
+        const e = report[col];
+        if (e) {
+          if (typeof e === 'string') {
+            if (e.startsWith('=')) {
+              extra.push({
+                formula: report[col].replace(/=/, '_xlfn.'),
+                value: '', // cannot compute a default value
+              });
+            } else {
+              extra.push(report[col]);
+            }
+          } else {
+            extra.push(JSON.stringify(report[col]));
+          }
+        }
+      });
+    }
+    return [url, path, docx || '', status, redirect || ''].concat(extra);
+  })));
+
+  return workbook.xlsx.writeBuffer();
+};
+
+const postImportStep = async () => {
+  if (autoSaveReport()) {
+    // save report file in the folder
+    await saveFile(dirHandle, REPORT_FILENAME, await getReport());
+  }
 };
 
 const createImporter = () => {
@@ -259,7 +313,8 @@ const attachListeners = () => {
     const { originalURL } = frame.dataset;
 
     updateImporterUI(results, originalURL);
-    postImportProcess(results, originalURL);
+    postSuccessfulStep(results, originalURL);
+    postImportStep();
 
     alert.success(`Import of page ${originalURL} completed.`);
   });
@@ -278,6 +333,7 @@ const attachListeners = () => {
     });
 
     updateImporterUI([{ status: 'error' }], originalURL);
+    postImportStep();
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -439,50 +495,11 @@ const attachListeners = () => {
   });
 
   DOWNLOAD_IMPORT_REPORT_BUTTON.addEventListener('click', (async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet 1');
-
-    const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
-
-    // create Excel auto Filters for the first row / header
-    worksheet.autoFilter = {
-      from: 'A1',
-      to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
-    };
-
-    worksheet.addRows([
-      headers,
-    ].concat(importStatus.rows.map((row) => {
-      const {
-        url, path, docx, status, redirect, report,
-      } = row;
-      const extra = [];
-      if (report) {
-        importStatus.extraCols.forEach((col) => {
-          const e = report[col];
-          if (e) {
-            if (typeof e === 'string') {
-              if (e.startsWith('=')) {
-                extra.push({
-                  formula: report[col].replace(/=/, '_xlfn.'),
-                  value: '', // cannot compute a default value
-                });
-              } else {
-                extra.push(report[col]);
-              }
-            } else {
-              extra.push(JSON.stringify(report[col]));
-            }
-          }
-        });
-      }
-      return [url, path, docx || '', status, redirect || ''].concat(extra);
-    })));
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer = await getReport();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     a.setAttribute('href', URL.createObjectURL(blob));
-    a.setAttribute('download', 'import_report.xlsx');
+    a.setAttribute('download', REPORT_FILENAME);
     a.click();
   }));
 
