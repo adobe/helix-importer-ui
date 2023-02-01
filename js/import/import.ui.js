@@ -140,7 +140,17 @@ const updateImporterUI = (results, originalURL) => {
     li.append(icon);
 
     BULK_URLS_LIST.append(li);
-    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}):`;
+
+    const totalTime = Math.round((new Date() - importStatus.startTime) / 1000);
+    let timeStr = `${totalTime}s`;
+    if (totalTime > 60) {
+      timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
+      if (totalTime > 3600) {
+        timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
+      }
+    }
+
+    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
   }
 };
 
@@ -150,6 +160,7 @@ const clearResultPanel = () => {
 };
 
 const initImportStatus = () => {
+  importStatus.startTime = 0;
   importStatus.imported = 0;
   importStatus.total = 0;
   importStatus.rows = [];
@@ -303,6 +314,7 @@ const attachListeners = () => {
     const field = IS_BULK ? 'import-urls' : 'import-url';
     const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
     importStatus.total = urlsArray.length;
+    importStatus.startTime = Date.now();
     const processNext = async () => {
       if (urlsArray.length > 0) {
         const url = urlsArray.pop();
