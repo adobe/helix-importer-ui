@@ -1,3 +1,10 @@
+# [1.25.0](https://github.com/adobe/helix-importer-ui/compare/v1.24.1...v1.25.0) (2023-02-01)
+
+
+### Features
+
+* display total elapsed time ([#103](https://github.com/adobe/helix-importer-ui/issues/103)) ([a7ea2d9](https://github.com/adobe/helix-importer-ui/commit/a7ea2d92f7835bdff5b24c95d55bb20458774f6e))
+
 ## [1.24.1](https://github.com/adobe/helix-importer-ui/compare/v1.24.0...v1.24.1) (2023-01-31)
 
 
