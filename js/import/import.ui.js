@@ -42,6 +42,7 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 const DOWNLOAD_BINARY_TYPES = ['pdf'];
+const REPORT_FILENAME = 'import-report.xlsx';
 
 const ui = {};
 const config = {};
@@ -140,7 +141,17 @@ const updateImporterUI = (results, originalURL) => {
     li.append(icon);
 
     BULK_URLS_LIST.append(li);
-    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}):`;
+
+    const totalTime = Math.round((new Date() - importStatus.startTime) / 1000);
+    let timeStr = `${totalTime}s`;
+    if (totalTime > 60) {
+      timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
+      if (totalTime > 3600) {
+        timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
+      }
+    }
+
+    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
   }
 };
 
@@ -150,6 +161,7 @@ const clearResultPanel = () => {
 };
 
 const initImportStatus = () => {
+  importStatus.startTime = 0;
   importStatus.imported = 0;
   importStatus.total = 0;
   importStatus.rows = [];
@@ -182,7 +194,7 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
-const postImportProcess = async (results, originalURL) => {
+const postSuccessfulStep = async (results, originalURL) => {
   await asyncForEach(results, async ({
     docx, filename, path, report,
   }) => {
@@ -211,6 +223,59 @@ const postImportProcess = async (results, originalURL) => {
   });
 };
 
+const autoSaveReport = () => dirHandle && IS_BULK;
+
+const getReport = async () => {
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Sheet 1');
+
+  const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
+
+  // create Excel auto Filters for the first row / header
+  worksheet.autoFilter = {
+    from: 'A1',
+    to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
+  };
+
+  worksheet.addRows([
+    headers,
+  ].concat(importStatus.rows.map((row) => {
+    const {
+      url, path, docx, status, redirect, report,
+    } = row;
+    const extra = [];
+    if (report) {
+      importStatus.extraCols.forEach((col) => {
+        const e = report[col];
+        if (e) {
+          if (typeof e === 'string') {
+            if (e.startsWith('=')) {
+              extra.push({
+                formula: report[col].replace(/=/, '_xlfn.'),
+                value: '', // cannot compute a default value
+              });
+            } else {
+              extra.push(report[col]);
+            }
+          } else {
+            extra.push(JSON.stringify(report[col]));
+          }
+        }
+      });
+    }
+    return [url, path, docx || '', status, redirect || ''].concat(extra);
+  })));
+
+  return workbook.xlsx.writeBuffer();
+};
+
+const postImportStep = async () => {
+  if (autoSaveReport()) {
+    // save report file in the folder
+    await saveFile(dirHandle, REPORT_FILENAME, await getReport());
+  }
+};
+
 const createImporter = () => {
   config.importer = new PollImporter({
     origin: config.origin,
@@ -221,6 +286,25 @@ const createImporter = () => {
 
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
+const sleep = (ms) => new Promise(
+  (resolve) => {
+    setTimeout(resolve, ms);
+  },
+);
+
+const smartScroll = async (window) => {
+  let scrolledOffset = 0;
+  let maxLoops = 4;
+  while (maxLoops > 0 && window.document.body.scrollHeight > scrolledOffset) {
+    const scrollTo = window.document.body.scrollHeight;
+    window.scrollTo({ left: 0, top: scrollTo, behavior: 'smooth' });
+    scrolledOffset = scrollTo;
+    maxLoops -= 1;
+    // eslint-disable-next-line no-await-in-loop
+    await sleep(250);
+  }
+};
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
@@ -229,12 +313,13 @@ const attachListeners = () => {
     const { originalURL } = frame.dataset;
 
     updateImporterUI(results, originalURL);
-    postImportProcess(results, originalURL);
+    await postSuccessfulStep(results, originalURL);
+    await postImportStep();
 
     alert.success(`Import of page ${originalURL} completed.`);
   });
 
-  config.importer.addErrorListener(({ url, error: err, params }) => {
+  config.importer.addErrorListener(async ({ url, error: err, params }) => {
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
 
@@ -248,6 +333,7 @@ const attachListeners = () => {
     });
 
     updateImporterUI([{ status: 'error' }], originalURL);
+    await postImportStep();
   });
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -284,6 +370,7 @@ const attachListeners = () => {
     const field = IS_BULK ? 'import-urls' : 'import-url';
     const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
     importStatus.total = urlsArray.length;
+    importStatus.startTime = Date.now();
     const processNext = async () => {
       if (urlsArray.length > 0) {
         const url = urlsArray.pop();
@@ -327,24 +414,28 @@ const attachListeners = () => {
                 const includeDocx = !!dirHandle;
 
                 if (config.fields['import-scroll-to-bottom']) {
-                  frame.contentWindow.window.scrollTo({ left: 0, top: frame.contentDocument.body.scrollHeight, behavior: 'smooth' });
+                  await smartScroll(frame.contentWindow.window);
                 }
 
-                window.setTimeout(async () => {
-                  const { originalURL, replacedURL } = frame.dataset;
-                  if (frame.contentDocument) {
-                    config.importer.setTransformationInput({
-                      url: replacedURL,
-                      document: frame.contentDocument,
-                      includeDocx,
-                      params: { originalURL },
-                    });
-                    await config.importer.transform();
-                  }
+                await sleep(config.fields['import-pageload-timeout'] || 100);
 
-                  const event = new Event('transformation-complete');
-                  frame.dispatchEvent(event);
-                }, config.fields['import-pageload-timeout'] || 100);
+                if (config.fields['import-scroll-to-bottom']) {
+                  await smartScroll(frame.contentWindow.window);
+                }
+
+                const { originalURL, replacedURL } = frame.dataset;
+                if (frame.contentDocument) {
+                  config.importer.setTransformationInput({
+                    url: replacedURL,
+                    document: frame.contentDocument,
+                    includeDocx,
+                    params: { originalURL },
+                  });
+                  await config.importer.transform();
+                }
+
+                const event = new Event('transformation-complete');
+                frame.dispatchEvent(event);
               };
 
               frame.addEventListener('load', onLoad);
@@ -404,50 +495,11 @@ const attachListeners = () => {
   });
 
   DOWNLOAD_IMPORT_REPORT_BUTTON.addEventListener('click', (async () => {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Sheet 1');
-
-    const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
-
-    // create Excel auto Filters for the first row / header
-    worksheet.autoFilter = {
-      from: 'A1',
-      to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
-    };
-
-    worksheet.addRows([
-      headers,
-    ].concat(importStatus.rows.map((row) => {
-      const {
-        url, path, docx, status, redirect, report,
-      } = row;
-      const extra = [];
-      if (report) {
-        importStatus.extraCols.forEach((col) => {
-          const e = report[col];
-          if (e) {
-            if (typeof e === 'string') {
-              if (e.startsWith('=')) {
-                extra.push({
-                  formula: report[col].replace(/=/, '_xlfn.'),
-                  value: '', // cannot compute a default value
-                });
-              } else {
-                extra.push(report[col]);
-              }
-            } else {
-              extra.push(JSON.stringify(report[col]));
-            }
-          }
-        });
-      }
-      return [url, path, docx || '', status, redirect || ''].concat(extra);
-    })));
-    const buffer = await workbook.xlsx.writeBuffer();
+    const buffer = await getReport();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     a.setAttribute('href', URL.createObjectURL(blob));
-    a.setAttribute('download', 'import_report.xlsx');
+    a.setAttribute('download', REPORT_FILENAME);
     a.click();
   }));
 
