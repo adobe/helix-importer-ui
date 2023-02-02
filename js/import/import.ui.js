@@ -488,9 +488,9 @@ const attachListeners = () => {
     processNext();
   }));
 
-  IMPORTFILEURL_FIELD.addEventListener('change', (event) => {
+  IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
     if (config.importer) {
-      config.importer.setImportFileURL(event.target.value);
+      await config.importer.setImportFileURL(event.target.value);
     }
   });
 

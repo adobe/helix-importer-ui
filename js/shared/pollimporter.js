@@ -23,7 +23,8 @@ export default class PollImporter {
     this.errorListeners = [];
     this.transformation = {};
     this.projectTransform = null;
-    this.projectTransformFileURL = null;
+    this.projectTransformFileURL = '';
+    this.running = false;
 
     this.#init();
   }
@@ -31,35 +32,35 @@ export default class PollImporter {
   async #loadProjectTransform() {
     const $this = this;
     const loadModule = async (projectTransformFileURL) => {
-      try {
-        const mod = await import(projectTransformFileURL);
-        if (mod.default) {
-          $this.projectTransform = mod.default;
-        }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.warn('failed to load project transform module', err);
-        $this.projectTransform = null;
+      const mod = await import(projectTransformFileURL);
+      if (mod.default) {
+        $this.projectTransform = mod.default;
       }
     };
 
     const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
+    let body = '';
     try {
       const res = await fetch(projectTransformFileURL);
-      const body = await res.text();
+      body = await res.text();
 
-      if (body !== this.lastProjectTransformFileBody) {
+      if (res.ok && body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
         await loadModule(projectTransformFileURL);
+        this.projectTransformFileURL = projectTransformFileURL;
+        // eslint-disable-next-line no-console
+        console.log(`Loaded importer file: ${projectTransformFileURL}`);
         return true;
       }
     } catch (err) {
-      if (this.lastProjectTransformFileBody !== 'nofilefound') {
-        // eslint-disable-next-line no-console
-        console.warn('failed to poll project transform module', err);
-        this.lastProjectTransformFileBody = 'nofilefound';
-        return true;
-      }
+      // ignore here, we know the file does not exist
+    }
+    if (body !== this.lastProjectTransformFileBody) {
+      // eslint-disable-next-line no-console
+      console.warn(`Importer file does not exist: ${projectTransformFileURL}`);
+      this.lastProjectTransformFileBody = body;
+      this.projectTransformFileURL = '';
+      return true;
     }
     return false;
   }
@@ -67,6 +68,7 @@ export default class PollImporter {
   async #init() {
     const $this = this;
     const poll = async () => {
+      if ($this.running) return;
       const hasChanged = await $this.#loadProjectTransform();
       if (hasChanged && $this.transformation.url && $this.transformation.document) {
         $this.transform();
@@ -80,6 +82,7 @@ export default class PollImporter {
   }
 
   async transform() {
+    this.running = true;
     const {
       includeDocx, url, document, params,
     } = this.transformation;
@@ -127,6 +130,7 @@ export default class PollImporter {
         });
       });
     }
+    this.running = false;
   }
 
   setTransformationInput({
