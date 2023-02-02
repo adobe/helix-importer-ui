@@ -173,8 +173,8 @@
   width: 100%;
 }
 
-.import #import-result {
-  height: calc(100vh - 212px);
+.import #import-result ul {
+  height: calc(100vh - 250px);
   overflow-y: auto;
 }
 
