@@ -1,3 +1,10 @@
+# [1.27.0](https://github.com/adobe/helix-importer-ui/compare/v1.26.0...v1.27.0) (2023-02-02)
+
+
+### Features
+
+* make import result header stick to top when scrolling list ([#105](https://github.com/adobe/helix-importer-ui/issues/105)) ([2a0df45](https://github.com/adobe/helix-importer-ui/commit/2a0df452224152497ba0d55f37a497e43c2f09f7))
+
 # [1.26.0](https://github.com/adobe/helix-importer-ui/compare/v1.25.0...v1.26.0) (2023-02-01)
 
 
