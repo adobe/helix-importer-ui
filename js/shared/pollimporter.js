@@ -22,11 +22,13 @@ export default class PollImporter {
     this.listeners = [];
     this.errorListeners = [];
     this.transformation = {};
+    this.projectTransform = null;
+    this.projectTransformFileURL = null;
 
     this.#init();
   }
 
-  async #loadTransform() {
+  async #loadProjectTransform() {
     const $this = this;
     const loadModule = async (projectTransformFileURL) => {
       try {
@@ -37,7 +39,7 @@ export default class PollImporter {
       } catch (err) {
         // eslint-disable-next-line no-console
         console.warn('failed to load project transform module', err);
-        this.projectTransform = null;
+        $this.projectTransform = null;
       }
     };
 
@@ -46,33 +48,34 @@ export default class PollImporter {
       const res = await fetch(projectTransformFileURL);
       const body = await res.text();
 
-      if (body !== $this.lastProjectTransformFileBody) {
+      if (body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
         await loadModule(projectTransformFileURL);
+        return true;
       }
     } catch (err) {
       if (this.lastProjectTransformFileBody !== 'nofilefound') {
         // eslint-disable-next-line no-console
         console.warn('failed to poll project transform module', err);
         this.lastProjectTransformFileBody = 'nofilefound';
+        return true;
       }
     }
+    return false;
   }
 
   async #init() {
     const $this = this;
     const poll = async () => {
-      await this.#loadTransform();
-      if ($this.transformation.url && $this.transformation.document) {
+      const hasChanged = await $this.#loadProjectTransform();
+      if (hasChanged && $this.transformation.url && $this.transformation.document) {
         $this.transform();
       }
     };
 
-    if (!this.projectTransformInterval) {
-      await poll();
-      if (this.poll) {
-        this.projectTransformInterval = setInterval(poll, 5000);
-      }
+    await poll();
+    if (!this.projectTransformInterval && this.poll) {
+      this.projectTransformInterval = setInterval(poll, 5000);
     }
   }
 
@@ -81,6 +84,8 @@ export default class PollImporter {
       includeDocx, url, document, params,
     } = this.transformation;
 
+    // eslint-disable-next-line no-console
+    console.log(`Starting transformation of ${url} with import file: ${this.projectTransformFileURL || 'none (default)'}`);
     try {
       let results;
       if (includeDocx) {
@@ -140,7 +145,7 @@ export default class PollImporter {
 
   async setImportFileURL(importFileURL) {
     this.config.importFileURL = importFileURL;
-    await this.#loadTransform();
+    await this.#loadProjectTransform();
   }
 
   addListener(listener) {
