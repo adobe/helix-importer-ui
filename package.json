@@ -1,6 +1,6 @@
 {
   "name": "helix-import-ui",
-  "version": "1.27.0",
+  "version": "1.28.0",
   "description": "helix-import-ui",
   "type": "module",
   "scripts": {

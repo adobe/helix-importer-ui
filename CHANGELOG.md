@@ -1,3 +1,10 @@
+# [1.28.0](https://github.com/adobe/helix-importer-ui/compare/v1.27.0...v1.28.0) (2023-02-03)
+
+
+### Features
+
+* prepend [importer-ui] to be able to filter logs ([142e093](https://github.com/adobe/helix-importer-ui/commit/142e0939185d625315b4c7dbcf7989ee21e1fb69))
+
 # [1.27.0](https://github.com/adobe/helix-importer-ui/compare/v1.26.0...v1.27.0) (2023-02-02)
 
 
