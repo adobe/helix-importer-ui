@@ -381,8 +381,13 @@ const attachListeners = () => {
         // eslint-disable-next-line no-console
         console.log(`Importing: ${importStatus.imported} => ${src}`);
 
-        const res = await fetch(src);
-        if (res.ok) {
+        let res;
+        try {
+          res = await fetch(src);
+        } catch (e) {
+          console.error(`Unexpected error when trying to fetch ${src} - CORS issue ?`, e);
+        }
+        if (res && res.ok) {
           if (res.redirected) {
             // eslint-disable-next-line no-console
             console.warn(`Cannot transform ${src} - redirected to ${res.url}`);
@@ -468,11 +473,12 @@ const attachListeners = () => {
           }
         } else {
           // eslint-disable-next-line no-console
-          console.warn(`Cannot transform ${src} - page may not exist (status ${res.status})`);
+          console.warn(`Cannot transform ${src} - page may not exist (status ${res?.status || 'unknown status'})`);
           importStatus.rows.push({
             url,
-            status: `Invalid: ${res.status}`,
+            status: `Invalid: ${res?.status || 'unknown status'}`,
           });
+          updateImporterUI([{ status: 'error' }], url);
           processNext();
         }
         // ui.markdownPreview.innerHTML = md2html('Import in progress...');
