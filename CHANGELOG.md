@@ -1,3 +1,10 @@
+# [1.29.0](https://github.com/adobe/helix-importer-ui/compare/v1.28.0...v1.29.0) (2023-02-03)
+
+
+### Features
+
+* catch fetch errors and give hint ([#107](https://github.com/adobe/helix-importer-ui/issues/107)) ([35d6600](https://github.com/adobe/helix-importer-ui/commit/35d6600b38debdad0d919edfd74986a19bee0c56))
+
 # [1.28.0](https://github.com/adobe/helix-importer-ui/compare/v1.27.0...v1.28.0) (2023-02-03)
 
 
