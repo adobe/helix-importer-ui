@@ -2,7 +2,7 @@
 
 Page to consider: https://main--hlxsite--kptdobe.hlx.page/content/page-with-pdf
 
-This is dummy page, do not worry about the look and feel. The goal is to convert that page to docx AND to tell the importer to download the referenced PDF.
+This is dummy page, do not worry about the look and feel or if the content is meaningful. The goal is to convert that page to docx AND to tell the importer to download the referenced PDF.
 
 Here is an import.js example:
 
@@ -35,8 +35,8 @@ export default {
         });
 
         // update the link to new path on the target host
-        // you will need to replace "main--repo--owner" by your project setup
         // this is required to be able to follow the links in Word
+        // you will need to replace "main--repo--owner" by your project setup
         const newHref = new URL(newPath, 'https://main--repo--owner.hlx.page').toString();
         a.setAttribute('href', newPath);
       }
@@ -51,8 +51,6 @@ Using the `transform` method and multiple outputs, you can return the page to be
 
 ![image](https://user-images.githubusercontent.com/474200/216992850-1ae0304f-b364-45c0-888b-685f8c1ebc19.png)
 
-
 Notes:
 - if you do not need the page as a docx, you can remove the first part - only the PDFs will be downloaded
-- this would potentially work with any kind of other type of resources
-
+- this would potentially work with other type of resource
