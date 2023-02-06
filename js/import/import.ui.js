@@ -205,7 +205,7 @@ const postSuccessfulStep = async (results, originalURL) => {
     if (docx) {
       if (dirHandle) {
         await saveFile(dirHandle, filename, docx);
-        data.docx = filename;
+        data.file = filename;
         data.status = 'Success';
       } else {
         data.status = 'Success - No file created';
@@ -220,6 +220,7 @@ const postSuccessfulStep = async (results, originalURL) => {
           } else if (dirHandle) {
             const blob = await res.blob();
             await saveFile(dirHandle, path, blob);
+            data.file = path;
             data.status = 'Success';
           } else {
             data.status = 'Success - No file created';
@@ -255,7 +256,7 @@ const getReport = async () => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet 1');
 
-  const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
+  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(importStatus.extraCols);
 
   // create Excel auto Filters for the first row / header
   worksheet.autoFilter = {
@@ -267,7 +268,7 @@ const getReport = async () => {
     headers,
   ].concat(importStatus.rows.map((row) => {
     const {
-      url, path, docx, status, redirect, report,
+      url, path, file, status, redirect, report,
     } = row;
     const extra = [];
     if (report) {
@@ -289,7 +290,7 @@ const getReport = async () => {
         }
       });
     }
-    return [url, path, docx || '', status, redirect || ''].concat(extra);
+    return [url, path, file || '', status, redirect || ''].concat(extra);
   })));
 
   return workbook.xlsx.writeBuffer();
@@ -411,6 +412,7 @@ const attachListeners = () => {
         try {
           res = await fetch(src);
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(`Unexpected error when trying to fetch ${src} - CORS issue ?`, e);
         }
         if (res && res.ok) {
