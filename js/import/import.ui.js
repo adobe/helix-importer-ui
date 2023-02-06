@@ -41,7 +41,6 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
-const DOWNLOAD_BINARY_TYPES = ['pdf'];
 const REPORT_FILENAME = 'import-report.xlsx';
 
 const ui = {};
@@ -196,18 +195,46 @@ const getProxyURLSetup = (url, origin) => {
 
 const postSuccessfulStep = async (results, originalURL) => {
   await asyncForEach(results, async ({
-    docx, filename, path, report,
+    docx, filename, path, report, from,
   }) => {
     const data = {
-      status: 'Success',
       url: originalURL,
       path,
     };
 
-    const includeDocx = !!docx;
-    if (includeDocx) {
-      await saveFile(dirHandle, filename, docx);
-      data.docx = filename;
+    if (docx) {
+      if (dirHandle) {
+        await saveFile(dirHandle, filename, docx);
+        data.file = filename;
+        data.status = 'Success';
+      } else {
+        data.status = 'Success - No file created';
+      }
+    } else if (from) {
+      try {
+        const res = await fetch(from);
+        if (res && res.ok) {
+          if (res.redirected) {
+            data.status = 'Redirect';
+            data.redirect = res.url;
+          } else if (dirHandle) {
+            const blob = await res.blob();
+            await saveFile(dirHandle, path, blob);
+            data.file = path;
+            data.status = 'Success';
+          } else {
+            data.status = 'Success - No file created';
+          }
+        } else {
+          data.status = `Error: Failed to download ${from} - ${res.status} ${res.statusText}`;
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(`Failed to download ${from} to ${path}`, e);
+        data.status = `Error: Failed to download ${from} - ${e.message}`;
+      }
+    } else {
+      data.status = 'Success - No file created';
     }
 
     if (report) {
@@ -229,7 +256,7 @@ const getReport = async () => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet 1');
 
-  const headers = ['URL', 'path', 'docx', 'status', 'redirect'].concat(importStatus.extraCols);
+  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(importStatus.extraCols);
 
   // create Excel auto Filters for the first row / header
   worksheet.autoFilter = {
@@ -241,7 +268,7 @@ const getReport = async () => {
     headers,
   ].concat(importStatus.rows.map((row) => {
     const {
-      url, path, docx, status, redirect, report,
+      url, path, file, status, redirect, report,
     } = row;
     const extra = [];
     if (report) {
@@ -263,7 +290,7 @@ const getReport = async () => {
         }
       });
     }
-    return [url, path, docx || '', status, redirect || ''].concat(extra);
+    return [url, path, file || '', status, redirect || ''].concat(extra);
   })));
 
   return workbook.xlsx.writeBuffer();
@@ -385,6 +412,7 @@ const attachListeners = () => {
         try {
           res = await fetch(src);
         } catch (e) {
+          // eslint-disable-next-line no-console
           console.error(`Unexpected error when trying to fetch ${src} - CORS issue ?`, e);
         }
         if (res && res.ok) {
@@ -455,8 +483,7 @@ const attachListeners = () => {
               current.removeEventListener('transformation-complete', processNext);
 
               current.replaceWith(frame);
-            } else if (IS_BULK
-              && DOWNLOAD_BINARY_TYPES.filter((t) => contentType.includes(t)).length > 0) {
+            } else if (dirHandle) {
               const blob = await res.blob();
               const u = new URL(src);
               const path = WebImporter.FileUtils.sanitizePath(u.pathname);
