@@ -1,3 +1,10 @@
+## [1.29.1](https://github.com/adobe/helix-importer-ui/compare/v1.29.0...v1.29.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* properly reload the transformer script ([#99](https://github.com/adobe/helix-importer-ui/issues/99)) ([78f9ee8](https://github.com/adobe/helix-importer-ui/commit/78f9ee8dac72036dd6112af0ebc05518acab2d7f))
+
 # [1.29.0](https://github.com/adobe/helix-importer-ui/compare/v1.28.0...v1.29.0) (2023-02-03)
 
 
