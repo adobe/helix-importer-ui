@@ -49,7 +49,7 @@ export default {
 
 Using the `transform` method and multiple outputs, you can return the page to be transformed and each pdf to be downloaded. When running the import on the url above, you get the following files:
 
-// TODO screenshot here
+![image](https://user-images.githubusercontent.com/474200/216992850-1ae0304f-b364-45c0-888b-685f8c1ebc19.png)
 
 
 Notes:
