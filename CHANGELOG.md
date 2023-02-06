@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/adobe/helix-importer-ui/compare/v1.29.1...v1.30.0) (2023-02-06)
+
+
+### Features
+
+* support for pdf download ([#109](https://github.com/adobe/helix-importer-ui/issues/109)) ([2e633f8](https://github.com/adobe/helix-importer-ui/commit/2e633f8902b4951948ad5e9005f59a599c3f6888))
+
 ## [1.29.1](https://github.com/adobe/helix-importer-ui/compare/v1.29.0...v1.29.1) (2023-02-06)
 
 
