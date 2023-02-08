@@ -37,10 +37,6 @@ export default class PollImporter {
       const mod = await import(projectTransformFileURL);
       if (mod.default) {
         $this.projectTransform = mod.default;
-
-        if (mod.default.onLoad) {
-          $this.#onLoad = mod.default.onLoad;
-        }
       }
     };
 
@@ -88,23 +84,26 @@ export default class PollImporter {
   }
 
   async onLoad({url, document, params}) {
-    try {
-      await this.#onLoad({
-        url,
-        document,
-        params,
-      });
-      return true;
-    } catch (err) {
-      this.errorListeners.forEach((listener) => {
-        listener({
+    if (this.projectTransform && this.projectTransform.onLoad) {
+      try {
+        await this.#onLoad({
           url,
-          error: err,
+          document,
           params,
         });
-      });
-      return false;
+        return true;
+      } catch (err) {
+        this.errorListeners.forEach((listener) => {
+          listener({
+            url,
+            error: err,
+            params,
+          });
+        });
+        return false;
+      }
     }
+    return true;
   }
 
   async transform() {
