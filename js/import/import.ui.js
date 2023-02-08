@@ -456,8 +456,15 @@ const attachListeners = () => {
                   await smartScroll(frame.contentWindow.window);
                 }
 
-                const { originalURL, replacedURL } = frame.dataset;
                 if (frame.contentDocument) {
+                  const { originalURL, replacedURL } = frame.dataset;
+
+                  await config.importer.onLoad({
+                    url: replacedURL,
+                    document: frame.contentDocument,
+                    params: { originalURL },
+                  });
+
                   config.importer.setTransformationInput({
                     url: replacedURL,
                     document: frame.contentDocument,
