@@ -33,6 +33,9 @@ export default class PollImporter {
         const mod = await import(projectTransformFileURL);
         if (mod.default) {
           this.projectTransform = mod.default;
+          if (mod.default.onLoad) {
+            this.onLoad = mod.default.onLoad;
+          }
         }
       } catch (err) {
         // eslint-disable-next-line no-console

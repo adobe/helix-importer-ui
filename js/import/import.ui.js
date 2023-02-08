@@ -340,8 +340,8 @@ const attachListeners = () => {
                       params: { originalURL },
                     });
 
-                    if (config.importer.projectTransform.onLoad) {
-                      await config.importer.projectTransform.onLoad(frame.contentDocument);
+                    if (config.importer.onLoad) {
+                      await config.importer.onLoad(frame.contentDocument);
                     }
 
                     await config.importer.transform();
