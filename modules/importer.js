@@ -14,6 +14,7 @@
 import {
   DOMUtils,
   FileUtils,
+  Loader,
   Blocks,
   html2docx,
   html2md,
@@ -84,6 +85,7 @@ export { default as md2html } from './md2html.js';
 export {
   Blocks,
   DOMUtils,
+  Loader,
   FileUtils,
   html2mdWrapper as html2md,
   html2docxWrapper as html2docx,
