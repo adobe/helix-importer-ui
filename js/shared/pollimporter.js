@@ -12,8 +12,6 @@
 /* global WebImporter */
 
 export default class PollImporter {
-  #onLoad = async () => {};
-
   constructor(cfg) {
     this.config = {
       importFileURL: `${cfg.origin}/tools/importer/import.js`,
