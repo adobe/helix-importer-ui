@@ -12,6 +12,8 @@
 /* global WebImporter */
 
 export default class PollImporter {
+  #onLoad = async () => {};
+
   constructor(cfg) {
     this.config = {
       importFileURL: `${cfg.origin}/tools/importer/import.js`,
@@ -25,7 +27,6 @@ export default class PollImporter {
     this.projectTransform = null;
     this.projectTransformFileURL = '';
     this.running = false;
-    this.onLoad = async () => {};
 
     this.#init();
   }
@@ -38,7 +39,7 @@ export default class PollImporter {
         $this.projectTransform = mod.default;
 
         if (mod.default.onLoad) {
-          $this.onLoad = mod.default.onLoad;
+          $this.#onLoad = mod.default.onLoad;
         }
       }
     };
@@ -83,6 +84,26 @@ export default class PollImporter {
     await poll();
     if (!this.projectTransformInterval && this.poll) {
       this.projectTransformInterval = setInterval(poll, 5000);
+    }
+  }
+
+  async onLoad({url, document, params}) {
+    try {
+      await this.#onLoad({
+        url,
+        document,
+        params,
+      });
+      return true;
+    } catch (err) {
+      this.errorListeners.forEach((listener) => {
+        listener({
+          url,
+          error: err,
+          params,
+        });
+      });
+      return false;
     }
   }
 

@@ -459,19 +459,21 @@ const attachListeners = () => {
                 if (frame.contentDocument) {
                   const { originalURL, replacedURL } = frame.dataset;
 
-                  await config.importer.onLoad({
+                  const onLoadSucceeded = await config.importer.onLoad({
                     url: replacedURL,
                     document: frame.contentDocument,
                     params: { originalURL },
                   });
 
-                  config.importer.setTransformationInput({
-                    url: replacedURL,
-                    document: frame.contentDocument,
-                    includeDocx,
-                    params: { originalURL },
-                  });
-                  await config.importer.transform();
+                  if (onLoadSucceeded) {
+                    config.importer.setTransformationInput({
+                      url: replacedURL,
+                      document: frame.contentDocument,
+                      includeDocx,
+                      params: { originalURL },
+                    });
+                    await config.importer.transform();
+                  }
                 }
 
                 const event = new Event('transformation-complete');
