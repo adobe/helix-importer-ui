@@ -25,6 +25,7 @@ export default class PollImporter {
     this.projectTransform = null;
     this.projectTransformFileURL = '';
     this.running = false;
+    this.onLoad = async () => {};
 
     this.#init();
   }
@@ -35,6 +36,10 @@ export default class PollImporter {
       const mod = await import(projectTransformFileURL);
       if (mod.default) {
         $this.projectTransform = mod.default;
+
+        if (mod.default.onLoad) {
+          $this.onLoad = mod.default.onLoad;
+        }
       }
     };
 
