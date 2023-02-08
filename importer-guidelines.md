@@ -503,6 +503,12 @@ With this method, you can construct an `xlsx` spreadsheet with the site data you
 
 Sites in the https://github.com/hlxsites/ organization have all be imported. There are many different implementations that cover a lot of use cases.
 
+## Case studies
+
+Here is growing list of case studies to help you drive some more sophisticated imports.
+
+1. [Convert a page and download all PDF files referenced on the page](./docs/download-pdf.md)
+
 ## Helpers
 
 The `DOMUtils` and `Blocks` objects are exposed. Their implementation can be found here: 

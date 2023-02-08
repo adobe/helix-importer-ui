@@ -22,64 +22,73 @@ export default class PollImporter {
     this.listeners = [];
     this.errorListeners = [];
     this.transformation = {};
+    this.projectTransform = null;
+    this.projectTransformFileURL = '';
+    this.running = false;
 
     this.#init();
   }
 
-  async #init() {
+  async #loadProjectTransform() {
     const $this = this;
     const loadModule = async (projectTransformFileURL) => {
-      try {
-        const mod = await import(projectTransformFileURL);
-        if (mod.default) {
-          this.projectTransform = mod.default;
-          if (mod.default.onLoad) {
-            this.onLoad = mod.default.onLoad;
-          }
-        }
-      } catch (err) {
+      const mod = await import(projectTransformFileURL);
+      if (mod.default) {
+        $this.projectTransform = mod.default;
+      }
+    };
+
+    const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
+    let body = '';
+    try {
+      const res = await fetch(projectTransformFileURL);
+      body = await res.text();
+
+      if (res.ok && body !== this.lastProjectTransformFileBody) {
+        this.lastProjectTransformFileBody = body;
+        await loadModule(projectTransformFileURL);
+        this.projectTransformFileURL = projectTransformFileURL;
         // eslint-disable-next-line no-console
-        console.warn('failed to load project transform module', err);
+        console.log(`Loaded importer file: ${projectTransformFileURL}`);
+        return true;
       }
-    };
+    } catch (err) {
+      // ignore here, we know the file does not exist
+    }
+    if (body !== this.lastProjectTransformFileBody) {
+      // eslint-disable-next-line no-console
+      console.warn(`Importer file does not exist: ${projectTransformFileURL}`);
+      this.lastProjectTransformFileBody = body;
+      this.projectTransformFileURL = '';
+      return true;
+    }
+    return false;
+  }
+
+  async #init() {
+    const $this = this;
     const poll = async () => {
-      const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
-      try {
-        const res = await fetch(projectTransformFileURL);
-        const body = await res.text();
-
-        if (body !== $this.lastProjectTransformFileBody) {
-          $this.lastProjectTransformFileBody = body;
-          await loadModule(projectTransformFileURL);
-          if ($this.transformation.url && $this.transformation.document) {
-            $this.transform();
-          }
-        }
-      } catch (err) {
-        if ($this.lastProjectTransformFileBody !== 'nofilefound') {
-          // eslint-disable-next-line no-console
-          console.warn('failed to poll project transform module', err);
-          $this.lastProjectTransformFileBody = 'nofilefound';
-          if ($this.transformation.url && $this.transformation.document) {
-            $this.transform();
-          }
-        }
+      if ($this.running) return;
+      const hasChanged = await $this.#loadProjectTransform();
+      if (hasChanged && $this.transformation.url && $this.transformation.document) {
+        $this.transform();
       }
     };
 
-    if (!this.projectTransformInterval) {
-      await poll();
-      if (this.poll) {
-        this.projectTransformInterval = setInterval(poll, 5000);
-      }
+    await poll();
+    if (!this.projectTransformInterval && this.poll) {
+      this.projectTransformInterval = setInterval(poll, 5000);
     }
   }
 
   async transform() {
+    this.running = true;
     const {
       includeDocx, url, document, params,
     } = this.transformation;
 
+    // eslint-disable-next-line no-console
+    console.log(`Starting transformation of ${url} with import file: ${this.projectTransformFileURL || 'none (default)'}`);
     try {
       let results;
       if (includeDocx) {
@@ -121,6 +130,7 @@ export default class PollImporter {
         });
       });
     }
+    this.running = false;
   }
 
   setTransformationInput({
@@ -137,8 +147,9 @@ export default class PollImporter {
     };
   }
 
-  setImportFileURL(importFileURL) {
+  async setImportFileURL(importFileURL) {
     this.config.importFileURL = importFileURL;
+    await this.#loadProjectTransform();
   }
 
   addListener(listener) {

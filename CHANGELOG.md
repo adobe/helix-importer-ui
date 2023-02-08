@@ -1,3 +1,52 @@
+# [1.30.0](https://github.com/adobe/helix-importer-ui/compare/v1.29.1...v1.30.0) (2023-02-06)
+
+
+### Features
+
+* support for pdf download ([#109](https://github.com/adobe/helix-importer-ui/issues/109)) ([2e633f8](https://github.com/adobe/helix-importer-ui/commit/2e633f8902b4951948ad5e9005f59a599c3f6888))
+
+## [1.29.1](https://github.com/adobe/helix-importer-ui/compare/v1.29.0...v1.29.1) (2023-02-06)
+
+
+### Bug Fixes
+
+* properly reload the transformer script ([#99](https://github.com/adobe/helix-importer-ui/issues/99)) ([78f9ee8](https://github.com/adobe/helix-importer-ui/commit/78f9ee8dac72036dd6112af0ebc05518acab2d7f))
+
+# [1.29.0](https://github.com/adobe/helix-importer-ui/compare/v1.28.0...v1.29.0) (2023-02-03)
+
+
+### Features
+
+* catch fetch errors and give hint ([#107](https://github.com/adobe/helix-importer-ui/issues/107)) ([35d6600](https://github.com/adobe/helix-importer-ui/commit/35d6600b38debdad0d919edfd74986a19bee0c56))
+
+# [1.28.0](https://github.com/adobe/helix-importer-ui/compare/v1.27.0...v1.28.0) (2023-02-03)
+
+
+### Features
+
+* prepend [importer-ui] to be able to filter logs ([142e093](https://github.com/adobe/helix-importer-ui/commit/142e0939185d625315b4c7dbcf7989ee21e1fb69))
+
+# [1.27.0](https://github.com/adobe/helix-importer-ui/compare/v1.26.0...v1.27.0) (2023-02-02)
+
+
+### Features
+
+* make import result header stick to top when scrolling list ([#105](https://github.com/adobe/helix-importer-ui/issues/105)) ([2a0df45](https://github.com/adobe/helix-importer-ui/commit/2a0df452224152497ba0d55f37a497e43c2f09f7))
+
+# [1.26.0](https://github.com/adobe/helix-importer-ui/compare/v1.25.0...v1.26.0) (2023-02-01)
+
+
+### Features
+
+* auto save report in directory in bulk mode ([#104](https://github.com/adobe/helix-importer-ui/issues/104)) ([35f37c6](https://github.com/adobe/helix-importer-ui/commit/35f37c62d9dc8b11a98f17c23231bbae87d7218b))
+
+# [1.25.0](https://github.com/adobe/helix-importer-ui/compare/v1.24.1...v1.25.0) (2023-02-01)
+
+
+### Features
+
+* display total elapsed time ([#103](https://github.com/adobe/helix-importer-ui/issues/103)) ([a7ea2d9](https://github.com/adobe/helix-importer-ui/commit/a7ea2d92f7835bdff5b24c95d55bb20458774f6e))
+
 ## [1.24.1](https://github.com/adobe/helix-importer-ui/compare/v1.24.0...v1.24.1) (2023-01-31)
 
 
