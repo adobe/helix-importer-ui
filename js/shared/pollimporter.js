@@ -86,7 +86,7 @@ export default class PollImporter {
   async onLoad({url, document, params}) {
     if (this.projectTransform && this.projectTransform.onLoad) {
       try {
-        await this.#onLoad({
+        await this.projectTransform.onLoad({
           url,
           document,
           params,
