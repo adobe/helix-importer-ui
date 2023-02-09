@@ -89,7 +89,6 @@ export default class PollImporter {
           document,
           params,
         });
-        return true;
       } catch (err) {
         this.errorListeners.forEach((listener) => {
           listener({
