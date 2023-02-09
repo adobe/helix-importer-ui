@@ -81,6 +81,28 @@ export default class PollImporter {
     }
   }
 
+  async onLoad({ url, document, params }) {
+    if (this.projectTransform && this.projectTransform.onLoad) {
+      try {
+        await this.projectTransform.onLoad({
+          url,
+          document,
+          params,
+        });
+      } catch (err) {
+        this.errorListeners.forEach((listener) => {
+          listener({
+            url,
+            error: err,
+            params,
+          });
+        });
+        return false;
+      }
+    }
+    return true;
+  }
+
   async transform() {
     this.running = true;
     const {

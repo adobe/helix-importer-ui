@@ -456,15 +456,24 @@ const attachListeners = () => {
                   await smartScroll(frame.contentWindow.window);
                 }
 
-                const { originalURL, replacedURL } = frame.dataset;
                 if (frame.contentDocument) {
-                  config.importer.setTransformationInput({
+                  const { originalURL, replacedURL } = frame.dataset;
+
+                  const onLoadSucceeded = await config.importer.onLoad({
                     url: replacedURL,
                     document: frame.contentDocument,
-                    includeDocx,
                     params: { originalURL },
                   });
-                  await config.importer.transform();
+
+                  if (onLoadSucceeded) {
+                    config.importer.setTransformationInput({
+                      url: replacedURL,
+                      document: frame.contentDocument,
+                      includeDocx,
+                      params: { originalURL },
+                    });
+                    await config.importer.transform();
+                  }
                 }
 
                 const event = new Event('transformation-complete');

@@ -592,3 +592,49 @@ Every new project has its own collection of new use cases which might be totally
   ```
 
  And reload the importer ui browser window.
+
+## Advanced
+
+Some advanced patterns to cover more advanced edge cases.
+### preprocess
+
+In the `import.js` file, you can define the `preprocess` function: it will be called before any processing done by the importer. The importer is doing a cleanup of the DOM to remove some edge cases that cause issues. For example, the importer removes the `<script>` tags but you might need to extract some info from one of those `<script>` (like a JSON object).
+
+```js
+  preprocess: ({ document, url, html, params }) => {
+    document.querySelectorAll('script').forEach((script) => {...}); // you will find the scripts in this method
+  },
+```
+
+Note: you can use the `params` object to "pass" parameters to the `transformDOM` (or `transform`) function. For example:
+
+```js
+  preprocess: ({ document, url, html, params }) => {
+    params.foundSomethingInPreprocessing = true;
+  },
+
+  transformDOM: ({ document, url, html, params }) => {
+    console.log(params.foundSomethingInPreprocessing); // should display true
+  },
+```
+
+### onLoad
+
+In the `import.js` file, you can define the `onLoad` function: it will be called "on page load" of the content iframe, after the bottom scrolling and the page load timeout. You are still in the context on the original page, this is the place where you can wait for an element for example. This is useful in the case of lazy loaded elements, you want to wait for those elements to be injected in the DOM. You should also be able to trigger clicks on some elements.
+
+```js
+  onLoad: async ({ document, url, params }) => {
+    try {
+      await WebImporter.Loader.waitForElement('.wait-for-me', document, 10000, 500);
+    } catch (error) {
+      throw new Error(`Element .wait-for-me not found in page ${params.originalURL}`);
+    }
+  },
+```
+
+`WebImporter.Loader.waitForElement`: see method signature here https://github.com/adobe/helix-importer/blob/main/src/utils/Loader.js#L14
+
+The code above forces the import process to wait for the DOM element with CSS class name `wait-for-me`. It checks every 500s if the element is there and fires an error if not found after 10s.
+Firing an error is one way of defining the page has a problem (maybe it is different ?). The error message will appear in the report and can be reviewed afterward. But it is not required. If it is fine for the page to not have the element, you can just log an error or do nothing.
+
+Note: calling `WebImporter.Loader.waitForElement` in the `transformDOM` or `transform` function would be useless - the execution context is different, the DOM is frozen and does not change anymore.
