@@ -1,3 +1,10 @@
+# [1.31.0](https://github.com/adobe/helix-importer-ui/compare/v1.30.1...v1.31.0) (2023-02-09)
+
+
+### Features
+
+* add support for onLoad importer function ([8eb3cfe](https://github.com/adobe/helix-importer-ui/commit/8eb3cfec9e6e59284f2daee34e35d515d86129b2))
+
 ## [1.30.1](https://github.com/adobe/helix-importer-ui/compare/v1.30.0...v1.30.1) (2023-02-08)
 
 
