@@ -598,7 +598,7 @@ Every new project has its own collection of new use cases which might be totally
 Some advanced patterns to cover more advanced edge cases.
 ### preprocess
 
-In the `import.js` file, you can define the `preprocess` function: it will be called before any processing done by the importer. The importer is doing a cleanup of the DOM to remove some edge cases that cause issues. It also removes the `<script>` tags and accessing them might be useful.
+In the `import.js` file, you can define the `preprocess` function: it will be called before any processing done by the importer. The importer is doing a cleanup of the DOM to remove some edge cases that cause issues. For example, the importer removes the `<script>` tags but you might need to extract some info from one of those `<script>` (like a JSON object).
 
 ```js
   preprocess: ({ document, url, html, params }) => {
@@ -606,7 +606,17 @@ In the `import.js` file, you can define the `preprocess` function: it will be ca
   },
 ```
 
-Note: you can use the `params` object to "pass" parameters to the `transformDOM` (or `transform`) function.
+Note: you can use the `params` object to "pass" parameters to the `transformDOM` (or `transform`) function. For example:
+
+```js
+  preprocess: ({ document, url, html, params }) => {
+    params.foundSomethingInPreprocessing = true;
+  },
+
+  transformDOM: ({ document, url, html, params }) => {
+    console.log(params.foundSomethingInPreprocessing); // should display true
+  },
+```
 
 ### onLoad
 
