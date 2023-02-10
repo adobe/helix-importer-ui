@@ -69,7 +69,9 @@ const setupUI = () => {
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
-  ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' ')));
+  ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
+    indent_size: '2',
+  }));
   ui.markdownEditor.setValue(md || '');
 
   const mdPreview = WebImporter.md2html(md);
