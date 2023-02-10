@@ -63,7 +63,7 @@ Some examples:
 | https://www.sample.com/A/b/C/d.html                   | /a/b/c/d                | /a/b/c/d.docx               | 
 | https://www.sample.com/Fâncy_URL%20with%20spaces.html | /f-ncy-url-with-spaces  | /f-ncy-url-with-spaces.docx |
 
-If you follow this pattern, the migration should be smooth: the Franklin resolution should fine the corresponding document for the old URLs. 
+If you follow this pattern, the migration should be smooth: the Franklin resolution should find the corresponding document for the old URLs. 
 If you decide to do some more sophisticated transformations (like transform `Fâncy_URL` into `fancy-url`), you will need to recreate the corresponding redirects to make sure the old URLs are still mapped to the new content naming convention. You can use the importer reporting (see below) to report those mappings.
 
 ## Rule examples
