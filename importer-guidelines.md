@@ -50,6 +50,22 @@ You must implement this method:
 
 The idea is simple: return a list of elements that will be converted to docx and stored at the path location.
 
+### Note on generated paths
+
+The Franklin URL space is pretty restricted (lower case, only latin characters, only hyphens, no .html) and the recommendation given to authors is to maintain directory and document names following the exact same restrictions in Sharepoint / GDrive to have a one to one mapping between the path+file and its URL. It makes their life so much easier!
+
+When importing a site, you will encounter a lot of various fancy URLs. The `generateDocumentPath` function allows you to control the document target path. It is a best practice to apply the `WebImporter.FileUtils.sanitizePath` helper method to all paths as provided in the provided default `import.js` file.
+
+Some examples: 
+
+| Source URL                                            | Recommended target path | Recommended target docx     |
+|-------------------------------------------------------|-------------------------|-----------------------------|
+| https://www.sample.com/A/b/C/d.html                   | /a/b/c/d                | /a/b/c/d.docx               | 
+| https://www.sample.com/Fâncy_URL%20with%20spaces.html | /f-ncy-url-with-spaces  | /f-ncy-url-with-spaces.docx |
+
+If you follow this pattern, the migration should be smooth: the Franklin resolution should fine the corresponding document for the old URLs. 
+If you decide to do some more sophisticated transformations (like transform `Fâncy_URL` into `fancy-url`), you will need to recreate the corresponding redirects to make sure the old URLs are still mapped to the new content naming convention. You can use the importer reporting (see below) to report those mappings.
+
 ## Rule examples
 
 ### Cleanup
