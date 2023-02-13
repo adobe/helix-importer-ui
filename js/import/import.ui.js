@@ -561,7 +561,7 @@ const attachListeners = () => {
       compareStatus.currentUrl = beforeUrls.length-1;
     }
     BEFORE_URL.href=beforeUrls[compareStatus.currentUrl];
-    AFTER_URL.href=beforeUrls[compareStatus.currentUrl];
+    AFTER_URL.href=afterUrls[compareStatus.currentUrl];
     URL_NUMBER.innerText=`${compareStatus.currentUrl+1} of ${beforeUrls.length}`;
     const beforeProxy = getProxyURLSetup(beforeUrls[compareStatus.currentUrl], config.origin);
     const afterProxy = getProxyURLSetup(afterUrls[compareStatus.currentUrl], config.origin);
