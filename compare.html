@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Compare (Bulk) Tool</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/import/import.css" />
+
+    <script src="./js/shared/log.js"></script>
+    <script src="./js/dist/spectrum-web-components.js"></script>
+
+    <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
+    <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
+    <script src="./js/dist/helix-importer.js"></script>
+
+    <script src="./js/import/import.ui.js" type="module"></script>
+</head>
+
+<body class="tool">
+    <sp-theme color="dark" scale="medium">
+        <!-- MAIN CONTENT -->
+        <main>
+            <!-- IMPORT BULK SECTION -->
+            <section class="import import-bulk">
+                <div class="section-title">
+                    <h2>Compare - Bulk</h2>
+                    <p>Compare Before and After</p>
+                    <sp-divider size="l"></sp-divider>
+                </div>
+                <div class="section-cols">
+                    <div class="section-col">
+                        <form class="compare-form">
+                            <sp-accordion>
+                                <sp-accordion-item label="Compare Options">
+                                <sp-field-label for="before-urls" required>URLs</sp-field-label>
+                                <sp-textfield class="option-field" multiline id="before-urls">
+                                    <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
+                                    <sp-help-text slot="negative-help-text">Please enter before URLs</sp-help-text>
+                                </sp-textfield>
+                                <sp-field-label for="after-urls" required>URLs</sp-field-label>
+                                <sp-textfield class="option-field" multiline id="after-urls">
+                                    <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
+                                    <sp-help-text slot="negative-help-text">Please enter after urls in the same order.</sp-help-text>
+                                </sp-textfield>
+                                    <div>
+
+                                        <sp-checkbox class="option-field" id="import-enable-js" checked>
+                                            Enable JavaScript
+                                        </sp-checkbox>
+
+                                        <sp-checkbox class="option-field" id="compare-scroll-to-bottom" checked>
+                                            Scroll to bottom
+                                        </sp-checkbox>
+                                    </div>
+                                </sp-accordion-item>
+                            </sp-accordion>
+
+                            <sp-button-group>
+                                <sp-button id="compare-next-button">Next</sp-button>
+                            </sp-button-group>
+                            <div id="compare-idx">
+                                
+                            </div>
+                        </form>
+                        <span id="folder-name"></span>
+                    </div>
+                </div>
+            </section>
+
+
+            <section class="compare compare-bulk">
+                <div class="section-cols">
+                    <div class="section-col">
+                        <div class="page-preview hidden" id="before-content-container">
+                            <sp-divider size="s"></sp-divider>
+                            <h3>Before <a href="" id="before-content-link">Open</a></h3>
+                            <iframe id="before-content-frame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="section-col">
+                        <div class="page-preview hidden" id="after-content-container">
+                            <sp-divider size="s"></sp-divider>
+                            <h3>After <a href="" id="after-content-link">Open</a></h3>
+                            <iframe id="after-content-frame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div id="alert-container"></div>
+    </sp-theme>
+</body>
+
+</html>

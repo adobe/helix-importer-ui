@@ -41,11 +41,30 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
+
+const COMPARE_NEXT_BUTTON = document.getElementById('compare-next-button');
+
+const BEFORE_FRAME = document.getElementById('before-content-frame');
+const AFTER_FRAME = document.getElementById('after-content-frame');
+const BEFORE_URL = document.getElementById('before-content-link');
+const AFTER_URL = document.getElementById('after-content-link');
+const URL_NUMBER = document.getElementById('compare-idx');
+const BEFORE_CONTAINER = document.querySelector('#before-content-container');
+const AFTER_CONTAINER = document.querySelector('#after-content-container');
+
+const COMPARE_BEFORE_FIELD = document.getElementById('before-urls');
+const COMPARE_AFTER_FIELD = document.getElementById('after-urls');
+
+
+
 const REPORT_FILENAME = 'import-report.xlsx';
 
 const ui = {};
 const config = {};
 const importStatus = {};
+const compareStatus = {
+  currentUrl : 0
+};
 
 let dirHandle = null;
 
@@ -363,7 +382,7 @@ const attachListeners = () => {
     await postImportStep();
   });
 
-  IMPORT_BUTTON.addEventListener('click', (async () => {
+  IMPORT_BUTTON?.addEventListener('click', (async () => {
     initImportStatus();
 
     if (IS_BULK) {
@@ -530,13 +549,48 @@ const attachListeners = () => {
     processNext();
   }));
 
-  IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
+  COMPARE_NEXT_BUTTON?.addEventListener('click', (async () => {
+    const beforeUrls = config.fields['before-urls'].split('\n').reverse().filter((u) => u.trim() !== '');
+    const afterUrls = config.fields['after-urls'].split('\n').reverse().filter((u) => u.trim() !== '');
+    compareStatus.currentUrl++;
+    if ( compareStatus.currentUrl >= beforeUrls.length ) {
+      compareStatus.currentUrl = 0;
+    }
+    const beforeProxy = getProxyURLSetup(beforeUrls[compareStatus.currentUrl], config.origin);
+    const afterProxy = getProxyURLSetup(afterUrls[compareStatus.currentUrl], config.origin);
+    BEFORE_URL.href=beforeUrls[compareStatus.currentUrl];
+    AFTER_URL.href=beforeUrls[compareStatus.currentUrl];
+    URL_NUMBER.innerText=`${compareStatus.currentUrl+1} of ${beforeUrls.length}`;
+    BEFORE_FRAME.src= beforeProxy.proxy.url;
+    AFTER_FRAME.src= afterProxy.proxy.url;
+    await sleep(config.fields['import-pageload-timeout'] || 100);
+    await smartScroll(BEFORE_FRAME.contentWindow.window);
+    await smartScroll(AFTER_FRAME.contentWindow.window);
+    BEFORE_CONTAINER.classList.remove('hidden');
+    AFTER_CONTAINER.classList.remove('hidden');
+  }));
+
+
+  COMPARE_BEFORE_FIELD?.addEventListener('change', async (event) => {
+    compareStatus.currentUrl = -1;
+    BEFORE_CONTAINER.classList.add('hidden');
+    AFTER_CONTAINER.classList.add('hidden');
+  });
+  COMPARE_AFTER_FIELD?.addEventListener('change', async (event) => {
+    compareStatus.currentUrl = -1;
+    BEFORE_CONTAINER.classList.add('hidden');
+    AFTER_CONTAINER.classList.add('hidden');
+  });
+
+
+
+  IMPORTFILEURL_FIELD?.addEventListener('change', async (event) => {
     if (config.importer) {
       await config.importer.setImportFileURL(event.target.value);
     }
   });
 
-  DOWNLOAD_IMPORT_REPORT_BUTTON.addEventListener('click', (async () => {
+  DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
     const buffer = await getReport();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });

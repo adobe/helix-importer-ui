@@ -194,6 +194,13 @@ section .section-cols {
   gap: 0 40px; 
 }
 
+section.compare .section-cols {
+  display: grid;
+  grid-template-columns: 4fr 4fr; 
+  grid-template-rows: 1fr; 
+  gap: 0 40px; 
+}
+
 section .section-cols .section-col {
   height: 100%;
   overflow-x: auto;
@@ -241,6 +248,7 @@ section .page-preview iframe {
   background-color: var(--spectrum-global-color-gray-75);
   overflow-x: auto;
 }
+
 
 /* ALERT CONTAINER */
 #alert-container {
