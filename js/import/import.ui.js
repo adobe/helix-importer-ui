@@ -43,6 +43,7 @@ const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker
 
 
 const COMPARE_NEXT_BUTTON = document.getElementById('compare-next-button');
+const COMPARE_PREV_BUTTON = document.getElementById('compare-prev-button');
 
 const BEFORE_FRAME = document.getElementById('before-content-frame');
 const AFTER_FRAME = document.getElementById('after-content-frame');
@@ -54,7 +55,7 @@ const AFTER_CONTAINER = document.querySelector('#after-content-container');
 
 const COMPARE_BEFORE_FIELD = document.getElementById('before-urls');
 const COMPARE_AFTER_FIELD = document.getElementById('after-urls');
-
+const AUTO_LOAD =  document.getElementById('compare-autoload');
 
 
 const REPORT_FILENAME = 'import-report.xlsx';
@@ -549,26 +550,55 @@ const attachListeners = () => {
     processNext();
   }));
 
-  COMPARE_NEXT_BUTTON?.addEventListener('click', (async () => {
+  const comparePages = async (n) => {
+
     const beforeUrls = config.fields['before-urls'].split('\n').reverse().filter((u) => u.trim() !== '');
     const afterUrls = config.fields['after-urls'].split('\n').reverse().filter((u) => u.trim() !== '');
-    compareStatus.currentUrl++;
+    compareStatus.currentUrl += n;
     if ( compareStatus.currentUrl >= beforeUrls.length ) {
       compareStatus.currentUrl = 0;
+    } else if ( compareStatus.currentUrl < 0) {
+      compareStatus.currentUrl = beforeUrls.length-1;
     }
-    const beforeProxy = getProxyURLSetup(beforeUrls[compareStatus.currentUrl], config.origin);
-    const afterProxy = getProxyURLSetup(afterUrls[compareStatus.currentUrl], config.origin);
     BEFORE_URL.href=beforeUrls[compareStatus.currentUrl];
     AFTER_URL.href=beforeUrls[compareStatus.currentUrl];
     URL_NUMBER.innerText=`${compareStatus.currentUrl+1} of ${beforeUrls.length}`;
+    const beforeProxy = getProxyURLSetup(beforeUrls[compareStatus.currentUrl], config.origin);
+    const afterProxy = getProxyURLSetup(afterUrls[compareStatus.currentUrl], config.origin);
     BEFORE_FRAME.src= beforeProxy.proxy.url;
     AFTER_FRAME.src= afterProxy.proxy.url;
-    await sleep(config.fields['import-pageload-timeout'] || 100);
-    await smartScroll(BEFORE_FRAME.contentWindow.window);
-    await smartScroll(AFTER_FRAME.contentWindow.window);
     BEFORE_CONTAINER.classList.remove('hidden');
     AFTER_CONTAINER.classList.remove('hidden');
+  };
+
+
+  COMPARE_NEXT_BUTTON?.addEventListener('click', (async () => {
+    await comparePages(1);
   }));
+  COMPARE_PREV_BUTTON?.addEventListener('click', (async () => {
+    await comparePages(-1);
+  }));
+
+  AUTO_LOAD?.addEventListener('change', (async () => {
+    if ( AUTO_LOAD.checked ) {
+      if ( !compareStatus.autoLoad ) {
+        compareStatus.autoLoad = true;
+        const autoLoad = async () => {
+          if ( compareStatus.autoLoad ) {
+            await comparePages(1);
+
+            setTimeout(async () => {
+              autoLoad();
+            }, 5000);            
+          }
+        };
+        await autoLoad();
+      }
+    } else {
+      compareStatus.autoLoad = false;
+    }
+  }));
+
 
 
   COMPARE_BEFORE_FIELD?.addEventListener('change', async (event) => {
