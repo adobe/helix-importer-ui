@@ -586,9 +586,8 @@ const attachListeners = () => {
         const autoLoad = async () => {
           if ( compareStatus.autoLoad ) {
             await comparePages(1);
-
             setTimeout(async () => {
-              autoLoad();
+              await autoLoad();
             }, 5000);            
           }
         };
