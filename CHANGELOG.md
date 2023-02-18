@@ -1,3 +1,10 @@
+## [1.31.5](https://github.com/adobe/helix-importer-ui/compare/v1.31.4...v1.31.5) (2023-02-18)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @spectrum-web-components/bundle to v0.28.9 ([#121](https://github.com/adobe/helix-importer-ui/issues/121)) ([e9bd466](https://github.com/adobe/helix-importer-ui/commit/e9bd4662633007c03a7af7b300fdb68ac3af835e))
+
 ## [1.31.4](https://github.com/adobe/helix-importer-ui/compare/v1.31.3...v1.31.4) (2023-02-17)
 
 
