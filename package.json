@@ -30,7 +30,7 @@
     "unified": "10.1.2"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.1",
+    "@adobe/eslint-config-helix": "2.0.2",
     "@babel/core": "7.21.0",
     "@babel/eslint-parser": "7.19.1",
     "@semantic-release/changelog": "6.0.2",
