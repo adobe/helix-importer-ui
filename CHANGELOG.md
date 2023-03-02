@@ -1,3 +1,10 @@
+# [1.32.0](https://github.com/adobe/helix-importer-ui/compare/v1.31.5...v1.32.0) (2023-03-02)
+
+
+### Features
+
+* use official github logo ([26eff0c](https://github.com/adobe/helix-importer-ui/commit/26eff0c9a3830b43373c07bf773bb64836655603))
+
 ## [1.31.5](https://github.com/adobe/helix-importer-ui/compare/v1.31.4...v1.31.5) (2023-02-18)
 
 
