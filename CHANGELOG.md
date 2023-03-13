@@ -1,3 +1,10 @@
+# [1.33.0](https://github.com/adobe/helix-importer-ui/compare/v1.32.1...v1.33.0) (2023-03-13)
+
+
+### Features
+
+* remove empty lines in html preview ([#113](https://github.com/adobe/helix-importer-ui/issues/113)) ([d7585c6](https://github.com/adobe/helix-importer-ui/commit/d7585c65c385cda0e893e00db6fa6f06df71cb35))
+
 ## [1.32.1](https://github.com/adobe/helix-importer-ui/compare/v1.32.0...v1.32.1) (2023-03-11)
 
 
