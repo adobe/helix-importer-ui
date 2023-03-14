@@ -298,6 +298,39 @@ This is an example.
 #### Special Note for `blockquote`
 While exporting HTML contents enclosed within [blockquote](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/blockquote) to Word docs, the `table` may not get exported correctly (like reported in https://github.com/adobe/helix-importer/issues/29). For such situations, consider removing or replacing `blockquote` enclosing the `table`.
 
+### Add a section break
+
+If you want to add a section break (the 3 dashes in Word `---`) to create a new section, just insert a `<hr>` element:
+
+Example
+
+Input DOM:
+
+```html
+<html>
+  <head></head>
+  <body>
+    <main>
+      <h1>Hello World</h1>
+      <p>First section</p>
+      <p>Second section</p>
+    </main>
+  </body>
+</html>
+```
+
+```js
+const firstParagraph = document.querySelector('main p')
+firstParagraph.after(document.createElement('hr'));
+```
+
+```md
+# Hello World
+First section
+---
+Second section
+```
+
 ### Convert background images
 
 Backgroud images are either part of the CSS or inline styles. As mentioned above, the styles considered when converting the DOM to Markdown. If background images are used on the pages being imported, they must receive a special treatment.
