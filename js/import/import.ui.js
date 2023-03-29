@@ -435,7 +435,7 @@ const attachListeners = () => {
             processNext();
           } else {
             const contentType = res.headers.get('content-type');
-            if (contentType.includes('html')) {
+            if (contentType.includes('html') || contentType.includes('json')) {
               const frame = document.createElement('iframe');
               frame.id = 'import-content-frame';
 

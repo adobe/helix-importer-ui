@@ -557,6 +557,7 @@ Sites in the https://github.com/hlxsites/ organization have all be imported. The
 Here is growing list of case studies to help you drive some more sophisticated imports.
 
 1. [Convert a page and download all PDF files referenced on the page](./docs/download-pdf.md)
+2. [Import content from a JSON API](./docs/import-from-json.md)
 
 ## Helpers
 
