@@ -1,3 +1,10 @@
+# [1.34.0](https://github.com/adobe/helix-importer-ui/compare/v1.33.6...v1.34.0) (2023-03-29)
+
+
+### Features
+
+* import from JSON ([#139](https://github.com/adobe/helix-importer-ui/issues/139)) ([8eb9d9c](https://github.com/adobe/helix-importer-ui/commit/8eb9d9ce7713f9c9678857f1e72095f9902cba45))
+
 ## [1.33.6](https://github.com/adobe/helix-importer-ui/compare/v1.33.5...v1.33.6) (2023-03-28)
 
 
