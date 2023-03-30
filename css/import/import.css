@@ -32,10 +32,7 @@
 /* stylelint-disable-next-line selector-class-pattern */
 .import .CodeMirror {
   position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  inset: 0;
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
