@@ -66,6 +66,8 @@ const setupUI = () => {
 
   ui.markdownPreview = MD_PREVIEW_PANEL;
   ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
+
+  SPTABS.selected = 'import-preview';
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
