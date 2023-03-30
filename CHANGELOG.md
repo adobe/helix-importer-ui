@@ -1,3 +1,10 @@
+## [1.34.1](https://github.com/adobe/helix-importer-ui/compare/v1.34.0...v1.34.1) (2023-03-30)
+
+
+### Bug Fixes
+
+* show preview tab on first import ([#145](https://github.com/adobe/helix-importer-ui/issues/145)) ([e7a94b8](https://github.com/adobe/helix-importer-ui/commit/e7a94b8cd0f10121fe6a699dcf8910f6c964f555))
+
 # [1.34.0](https://github.com/adobe/helix-importer-ui/compare/v1.33.6...v1.34.0) (2023-03-29)
 
 
