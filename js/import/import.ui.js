@@ -85,38 +85,44 @@ const loadResult = ({ md, html: outputHTML }) => {
 };
 
 const updateImporterUI = (results, originalURL) => {
+  const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
   if (!IS_BULK) {
     IMPORT_FILE_PICKER_CONTAINER.innerHTML = '';
-    const picker = document.createElement('sp-picker');
-    picker.setAttribute('size', 'm');
 
-    if (results.length < 2) {
-      picker.setAttribute('quiet', true);
-      picker.setAttribute('disabled', true);
-    }
+    if (status === 'success') {
+      const picker = document.createElement('sp-picker');
+      picker.setAttribute('size', 'm');
 
-    results.forEach((result, index) => {
-      const { path } = result;
-
-      // add result to picker list
-      const item = document.createElement('sp-menu-item');
-      item.innerHTML = path;
-      if (index === 0) {
-        item.setAttribute('selected', true);
-        picker.setAttribute('label', path);
-        picker.setAttribute('value', path);
+      if (results.length < 2) {
+        picker.setAttribute('quiet', true);
+        picker.setAttribute('disabled', true);
       }
-      picker.appendChild(item);
-    });
 
-    IMPORT_FILE_PICKER_CONTAINER.append(picker);
+      results.forEach((result, index) => {
+        const { path } = result;
 
-    picker.addEventListener('change', (e) => {
-      const r = results.filter((i) => i.path === e.target.value)[0];
-      loadResult(r);
-    });
+        // add result to picker list
+        const item = document.createElement('sp-menu-item');
+        item.innerHTML = path;
+        if (index === 0) {
+          item.setAttribute('selected', true);
+          picker.setAttribute('label', path);
+          picker.setAttribute('value', path);
+        }
+        picker.appendChild(item);
+      });
 
-    loadResult(results[0]);
+      IMPORT_FILE_PICKER_CONTAINER.append(picker);
+
+      if (results.length > 0) {
+        picker.addEventListener('change', (e) => {
+          const r = results.filter((i) => i.path === e.target.value)[0];
+          loadResult(r);
+        });
+      }
+
+      loadResult(results[0]);
+    }
   } else {
     const li = document.createElement('li');
     const link = document.createElement('sp-link');
@@ -126,7 +132,6 @@ const updateImporterUI = (results, originalURL) => {
     link.innerHTML = originalURL;
     li.append(link);
 
-    const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
     let name = 'sp-icon-checkmark-circle';
     let label = 'Success';
     if (status === 'redirect') {
@@ -512,6 +517,7 @@ const attachListeners = () => {
         } else {
           // eslint-disable-next-line no-console
           console.warn(`Cannot transform ${src} - page may not exist (status ${res?.status || 'unknown status'})`);
+          alert.error(`Cannot transform ${src} - page may not exist (status ${res?.status || 'unknown status'})`);
           importStatus.rows.push({
             url,
             status: `Invalid: ${res?.status || 'unknown status'}`,
@@ -519,9 +525,6 @@ const attachListeners = () => {
           updateImporterUI([{ status: 'error' }], url);
           processNext();
         }
-        // ui.markdownPreview.innerHTML = md2html('Import in progress...');
-        // ui.transformedEditor.setValue('');
-        // ui.markdownEditor.setValue('');
       } else {
         const frame = getContentFrame();
         frame.removeEventListener('transformation-complete', processNext);
