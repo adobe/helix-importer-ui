@@ -419,10 +419,13 @@ const attachListeners = () => {
 
         let res;
         try {
-          res = await fetch(src);
+          const headers = JSON.parse(config.fields['import-custom-headers'] || '{}');
+          res = await fetch(src, {
+            headers,
+          });
         } catch (e) {
           // eslint-disable-next-line no-console
-          console.error(`Unexpected error when trying to fetch ${src} - CORS issue ?`, e);
+          console.error(`Unexpected error when trying to fetch ${src} - CORS issue or invalid headers ?`, e);
         }
         if (res && res.ok) {
           if (res.redirected) {
@@ -494,7 +497,17 @@ const attachListeners = () => {
 
               frame.dataset.originalURL = url;
               frame.dataset.replacedURL = src;
-              frame.src = src;
+
+              let blob;
+              if (contentType.includes('json')) {
+                blob = await res.blob();
+              } else {
+                let html = await res.text();
+                html = html.replace(/<head>/, `<head><base href="${remote.origin}">`);
+                blob = new Blob([html], { type: 'text/html' });
+              }
+
+              frame.src = URL.createObjectURL(blob);
 
               const current = getContentFrame();
               current.removeEventListener('load', onLoad);
