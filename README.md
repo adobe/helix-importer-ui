@@ -30,7 +30,6 @@ In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://ww
   - if the remote page is an SPA (React, Angular) or require Javascript to load some pieces of the content, Javascript is then required. Enabling Javascript may help here.
   - more generally, disabling Javascript speeds up the import process and reduces the memory consumed.
 - `Scroll to bottom`: forces a scroll to the bottom of the page. This might allow images set with earger to be loaded or any element loaded with Javascript below the fold. Increasing the `Page load timeout` might give more time to those element to be loaded.
-- `Custom headers`: connection to the site you want to import content from might require some custom request headers, like a Bear, an API key (especially when hitting JSON API), a Coookie... Those headers are sent together with the fetch request (headers config property of the standard browser `fetch` API).
 
 ## Crawler
 
