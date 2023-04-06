@@ -1,3 +1,10 @@
+# [1.36.0](https://github.com/adobe/helix-importer-ui/compare/v1.35.1...v1.36.0) (2023-04-06)
+
+
+### Features
+
+* add optional custom headers field ([#150](https://github.com/adobe/helix-importer-ui/issues/150)) ([633da4c](https://github.com/adobe/helix-importer-ui/commit/633da4cb987f82830db0bdd0ed55144c149cef85))
+
 ## [1.35.1](https://github.com/adobe/helix-importer-ui/compare/v1.35.0...v1.35.1) (2023-04-06)
 
 
