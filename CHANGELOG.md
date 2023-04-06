@@ -1,3 +1,10 @@
+## [1.35.1](https://github.com/adobe/helix-importer-ui/compare/v1.35.0...v1.35.1) (2023-04-06)
+
+
+### Reverts
+
+* Revert "feat: add optional custom headers field (#149)" ([2abc82f](https://github.com/adobe/helix-importer-ui/commit/2abc82ff13b3e3d93e443bad82cae119a0b54558)), closes [#149](https://github.com/adobe/helix-importer-ui/issues/149)
+
 # [1.35.0](https://github.com/adobe/helix-importer-ui/compare/v1.34.2...v1.35.0) (2023-04-06)
 
 
