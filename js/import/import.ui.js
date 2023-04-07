@@ -503,7 +503,7 @@ const attachListeners = () => {
                 blob = await res.blob();
               } else {
                 let html = await res.text();
-                html = html.replace(/<head>/, `<head><base href="${remote.origin}">`);
+                html = html.replace(/<head>/, `<head><base href="${src}">`);
                 blob = new Blob([html], { type: 'text/html' });
               }
 
