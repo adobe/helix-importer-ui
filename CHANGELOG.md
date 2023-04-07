@@ -1,3 +1,10 @@
+## [1.36.1](https://github.com/adobe/helix-importer-ui/compare/v1.36.0...v1.36.1) (2023-04-07)
+
+
+### Bug Fixes
+
+* use proxied url ([#151](https://github.com/adobe/helix-importer-ui/issues/151)) ([e0fd88d](https://github.com/adobe/helix-importer-ui/commit/e0fd88de1267b413e6a6d591038ad286bf687bbc))
+
 # [1.36.0](https://github.com/adobe/helix-importer-ui/compare/v1.35.1...v1.36.0) (2023-04-06)
 
 
