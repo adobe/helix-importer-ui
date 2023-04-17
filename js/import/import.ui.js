@@ -498,16 +498,12 @@ const attachListeners = () => {
               frame.dataset.originalURL = url;
               frame.dataset.replacedURL = src;
 
-              let blob;
               if (contentType.includes('json')) {
-                blob = await res.blob();
+                const blob = await res.blob();
+                frame.src = URL.createObjectURL(blob);
               } else {
-                let html = await res.text();
-                html = html.replace(/<head>/, `<head><base href="${src}">`);
-                blob = new Blob([html], { type: 'text/html' });
+                frame.src = src;
               }
-
-              frame.src = URL.createObjectURL(blob);
 
               const current = getContentFrame();
               current.removeEventListener('load', onLoad);
