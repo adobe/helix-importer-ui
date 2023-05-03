@@ -1,3 +1,10 @@
+# [1.37.0](https://github.com/adobe/helix-importer-ui/compare/v1.36.8...v1.37.0) (2023-05-03)
+
+
+### Features
+
+* disable JS execution by default and add warning ([#170](https://github.com/adobe/helix-importer-ui/issues/170)) ([57764d9](https://github.com/adobe/helix-importer-ui/commit/57764d992c4345acaf2f7231061bf444c6cba793))
+
 ## [1.36.8](https://github.com/adobe/helix-importer-ui/compare/v1.36.7...v1.36.8) (2023-04-23)
 
 
