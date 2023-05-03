@@ -65,6 +65,7 @@ const setupUI = () => {
   ui.markdownEditor.setSize('100%', '100%');
 
   ui.markdownPreview = MD_PREVIEW_PANEL;
+  // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
   ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
 
   SPTABS.selected = 'import-preview';
@@ -77,6 +78,7 @@ const loadResult = ({ md, html: outputHTML }) => {
   ui.markdownEditor.setValue(md || '');
 
   const mdPreview = WebImporter.md2html(md);
+  // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
   ui.markdownPreview.innerHTML = mdPreview;
 
   // remove existing classes and styles
@@ -89,7 +91,7 @@ const loadResult = ({ md, html: outputHTML }) => {
 const updateImporterUI = (results, originalURL) => {
   const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
   if (!IS_BULK) {
-    IMPORT_FILE_PICKER_CONTAINER.innerHTML = '';
+    IMPORT_FILE_PICKER_CONTAINER.textContent = '';
 
     if (status === 'success') {
       const picker = document.createElement('sp-picker');
@@ -105,7 +107,7 @@ const updateImporterUI = (results, originalURL) => {
 
         // add result to picker list
         const item = document.createElement('sp-menu-item');
-        item.innerHTML = path;
+        item.textContent = path;
         if (index === 0) {
           item.setAttribute('selected', true);
           picker.setAttribute('label', path);
@@ -131,7 +133,7 @@ const updateImporterUI = (results, originalURL) => {
     link.setAttribute('size', 'm');
     link.setAttribute('target', '_blank');
     link.setAttribute('href', originalURL);
-    link.innerHTML = originalURL;
+    link.textContent = originalURL;
     li.append(link);
 
     let name = 'sp-icon-checkmark-circle';
@@ -164,8 +166,8 @@ const updateImporterUI = (results, originalURL) => {
 };
 
 const clearResultPanel = () => {
-  BULK_URLS_LIST.innerHTML = '';
-  BULK_URLS_HEADING.innerText = 'Importing...';
+  BULK_URLS_LIST.textContent = '';
+  BULK_URLS_HEADING.textContent = 'Importing...';
 };
 
 const initImportStatus = () => {

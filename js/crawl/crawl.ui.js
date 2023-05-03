@@ -52,7 +52,7 @@ const displayCrawledURL = (url) => {
   link.setAttribute('size', 'm');
   link.setAttribute('target', '_blank');
   link.setAttribute('href', url);
-  link.innerHTML = u.pathname;
+  link.textContent = u.pathname;
   li.append(link);
 
   CRAWLED_URLS_LIST.append(li);
@@ -62,12 +62,12 @@ const displayCrawledURL = (url) => {
 
 const displayTooManyURLs = () => {
   const li = document.createElement('li');
-  li.innerHTML = 'Too many urls to display. Please download the crawl report to access the full list.';
+  li.textContent = 'Too many urls to display. Please download the crawl report to access the full list.';
   CRAWLED_URLS_LIST.append(li);
 };
 
 const clearResultPanel = () => {
-  CRAWLED_URLS_LIST.innerHTML = '';
+  CRAWLED_URLS_LIST.textContent = '';
   CRAWLED_URLS_HEADING.innerText = 'Crawling...';
 };
 
