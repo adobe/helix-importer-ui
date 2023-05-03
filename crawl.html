@@ -41,9 +41,12 @@
                                         <sp-field-label for="crawl-pageload-timeout">Page load timeout</sp-field-label>
                                         <sp-number-field class="option-field" id="crawl-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
-                                        <sp-checkbox class="option-field" id="crawl-enable-js" checked>
+                                        <sp-checkbox class="option-field" id="crawl-enable-js">
                                             Enable JavaScript
                                         </sp-checkbox>
+                                        <sp-help-text variant="negative" icon>
+                                            Security risk: only enable Javascript execution when importing from trusted websites.
+                                        </sp-help-text>
 
                                         <sp-checkbox class="option-field" id="crawl-show-preview" checked>
                                             Show preview
