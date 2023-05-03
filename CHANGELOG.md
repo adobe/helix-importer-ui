@@ -1,3 +1,10 @@
+# [1.38.0](https://github.com/adobe/helix-importer-ui/compare/v1.37.0...v1.38.0) (2023-05-03)
+
+
+### Features
+
+* review innerHTML usages ([#172](https://github.com/adobe/helix-importer-ui/issues/172)) ([9ed46b4](https://github.com/adobe/helix-importer-ui/commit/9ed46b4203a6d1824e76c3a16f8d90abbc6377bb))
+
 # [1.37.0](https://github.com/adobe/helix-importer-ui/compare/v1.36.8...v1.37.0) (2023-05-03)
 
 
