@@ -116,7 +116,7 @@ export default class PollImporter {
       if (includeDocx) {
         const out = await WebImporter.html2docx(
           url,
-          document,
+          document.cloneNode(true),
           this.projectTransform,
           params,
         );
@@ -129,7 +129,7 @@ export default class PollImporter {
       } else {
         const out = await WebImporter.html2md(
           url,
-          document,
+          document.cloneNode(true),
           this.projectTransform,
           params,
         );
