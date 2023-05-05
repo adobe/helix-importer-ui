@@ -1,3 +1,10 @@
+## [1.38.3](https://github.com/adobe/helix-importer-ui/compare/v1.38.2...v1.38.3) (2023-05-05)
+
+
+### Bug Fixes
+
+* load non json resources without blob ([#162](https://github.com/adobe/helix-importer-ui/issues/162)) ([02df655](https://github.com/adobe/helix-importer-ui/commit/02df6557899f820026d299adbc6ffb581cc61d55))
+
 ## [1.38.2](https://github.com/adobe/helix-importer-ui/compare/v1.38.1...v1.38.2) (2023-05-04)
 
 
