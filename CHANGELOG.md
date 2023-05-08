@@ -1,3 +1,10 @@
+## [1.38.5](https://github.com/adobe/helix-importer-ui/compare/v1.38.4...v1.38.5) (2023-05-08)
+
+
+### Bug Fixes
+
+* use original document to re-run import process ([282ab33](https://github.com/adobe/helix-importer-ui/commit/282ab33bbc3d6a9f588d10f01c540835597680a5))
+
 ## [1.38.4](https://github.com/adobe/helix-importer-ui/compare/v1.38.3...v1.38.4) (2023-05-07)
 
 
