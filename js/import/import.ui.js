@@ -371,7 +371,7 @@ const attachListeners = () => {
 
     updateImporterUI(results, originalURL);
     let error = await postSuccessfulStep(results, originalURL);
-    error = await postImportStep() || error;
+    error = await postImportStep() && error;
 
     if (error) {
       alert.error(`Something went wrong during the import of page ${originalURL}. Please check the Dev Console logs.`);
