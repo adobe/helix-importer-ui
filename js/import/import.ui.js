@@ -205,6 +205,7 @@ const getProxyURLSetup = (url, origin) => {
 };
 
 const postSuccessfulStep = async (results, originalURL) => {
+  let error = false;
   await asyncForEach(results, async ({
     docx, filename, path, report, from,
   }) => {
@@ -215,9 +216,16 @@ const postSuccessfulStep = async (results, originalURL) => {
 
     if (docx) {
       if (dirHandle) {
-        await saveFile(dirHandle, filename, docx);
-        data.file = filename;
-        data.status = 'Success';
+        try {
+          await saveFile(dirHandle, filename, docx);
+          data.file = filename;
+          data.status = 'Success';
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(`Failed to save file ${path} for ${originalURL}`, e);
+          data.status = `Error: Failed to save file ${path} - ${e.message}`;
+          error = true;
+        }
       } else {
         data.status = 'Success - No file created';
       }
@@ -238,11 +246,13 @@ const postSuccessfulStep = async (results, originalURL) => {
           }
         } else {
           data.status = `Error: Failed to download ${from} - ${res.status} ${res.statusText}`;
+          error = true;
         }
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(`Failed to download ${from} to ${path}`, e);
         data.status = `Error: Failed to download ${from} - ${e.message}`;
+        error = true;
       }
     } else {
       data.status = 'Success - No file created';
@@ -259,6 +269,8 @@ const postSuccessfulStep = async (results, originalURL) => {
 
     importStatus.rows.push(data);
   });
+
+  return error;
 };
 
 const autoSaveReport = () => dirHandle && IS_BULK;
@@ -310,8 +322,15 @@ const getReport = async () => {
 const postImportStep = async () => {
   if (autoSaveReport()) {
     // save report file in the folder
-    await saveFile(dirHandle, REPORT_FILENAME, await getReport());
+    try {
+      await saveFile(dirHandle, REPORT_FILENAME, await getReport());
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error('Failed to save report file', e);
+      return false;
+    }
   }
+  return true;
 };
 
 const createImporter = () => {
@@ -351,10 +370,14 @@ const attachListeners = () => {
     const { originalURL } = frame.dataset;
 
     updateImporterUI(results, originalURL);
-    await postSuccessfulStep(results, originalURL);
-    await postImportStep();
+    let error = await postSuccessfulStep(results, originalURL);
+    error = await postImportStep() || error;
 
-    alert.success(`Import of page ${originalURL} completed.`);
+    if (error) {
+      alert.error(`Something went wrong during the import of page ${originalURL}. Please check the Dev Console logs.`);
+    } else {
+      alert.success(`Import of page ${originalURL} completed.`);
+    }
   });
 
   config.importer.addErrorListener(async ({ url, error: err, params }) => {
