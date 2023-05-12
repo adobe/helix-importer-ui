@@ -11,6 +11,31 @@
  */
 /* global WebImporter */
 
+const DEFAULT_SUPPORTED_STYLES = ['background-image'];
+
+function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
+  const clone = document.cloneNode(true);
+
+  const applyStyles = (nodeSrc, nodeDest) => {
+    const style = window.getComputedStyle(nodeSrc, null);
+
+    styles.forEach((styleName) => {
+      if (style[styleName]) {
+        nodeDest.style[styleName] = style[styleName];
+      }
+    });
+
+    if (nodeSrc.children && nodeSrc.children.length > 0) {
+      const destChildren = [...nodeDest.children];
+      [...nodeSrc.children].forEach((child, i) => {
+        applyStyles(child, destChildren[i]);
+      });
+    }
+  };
+  applyStyles(document.body, clone.body);
+  return clone;
+}
+
 export default class PollImporter {
   constructor(cfg) {
     this.config = {
@@ -116,7 +141,7 @@ export default class PollImporter {
       if (includeDocx) {
         const out = await WebImporter.html2docx(
           url,
-          document.cloneNode(true),
+          deepCloneWithStyles(document, this.projectTransform.REQUIRED_STYLES),
           this.projectTransform,
           params,
         );
@@ -129,7 +154,7 @@ export default class PollImporter {
       } else {
         const out = await WebImporter.html2md(
           url,
-          document.cloneNode(true),
+          deepCloneWithStyles(document, this.projectTransform.REQUIRED_STYLES),
           this.projectTransform,
           params,
         );
