@@ -688,3 +688,16 @@ The code above forces the import process to wait for the DOM element with CSS cl
 Firing an error is one way of defining the page has a problem (maybe it is different ?). The error message will appear in the report and can be reviewed afterward. But it is not required. If it is fine for the page to not have the element, you can just log an error or do nothing.
 
 Note: calling `WebImporter.Loader.waitForElement` in the `transformDOM` or `transform` function would be useless - the execution context is different, the DOM is frozen and does not change anymore.
+
+### Styles
+
+By default, the importer does not deal with styles: CSS files are removed and only inline styles might be available during the transformation phase (on the DOM element of the document in the `preprocess`, `transform` or `transformDOM` function). Only exception is the `background-image` (computed) style which is inlined in the DOM so that, if useful, the background images can be converted into `img` elements and inserted into the DOM to become part of the content.
+If necessary, the list of style elements that are inlined by the importer before the transformation phase can be overriden in `import.js` via the `REQUIRED_STYLES` array. Here an example reproducing the default behavior:
+
+```js
+export default {
+  REQUIRED_STYLES: ['background-image'],
+};
+```
+
+Just add the extra styles you need to perform your transformation.
