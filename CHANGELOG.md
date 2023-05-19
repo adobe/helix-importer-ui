@@ -1,3 +1,11 @@
+## [1.39.1](https://github.com/adobe/helix-importer-ui/compare/v1.39.0...v1.39.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* clone and copy styles ([#184](https://github.com/adobe/helix-importer-ui/issues/184)) ([a750087](https://github.com/adobe/helix-importer-ui/commit/a75008746b1b367648e8624e6fc0b6880a1ca222))
+* **deps:** update dependency @adobe/helix-importer to v2.9.7 ([#188](https://github.com/adobe/helix-importer-ui/issues/188)) ([a9f7907](https://github.com/adobe/helix-importer-ui/commit/a9f7907c11ac03e29bce5454b1f005bb9219459b))
+
 # [1.39.0](https://github.com/adobe/helix-importer-ui/compare/v1.38.7...v1.39.0) (2023-05-15)
 
 
