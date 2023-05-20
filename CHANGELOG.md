@@ -1,3 +1,10 @@
+## [1.39.2](https://github.com/adobe/helix-importer-ui/compare/v1.39.1...v1.39.2) (2023-05-20)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#189](https://github.com/adobe/helix-importer-ui/issues/189)) ([a84d0ab](https://github.com/adobe/helix-importer-ui/commit/a84d0abba61ce5528e23f0bcf474498f4ca8694d))
+
 ## [1.39.1](https://github.com/adobe/helix-importer-ui/compare/v1.39.0...v1.39.1) (2023-05-19)
 
 
