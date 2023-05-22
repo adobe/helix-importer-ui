@@ -1,3 +1,16 @@
+# [1.40.0](https://github.com/adobe/helix-importer-ui/compare/v1.39.2...v1.40.0) (2023-05-22)
+
+
+### Bug Fixes
+
+* deny browser automated downloads from the import frame to trigger standard warning notification in web console ([8c38da9](https://github.com/adobe/helix-importer-ui/commit/8c38da92a056b9609087f7ba9114e8e620abb96e))
+* extend list of extensions to exclude from crawling ([fe73c38](https://github.com/adobe/helix-importer-ui/commit/fe73c383f0a07a860330421a91906346d771cfb1))
+
+
+### Features
+
+* crawl: report excluded urls ([f4bd166](https://github.com/adobe/helix-importer-ui/commit/f4bd1664a0015aa5222ccf6bd85b9cc2fb64c12b))
+
 ## [1.39.2](https://github.com/adobe/helix-importer-ui/compare/v1.39.1...v1.39.2) (2023-05-20)
 
 
