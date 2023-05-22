@@ -149,11 +149,11 @@ const attachListeners = () => {
         const frame = document.createElement('iframe');
         frame.id = 'crawl-content-frame';
 
+        let sandboxAttr = 'allow-same-origin';
         if (config.fields['crawl-enable-js']) {
-          frame.removeAttribute('sandbox');
-        } else {
-          frame.setAttribute('sandbox', 'allow-same-origin');
+          sandboxAttr += ' allow-scripts';
         }
+        frame.setAttribute('sandbox', sandboxAttr);
 
         const onLoad = async () => {
           if (config.fields['import-scroll-to-bottom']) {
