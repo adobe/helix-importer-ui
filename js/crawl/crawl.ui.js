@@ -171,6 +171,7 @@ const attachListeners = () => {
               let nbLinksExternalHost = 0;
               let nbLinksAlreadyProcessed = 0;
               const linksToFollow = [];
+              const linksExcluded = [];
               links.forEach((a) => {
                 nbLinks += 1;
                 if (a.href) {
@@ -190,6 +191,8 @@ const attachListeners = () => {
                       } else {
                         nbLinksAlreadyProcessed += 1;
                       }
+                    } else {
+                      linksExcluded.push(found);
                     }
                   } else {
                     nbLinksExternalHost += 1;
@@ -206,6 +209,8 @@ const attachListeners = () => {
                 nbLinksExternalHost,
                 nbLinksToFollow: linksToFollow.length,
                 linksToFollow,
+                nbLinksExcluded: linksExcluded.length,
+                linksExcluded,
               };
               crawlStatus.rows.push(row);
               crawlStatus.crawled += 1;
@@ -280,7 +285,7 @@ const attachListeners = () => {
 
     let headers = ['URL'];
     if (crawlStatus.hasExtra) {
-      headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow'];
+      headers = ['URL', 'status', 'redirect', 'Nb links on page', 'Nb links already processed', 'Nb links on external host', 'Nb links to follow', 'Links to follow', 'Nb links excluded', 'Links excluded'];
       worksheet.autoFilter = {
         from: 'A1',
         to: 'H1',
@@ -304,10 +309,12 @@ const attachListeners = () => {
       nbLinksExternalHost,
       nbLinksToFollow,
       linksToFollow,
+      nbLinksExcluded,
+      linksExcluded,
     }) => {
       if (crawlStatus.hasExtra) {
         return [
-          url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '',
+          url, status, redirect || '', nbLinks || '', nbLinksAlreadyProcessed || '', nbLinksExternalHost || '', nbLinksToFollow || '', linksToFollow ? linksToFollow.join(', ') : '', nbLinksExcluded || '', linksExcluded ? linksExcluded.join(', ') : '',
         ];
       }
       return [url];
