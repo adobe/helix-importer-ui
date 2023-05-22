@@ -36,6 +36,21 @@ const IGNORED_EXTENSIONS = [
   'webp',
   'eps',
   'pdf',
+  'doc',
+  'docx',
+  'xls',
+  'xlsx',
+  'ppt',
+  'pptx',
+  'zip',
+  'gz',
+  'tgz',
+  'tar',
+  'bz2',
+  'dmg',
+  'exe',
+  'iso',
+  'mp4',
 ];
 
 const config = {};
