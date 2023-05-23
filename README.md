@@ -23,7 +23,7 @@ In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://ww
 ### Options
 
 - `Local save as docx`: enable / disable the save as docx to the local file system. Disabling is useful when working on the `import.js` transformation and checking the docx is not necessarily at that time.
-- `Import file URL`: url of the import transformation file
+- `Import file URL`: url of the import transformation file (by convention the `hlx` importer service maps `http://localhost:3001/tools/importer/*` urls to local folder so all import code must be placed under `<PROJECT_ROOT>/tools/importer/`)
 - `Page load timeout`: the transformation uses the target page DOM. This DOM might take some time to be fully decorated. You can reduce the timeout if your transformation does not need to wait or extend if the DOM takes longer to be fully complete
 - `Enable Javascript`: 
   - page to import may have a Javascript redirect to the remote domain (to make sure you stay on their site). This then blocks the tool to access the content via the iframe. Disabling Javascript may help here. 
