@@ -19,7 +19,7 @@ async function loadSitemap(sitemapURL, origin, host, config = {}) {
     if (config.log) {
       config.log(`Extracting URLs from sitemap: ${sitemapURL}`);
     }
-    const xml = await resp.text();
+    const xml = (await resp.text()).trim();
     const sitemap = (new window.DOMParser()).parseFromString(xml, 'text/xml');
     const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
     let urls = [];
