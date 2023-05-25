@@ -99,7 +99,7 @@ const enableProcessButtons = () => {
 };
 
 const resetResultPanelHeader = () => {
-  if(CRAWLED_URLS_LIST.childNodes.length === 0) {
+  if (CRAWLED_URLS_LIST.childNodes.length === 0) {
     CRAWLED_URLS_HEADING.innerText = '';
   }
 };
@@ -352,7 +352,7 @@ const attachListeners = () => {
         const u = new URL(url);
         return u.pathname.startsWith(config.fields['crawl-filter-pathname']);
       });
-  
+
       crawlStatus.crawled = crawlStatus.urls.length;
       crawlStatus.urls.forEach((url, index) => {
         if (index === 1000) {
@@ -360,13 +360,13 @@ const attachListeners = () => {
         } else if (index < 1000) {
           displayCrawledURL(url);
         }
-  
+
         const row = {
           url,
         };
         crawlStatus.rows.push(row);
       });
-    } catch(e) {
+    } catch (e) {
       alert.error(`Error while loading sitemaps and URLs from robots.txt: ${e}`);
     }
 

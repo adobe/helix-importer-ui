@@ -22,7 +22,7 @@ async function loadSitemap(sitemapURL, origin, host, config = {}) {
     const xml = (await resp.text()).trim();
     const sitemap = (new window.DOMParser()).parseFromString(xml, 'text/xml');
 
-    const errorNode = sitemap.querySelector("parsererror");
+    const errorNode = sitemap.querySelector('parsererror');
     if (errorNode) {
       // parsing failed
       throw new Error(`parsing sitemap ${sitemapURL}: ${errorNode.textContent}`);
@@ -36,15 +36,15 @@ async function loadSitemap(sitemapURL, origin, host, config = {}) {
           resolve(true);
         });
       }));
-  
+
       await Promise.all(promises);
-  
+
       const urlLocs = sitemap.querySelectorAll('url loc');
       urlLocs.forEach((loc) => {
         const u = new URL(loc.textContent, host);
         urls.push(u.toString());
       });
-  
+
       return urls;
     }
   }
