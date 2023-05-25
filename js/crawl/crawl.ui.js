@@ -81,7 +81,7 @@ const displayTooManyURLs = () => {
   CRAWLED_URLS_LIST.append(li);
 };
 
-const clearResultPanel = () => {
+const initResultPanel = () => {
   CRAWLED_URLS_LIST.textContent = '';
   CRAWLED_URLS_HEADING.innerText = 'Crawling...';
 };
@@ -96,6 +96,12 @@ const enableProcessButtons = () => {
   PROCESS_BUTTONS.forEach((button) => {
     button.disabled = false;
   });
+};
+
+const resetResultPanelHeader = () => {
+  if(CRAWLED_URLS_LIST.childNodes.length === 0) {
+    CRAWLED_URLS_HEADING.innerText = '';
+  }
 };
 
 const getProxyURLSetup = (url, origin) => {
@@ -123,7 +129,7 @@ const attachListeners = () => {
 
   CRAWL_BUTTON.addEventListener('click', (async () => {
     disableProcessButtons();
-    clearResultPanel();
+    initResultPanel();
 
     if (config.fields['crawl-show-preview']) {
       CRAWL_CONTAINER.classList.remove('hidden');
@@ -274,6 +280,7 @@ const attachListeners = () => {
         frame.removeEventListener('crawling-complete', processNext);
         CRAWL_REPORT_BUTTON.classList.remove('hidden');
         enableProcessButtons();
+        resetResultPanelHeader();
       }
     };
     processNext();
@@ -329,7 +336,7 @@ const attachListeners = () => {
 
   GETURLSFROMROBOTS_BUTTON.addEventListener('click', (async () => {
     disableProcessButtons();
-    clearResultPanel();
+    initResultPanel();
 
     crawlStatus.crawled = 0;
     crawlStatus.rows = [];
@@ -337,30 +344,35 @@ const attachListeners = () => {
     crawlStatus.hasExtra = false;
 
     // eslint-disable-next-line no-alert
-    crawlStatus.urls = (await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
-      log: alert.success,
-      sitemap: config.fields['crawl-sitemap-file'],
-    })).filter((url) => {
-      const u = new URL(url);
-      return u.pathname.startsWith(config.fields['crawl-filter-pathname']);
-    });
-
-    crawlStatus.crawled = crawlStatus.urls.length;
-    crawlStatus.urls.forEach((url, index) => {
-      if (index === 1000) {
-        displayTooManyURLs();
-      } else if (index < 1000) {
-        displayCrawledURL(url);
-      }
-
-      const row = {
-        url,
-      };
-      crawlStatus.rows.push(row);
-    });
+    try {
+      crawlStatus.urls = (await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
+        log: alert.success,
+        sitemap: config.fields['crawl-sitemap-file'],
+      })).filter((url) => {
+        const u = new URL(url);
+        return u.pathname.startsWith(config.fields['crawl-filter-pathname']);
+      });
+  
+      crawlStatus.crawled = crawlStatus.urls.length;
+      crawlStatus.urls.forEach((url, index) => {
+        if (index === 1000) {
+          displayTooManyURLs();
+        } else if (index < 1000) {
+          displayCrawledURL(url);
+        }
+  
+        const row = {
+          url,
+        };
+        crawlStatus.rows.push(row);
+      });
+    } catch(e) {
+      alert.error(`Error while loading sitemaps and URLs from robots.txt: ${e}`);
+    }
 
     CRAWL_REPORT_BUTTON.classList.remove('hidden');
     enableProcessButtons();
+    resetResultPanelHeader();
   }));
 };
 
