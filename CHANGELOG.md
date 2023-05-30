@@ -1,3 +1,15 @@
+# [1.41.0](https://github.com/adobe/helix-importer-ui/compare/v1.40.1...v1.41.0) (2023-05-30)
+
+
+### Bug Fixes
+
+* handle sitemap parsing issues ([7f0f333](https://github.com/adobe/helix-importer-ui/commit/7f0f333a7d8f7ccc127c4b705b8fd10be084aa62))
+
+
+### Features
+
+* auto handle prefix space issues in sitemap files ([ea4b8b9](https://github.com/adobe/helix-importer-ui/commit/ea4b8b9daaaa9bce80498fd3fd0a596ea65677d2))
+
 ## [1.40.1](https://github.com/adobe/helix-importer-ui/compare/v1.40.0...v1.40.1) (2023-05-27)
 
 
