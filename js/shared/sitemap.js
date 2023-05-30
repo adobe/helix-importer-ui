@@ -19,27 +19,34 @@ async function loadSitemap(sitemapURL, origin, host, config = {}) {
     if (config.log) {
       config.log(`Extracting URLs from sitemap: ${sitemapURL}`);
     }
-    const xml = await resp.text();
+    const xml = (await resp.text()).trim();
     const sitemap = (new window.DOMParser()).parseFromString(xml, 'text/xml');
-    const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
-    let urls = [];
-    const promises = subSitemaps.map((loc) => new Promise((resolve) => {
-      const subSitemapURL = new URL(loc.textContent, origin);
-      loadSitemap(subSitemapURL.toString(), origin, host, config).then((result) => {
-        urls = urls.concat(result);
-        resolve(true);
+
+    const errorNode = sitemap.querySelector('parsererror');
+    if (errorNode) {
+      // parsing failed
+      throw new Error(`parsing sitemap ${sitemapURL}: ${errorNode.textContent}`);
+    } else {
+      const subSitemaps = [...sitemap.querySelectorAll('sitemap loc')];
+      let urls = [];
+      const promises = subSitemaps.map((loc) => new Promise((resolve) => {
+        const subSitemapURL = new URL(loc.textContent, origin);
+        loadSitemap(subSitemapURL.toString(), origin, host, config).then((result) => {
+          urls = urls.concat(result);
+          resolve(true);
+        });
+      }));
+
+      await Promise.all(promises);
+
+      const urlLocs = sitemap.querySelectorAll('url loc');
+      urlLocs.forEach((loc) => {
+        const u = new URL(loc.textContent, host);
+        urls.push(u.toString());
       });
-    }));
 
-    await Promise.all(promises);
-
-    const urlLocs = sitemap.querySelectorAll('url loc');
-    urlLocs.forEach((loc) => {
-      const u = new URL(loc.textContent, host);
-      urls.push(u.toString());
-    });
-
-    return urls;
+      return urls;
+    }
   }
   return [];
 }
@@ -67,14 +74,23 @@ async function loadURLsFromRobots(origin, host, config = {}) {
       sitemaps.push(m[1]);
     }
 
-    const promises = sitemaps.map((sitemap) => new Promise((resolve) => {
+    const promises = sitemaps.map((sitemap) => new Promise((resolve, reject) => {
       loadSitemap(sitemap, origin, host, config).then((u) => {
         urls = urls.concat(u);
         resolve();
-      });
+      }).catch(reject);
     }));
 
-    await Promise.all(promises);
+    const results = await Promise.allSettled(promises);
+    const errors = [];
+    results.forEach((result) => {
+      if (result.status === 'rejected') {
+        errors.push(result.reason.message);
+      }
+    });
+    if (errors.length > 0) {
+      throw new Error(errors.join(' - '));
+    }
   } else {
     // eslint-disable-next-line no-console
     const sitemapFile = config.sitemapFile || '/sitemap.xml';
