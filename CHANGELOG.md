@@ -1,3 +1,10 @@
+# [1.42.0](https://github.com/adobe/helix-importer-ui/compare/v1.41.1...v1.42.0) (2023-06-06)
+
+
+### Features
+
+* use default sitemap if no sitemap found in robots.txt ([#197](https://github.com/adobe/helix-importer-ui/issues/197)) ([a141e07](https://github.com/adobe/helix-importer-ui/commit/a141e07dc84b3d812b4968ecafa69c6bb5c1e69e))
+
 ## [1.41.1](https://github.com/adobe/helix-importer-ui/compare/v1.41.0...v1.41.1) (2023-06-03)
 
 
