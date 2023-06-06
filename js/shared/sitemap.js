@@ -74,6 +74,14 @@ async function loadURLsFromRobots(origin, host, config = {}) {
       sitemaps.push(m[1]);
     }
 
+    if (sitemaps.length === 0) {
+      const sitemapFile = config.sitemapFile || '/sitemap.xml';
+      if (config.log) {
+        config.log(`No sitemaps found in robots.txt - trying ${sitemapFile}`);
+      }
+      sitemaps.push(sitemapFile);
+    }
+
     const promises = sitemaps.map((sitemap) => new Promise((resolve, reject) => {
       loadSitemap(sitemap, origin, host, config).then((u) => {
         urls = urls.concat(u);
