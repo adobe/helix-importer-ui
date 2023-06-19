@@ -642,6 +642,20 @@ Every new project has its own collection of new use cases which might be totally
   ```
 
  And reload the importer ui browser window.
+ 
+ ℹ️ If you want to make and/or propose changes in the `helix-importer` package (a dependency for `helix-importer-ui`, following additional steps would be needed:
+   1. check-out https://github.com/adobe/helix-importer
+   1. execute `npm i` in the repository root
+   1. execute `npm link`
+   1. navigate to `helix-importer-ui` checkout folder from your project root (typically `$PROJECT_ROOT/tools/importer/helix-importer-ui`
+   1. execute `npm i`
+      * not required if you've already been working on importer via `hlx import`)
+   1. execute `npm link @adobe/helix-importer`
+   1. update the `build:dev` goal in `package.json`, and remove `npm i` execution from the goal
+      * this is required, otherwise the symlink created by `npm link @adobe/helix-importer` will be reset
+   1. execute `npm run build:dev` and reload the importer ui browser window.
+      * this step is required for all subsequent (local) updates made to `helix-importer` dependency
+      * to restore, revert changes made to `package.json` and repeat this step
 
 ## Advanced
 
