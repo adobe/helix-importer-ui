@@ -23,6 +23,7 @@ const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-previ
 
 const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
+const GENERATE_IMPORTJS_BUTTON = document.getElementById('import-generateimportjs-button');
 
 // const SAVEASWORD_BUTTON = document.getElementById('saveAsWord');
 const FOLDERNAME_SPAN = document.getElementById('folder-name');
@@ -396,6 +397,22 @@ const attachListeners = () => {
     updateImporterUI([{ status: 'error' }], originalURL);
     await postImportStep();
   });
+
+  GENERATE_IMPORTJS_BUTTON.addEventListener('click', (async () => {
+    GENERATE_IMPORTJS_BUTTON.disabled = true;
+    // TODO call genai APIs
+    // you probably need a url before enabling this button
+    const res = await fetch('https://gist.githubusercontent.com/kptdobe/8a726387ecca80dde2081b17b3e913f7/raw/a9fadcc3f932aa85f407b1c6254807c38511dd02/import.js');
+    const defaultImportJS = await res.text();
+
+    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(defaultImportJS);
+      alert.success('import.js file copied to clipboard');
+    } else {
+      alert.error('Failed to copy import.js file to clipboard');
+    }
+    GENERATE_IMPORTJS_BUTTON.disabled = false;
+  }));
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
     initImportStatus();
