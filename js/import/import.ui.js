@@ -400,9 +400,26 @@ const attachListeners = () => {
 
   GENERATE_IMPORTJS_BUTTON.addEventListener('click', (async () => {
     GENERATE_IMPORTJS_BUTTON.disabled = true;
-    // TODO call genai APIs
-    // you probably need a url before enabling this button
-    const res = await fetch('https://gist.githubusercontent.com/kptdobe/8a726387ecca80dde2081b17b3e913f7/raw/a9fadcc3f932aa85f407b1c6254807c38511dd02/import.js');
+    
+    const frame = getContentFrame();
+    const { originalURL } = frame.dataset;
+    // using a local server
+    // TODO call Public APIs
+    const GENAI_API_PATH = "http://localhost:3003/run"
+    const requestSettings = {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          "url": originalURL
+        })
+    }
+
+    const res = await fetch(GENAI_API_PATH, requestSettings);
+
+    // const res = await fetch('https://gist.githubusercontent.com/kptdobe/8a726387ecca80dde2081b17b3e913f7/raw/a9fadcc3f932aa85f407b1c6254807c38511dd02/import.js');
     const defaultImportJS = await res.text();
 
     if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
@@ -586,6 +603,7 @@ const attachListeners = () => {
       }
     };
     processNext();
+    GENERATE_IMPORTJS_BUTTON.disabled = false;
   }));
 
   IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
@@ -622,6 +640,8 @@ const init = () => {
 
   if (!IS_BULK) setupUI();
   attachListeners();
+
+  GENERATE_IMPORTJS_BUTTON.disabled = true;
 };
 
 init();
