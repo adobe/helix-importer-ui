@@ -400,22 +400,22 @@ const attachListeners = () => {
 
   GENERATE_IMPORTJS_BUTTON.addEventListener('click', (async () => {
     GENERATE_IMPORTJS_BUTTON.disabled = true;
-    
+
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
     // using a local server
     // TODO call Public APIs
-    const GENAI_API_PATH = "http://localhost:3003/run"
+    const GENAI_API_PATH = 'http://localhost:3003/run';
     const requestSettings = {
-        method: 'POST',
-        headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          "url": originalURL
-        })
-    }
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        url: originalURL,
+      }),
+    };
 
     const res = await fetch(GENAI_API_PATH, requestSettings);
 
