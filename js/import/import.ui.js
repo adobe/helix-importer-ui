@@ -15,6 +15,7 @@ import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
+import { toggleLoadingButton } from '../shared/ui.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -414,6 +415,7 @@ const attachListeners = () => {
     }
 
     disableProcessButtons();
+    toggleLoadingButton(IMPORT_BUTTON);
     if (config.fields['import-local-save'] && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
@@ -566,6 +568,7 @@ const attachListeners = () => {
         frame.removeEventListener('transformation-complete', processNext);
         DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
         enableProcessButtons();
+        toggleLoadingButton(IMPORT_BUTTON);
       }
     };
     processNext();

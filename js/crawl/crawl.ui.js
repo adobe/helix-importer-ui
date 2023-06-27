@@ -13,6 +13,7 @@
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { loadURLsFromRobots } from '../shared/sitemap.js';
 import alert from '../shared/alert.js';
+import { toggleLoadingButton } from '../shared/ui.js';
 
 const PARENT_SELECTOR = '.crawl';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -129,6 +130,7 @@ const attachListeners = () => {
 
   CRAWL_BUTTON.addEventListener('click', (async () => {
     disableProcessButtons();
+    toggleLoadingButton(CRAWL_BUTTON);
     initResultPanel();
 
     if (config.fields['crawl-show-preview']) {
@@ -280,6 +282,7 @@ const attachListeners = () => {
         frame.removeEventListener('crawling-complete', processNext);
         CRAWL_REPORT_BUTTON.classList.remove('hidden');
         enableProcessButtons();
+        toggleLoadingButton(CRAWL_BUTTON);
         resetResultPanelHeader();
       }
     };
@@ -336,6 +339,7 @@ const attachListeners = () => {
 
   GETURLSFROMROBOTS_BUTTON.addEventListener('click', (async () => {
     disableProcessButtons();
+    toggleLoadingButton(GETURLSFROMROBOTS_BUTTON);
     initResultPanel();
 
     crawlStatus.crawled = 0;
@@ -372,6 +376,7 @@ const attachListeners = () => {
 
     CRAWL_REPORT_BUTTON.classList.remove('hidden');
     enableProcessButtons();
+    toggleLoadingButton(GETURLSFROMROBOTS_BUTTON);
     resetResultPanelHeader();
   }));
 };

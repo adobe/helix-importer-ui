@@ -37,3 +37,5 @@ import '@spectrum-web-components/sidenav/sp-sidenav-heading.js';
 import '@spectrum-web-components/sidenav/sp-sidenav-item.js';
 
 import '@spectrum-web-components/toast/sp-toast.js';
+
+import '@spectrum-web-components/progress-circle/sp-progress-circle.js';

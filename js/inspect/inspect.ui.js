@@ -1,6 +1,7 @@
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { drop, generateCSS, rgb2hex } from './inspect.js';
 import alert from '../shared/alert.js';
+import { toggleLoadingButton } from '../shared/ui.js';
 
 const PARENT_SELECTOR = '.inspect';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -65,6 +66,7 @@ const doDrop = async () => {
 
     enablePickers();
     enableButton();
+    toggleLoadingButton(DROP_BUTTON);
   }, 2000);
 };
 
@@ -201,6 +203,7 @@ const attachListeners = () => {
   DROP_BUTTON.addEventListener('click', async () => {
     PREVIEW_PANEL.classList.remove('hidden');
     disableButton();
+    toggleLoadingButton(DROP_BUTTON);
     disablePickers();
     const url = new URL(config.fields['inspect-url']);
 
