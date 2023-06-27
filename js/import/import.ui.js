@@ -403,6 +403,7 @@ const attachListeners = () => {
 
   GENERATE_IMPORTJS_BUTTON.addEventListener('click', (async () => {
     disableProcessButtons();
+    toggleLoadingButton(GENERATE_IMPORTJS_BUTTON);
 
     const url = config.fields['import-url'];
     // using a local server
@@ -419,7 +420,7 @@ const attachListeners = () => {
 
     const res = await fetch(GENAI_API_PATH, requestSettings);
     // const res = await fetch('https://gist.githubusercontent.com/kptdobe/8a726387ecca80dde2081b17b3e913f7/raw/a9fadcc3f932aa85f407b1c6254807c38511dd02/import.js');
-    
+
     if (res.ok) {
       const defaultImportJS = await res.text();
       console.log(defaultImportJS);
@@ -439,6 +440,7 @@ const attachListeners = () => {
     }
 
     enableProcessButtons();
+    toggleLoadingButton(GENERATE_IMPORTJS_BUTTON);
   }));
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
