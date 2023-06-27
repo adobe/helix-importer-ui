@@ -1,3 +1,17 @@
+# [1.43.0](https://github.com/adobe/helix-importer-ui/compare/v1.42.2...v1.43.0) (2023-06-27)
+
+
+### Features
+
+* add loading spinners to all buttons ([#207](https://github.com/adobe/helix-importer-ui/issues/207)) ([2034246](https://github.com/adobe/helix-importer-ui/commit/20342465b1690141f063cbfdc6154a673bb3cea1))
+
+## [1.42.2](https://github.com/adobe/helix-importer-ui/compare/v1.42.1...v1.42.2) (2023-06-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-importer to v2.9.8 ([#206](https://github.com/adobe/helix-importer-ui/issues/206)) ([4414c3c](https://github.com/adobe/helix-importer-ui/commit/4414c3c357ba6c5703dc8d78dbe7e75791abcee9))
+
 ## [1.42.1](https://github.com/adobe/helix-importer-ui/compare/v1.42.0...v1.42.1) (2023-06-18)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "helix-import-ui",
-  "version": "1.42.1",
+  "version": "1.43.0",
   "description": "helix-import-ui",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "2.9.7",
+    "@adobe/helix-importer": "2.9.8",
     "@adobe/mdast-util-gridtables": "1.0.6",
     "@adobe/remark-gridtables": "1.0.2",
     "@spectrum-web-components/bundle": "0.33.2",
@@ -46,9 +46,9 @@
     "mini-css-extract-plugin": "2.7.6",
     "node-polyfill-webpack-plugin": "2.0.1",
     "semantic-release": "21.0.5",
-    "stylelint": "15.8.0",
+    "stylelint": "15.9.0",
     "stylelint-config-standard": "33.0.0",
-    "webpack": "5.87.0",
+    "webpack": "5.88.0",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-merge": "5.9.0"

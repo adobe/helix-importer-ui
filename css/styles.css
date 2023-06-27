@@ -178,6 +178,11 @@ main sp-button[disabled] {
   cursor: not-allowed;
 }
 
+main sp-button sp-progress-circle {
+  margin-right: 10px;
+  vertical-align: bottom;
+}
+
 /* SECTIONS */
 section {
   height: 100%;
