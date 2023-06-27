@@ -181,10 +181,12 @@ const initImportStatus = () => {
 
 const disableProcessButtons = () => {
   IMPORT_BUTTON.disabled = true;
+  GENERATE_IMPORTJS_BUTTON.disabled = true;
 };
 
 const enableProcessButtons = () => {
   IMPORT_BUTTON.disabled = false;
+  GENERATE_IMPORTJS_BUTTON.disabled = false;
 };
 
 const getProxyURLSetup = (url, origin) => {
@@ -399,10 +401,9 @@ const attachListeners = () => {
   });
 
   GENERATE_IMPORTJS_BUTTON.addEventListener('click', (async () => {
-    GENERATE_IMPORTJS_BUTTON.disabled = true;
+    disableProcessButtons();
 
-    const frame = getContentFrame();
-    const { originalURL } = frame.dataset;
+    const url = config.fields['import-url'];
     // using a local server
     // TODO call Public APIs
     const GENAI_API_PATH = 'http://localhost:3003/run';
@@ -412,23 +413,31 @@ const attachListeners = () => {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        url: originalURL,
-      }),
+      body: JSON.stringify({ url }),
     };
 
     const res = await fetch(GENAI_API_PATH, requestSettings);
-
     // const res = await fetch('https://gist.githubusercontent.com/kptdobe/8a726387ecca80dde2081b17b3e913f7/raw/a9fadcc3f932aa85f407b1c6254807c38511dd02/import.js');
-    const defaultImportJS = await res.text();
+    
+    if (res.ok) {
+      const defaultImportJS = await res.text();
+      console.log(defaultImportJS);
 
-    if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(defaultImportJS);
-      alert.success('import.js file copied to clipboard');
+      if (navigator && navigator.clipboard && navigator.clipboard.writeText) {
+        try {
+          await navigator.clipboard.writeText(defaultImportJS);
+          alert.success('import.js file copied to clipboard');
+        } catch (e) {
+          alert.error(`Failed to copy import.js file to clipboard: ${e.message} - check console.log`);
+        }
+      } else {
+        alert.error('Failed to copy import.js file to clipboard: no clipboard API available - check console.log');
+      }
     } else {
-      alert.error('Failed to copy import.js file to clipboard');
+      alert.error(`Failed to fetch an import.js file. Status code: ${res.status}`);
     }
-    GENERATE_IMPORTJS_BUTTON.disabled = false;
+
+    enableProcessButtons();
   }));
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
@@ -603,7 +612,6 @@ const attachListeners = () => {
       }
     };
     processNext();
-    GENERATE_IMPORTJS_BUTTON.disabled = false;
   }));
 
   IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
@@ -640,8 +648,6 @@ const init = () => {
 
   if (!IS_BULK) setupUI();
   attachListeners();
-
-  GENERATE_IMPORTJS_BUTTON.disabled = true;
 };
 
 init();
