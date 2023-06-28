@@ -129,14 +129,6 @@
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 
 /**
- * @author Richard Smith-Unna
- * @copyright 2016 Richard Smith-Unnar
- * @license MIT
- * @module unist:find
- * @fileoverview Unist node finder
- */
-
-/**
  * Character class utilities for XML NS 1.0 edition 3.
  *
  * @author Louis-Dominique Dubeau
