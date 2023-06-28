@@ -16,7 +16,7 @@
   "dependencies": {
     "@adobe/helix-importer": "2.9.8",
     "@adobe/mdast-util-gridtables": "1.0.9",
-    "@adobe/remark-gridtables": "1.0.3",
+    "@adobe/remark-gridtables": "1.0.4",
     "@spectrum-web-components/bundle": "0.33.2",
     "@spectrum-web-components/icons-workflow": "0.33.2",
     "hast-util-raw": "8.0.0",
