@@ -14,7 +14,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "2.9.14",
+    "@adobe/helix-importer": "2.9.15",
     "@adobe/mdast-util-gridtables": "2.0.1",
     "@adobe/remark-gridtables": "1.0.4",
     "@spectrum-web-components/bundle": "0.33.2",
