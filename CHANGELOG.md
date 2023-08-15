@@ -1,3 +1,10 @@
+# [1.44.0](https://github.com/adobe/helix-importer-ui/compare/v1.43.20...v1.44.0) (2023-08-15)
+
+
+### Features
+
+* better enduser feedback for redirects ([#239](https://github.com/adobe/helix-importer-ui/issues/239)) ([d5c92eb](https://github.com/adobe/helix-importer-ui/commit/d5c92eb9fb028253064c9db8e883b0076a6d7d63))
+
 ## [1.43.20](https://github.com/adobe/helix-importer-ui/compare/v1.43.19...v1.43.20) (2023-08-14)
 
 
