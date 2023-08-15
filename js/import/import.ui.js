@@ -127,6 +127,8 @@ const updateImporterUI = (results, originalURL) => {
       }
 
       loadResult(results[0]);
+    } else if (status === 'redirect') {
+      alert.warning(`No page imported: ${results[0].from} redirects to ${results[0].to}`);
     }
   } else {
     const li = document.createElement('li');
@@ -287,6 +289,13 @@ const getReport = async () => {
     from: 'A1',
     to: `${String.fromCharCode(65 + headers.length - 1)}1`, // 65 = 'A'...
   };
+
+  // specify a width for known path / url columns
+  const w = 60;
+  worksheet.getColumn(1).width = w;
+  worksheet.getColumn(2).width = w;
+  worksheet.getColumn(3).width = w;
+  worksheet.getColumn(5).width = w;
 
   worksheet.addRows([
     headers,
@@ -456,8 +465,6 @@ const attachListeners = () => {
         }
         if (res && res.ok) {
           if (res.redirected) {
-            // eslint-disable-next-line no-console
-            console.warn(`Cannot transform ${src} - redirected to ${res.url}`);
             const u = new URL(res.url);
             let redirect = res.url;
             if (u.origin === window.location.origin) {
@@ -468,7 +475,9 @@ const attachListeners = () => {
               status: 'Redirect',
               redirect,
             });
-            updateImporterUI([{ status: 'redirect' }], url);
+            // eslint-disable-next-line no-console
+            console.warn(`Cannot transform ${url} - redirected to ${redirect}`);
+            updateImporterUI([{ status: 'redirect', from: url, to: redirect }], url);
             processNext();
           } else {
             const contentType = res.headers.get('content-type');
