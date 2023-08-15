@@ -30,8 +30,13 @@ const info = (message) => {
   doAlert(message, 'info');
 };
 
+const warning = (message) => {
+  doAlert(message, 'warning');
+};
+
 export default {
   success,
   error,
   info,
+  warning,
 };
