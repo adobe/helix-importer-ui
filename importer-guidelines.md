@@ -66,6 +66,9 @@ Some examples:
 If you follow this pattern, the migration should be smooth: the Franklin resolution should find the corresponding document for the old URLs. 
 If you decide to do some more sophisticated transformations (like transform `Fâncy_URL` into `fancy-url`), you will need to recreate the corresponding redirects to make sure the old URLs are still mapped to the new content naming convention. You can use the importer reporting (see below) to report those mappings.
 
+### Best practice when developing import.js
+Changes to import.js are hot auto reloaded when using the import UI section 'Import - Workbench' only. In case your import.js is not updated in 'Import - Bulk', restart the 'hlx import'. Auto reloading is disabled in bulk entirely, to ensure that no mixed outputs are generated while a long running bulk is on the go and then, for some reason, the import.js changes.
+
 ## Rule examples
 
 ### Cleanup
