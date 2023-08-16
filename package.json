@@ -4,6 +4,7 @@
   "description": "helix-import-ui",
   "type": "module",
   "scripts": {
+    "test": "c8 mocha",
     "clean": "rm -fr ./js/dist",
     "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs",
     "build:dev": "npm run clean && npm i && webpack --config webpack.dev.cjs",
@@ -19,15 +20,15 @@
     "@adobe/remark-gridtables": "1.0.4",
     "@spectrum-web-components/bundle": "0.35.0",
     "@spectrum-web-components/icons-workflow": "0.35.0",
-    "hast-util-raw": "9.0.0",
-    "hast-util-to-html": "9.0.0",
-    "mdast-util-to-hast": "13.0.1",
+    "hast-util-raw": "8.0.0",
+    "hast-util-to-html": "8.0.4",
+    "mdast-util-to-hast": "12.3.0",
     "parcel": "2.9.3",
     "path-browserify": "1.0.1",
     "rehype-format": "4.0.1",
     "remark-gfm": "3.0.1",
     "remark-parse": "10.0.2",
-    "unified": "11.0.0"
+    "unified": "10.1.2"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.2",
@@ -36,6 +37,7 @@
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
+    "c8": "8.0.1",
     "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "11.0.0",
     "eslint": "8.47.0",
@@ -44,6 +46,7 @@
     "eslint-plugin-import": "2.28.0",
     "html-webpack-plugin": "5.5.3",
     "mini-css-extract-plugin": "2.7.6",
+    "mocha": "10.2.0",
     "node-polyfill-webpack-plugin": "2.0.1",
     "semantic-release": "21.0.7",
     "stylelint": "15.10.2",
