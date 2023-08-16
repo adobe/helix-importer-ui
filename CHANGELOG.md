@@ -1,3 +1,10 @@
+## [1.44.2](https://github.com/adobe/helix-importer-ui/compare/v1.44.1...v1.44.2) (2023-08-16)
+
+
+### Bug Fixes
+
+* md2html fires an exception ([#241](https://github.com/adobe/helix-importer-ui/issues/241)) ([dc5643a](https://github.com/adobe/helix-importer-ui/commit/dc5643ae3c82a31029c463bb385e2a99762c601d))
+
 ## [1.44.1](https://github.com/adobe/helix-importer-ui/compare/v1.44.0...v1.44.1) (2023-08-15)
 
 
