@@ -30,4 +30,8 @@ describe('md2html', () => {
   it('table', async () => {
     await test('table');
   });
+
+  it('complex', async () => {
+    await test('complex');
+  });
 });
