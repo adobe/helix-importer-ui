@@ -26,6 +26,8 @@ In your `import.js` transformation file, you can implement 2 modes:
 - one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
 - one input / multiple outputs - default file snippet: https://gist.github.com/kptdobe/7bf50b69194884171b12874fc5c74588
 
+Note: when working on an import with the `Import - Workbench` tool, the `import.js` file is hot-reloaded and the import process is launched automatically each time you modify the file - this allows to immediately see the impact of your changes. This hot-reload behavior is NOT available when working with the `Import - Bulk` tool - this is to avoid the risk of re-launching the full import if you touch your `import.js` file while importing 1k or more pages.
+
 #### one input / one output
 
 You must implement those 2 methods:
@@ -589,7 +591,18 @@ to disable CORS headers or set a custom cookie / referer for some of the request
 
 ### Images
 
-When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus. When images are stored on the same host, this is usually not an issue but in many cases, images are coming from different hosts. We then need some extra logic to also proxy those different hosts. This code might help (pending todo to integrate the code to the importer itself - see https://github.com/adobe/helix-importer-ui/issues/42):
+When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus.
+
+When images are stored on the same host, this is usually not an issue but, in many cases, images are coming from different hosts or are absolutely referenced. This makes it impossible for the browser to `fetch` the images and generates CORS issues. This is easy to observe in the console logs, you typically get a message like this:
+
+```
+[importer-ui] Cannot download image <image url>: Failed to fetch
+Access to fetch at '<image url>' from origin 'http://localhost:3001' has been blocked by CORS policy...
+```
+
+A typical symptom is that you see the images in the Preview ui but images are missing in the Word document.
+
+Problem is easy to solve: we need some extra logic to re-write the image url to go through the local proxy. The following code might help (pending todo to integrate the code to the importer itself - see https://github.com/adobe/helix-importer-ui/issues/42):
 
 ```js
 const makeProxySrcs = (main, host) => {
