@@ -1,3 +1,10 @@
+## [1.44.7](https://github.com/adobe/helix-importer-ui/compare/v1.44.6...v1.44.7) (2023-08-29)
+
+
+### Bug Fixes
+
+* margin fix ([#250](https://github.com/adobe/helix-importer-ui/issues/250)) ([5cfe933](https://github.com/adobe/helix-importer-ui/commit/5cfe933dad8410dc05f12992a1eeed3e690da7a3))
+
 ## [1.44.6](https://github.com/adobe/helix-importer-ui/compare/v1.44.5...v1.44.6) (2023-08-25)
 
 
