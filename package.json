@@ -25,7 +25,7 @@
     "mdast-util-to-hast": "12.3.0",
     "parcel": "2.9.3",
     "path-browserify": "1.0.1",
-    "rehype-format": "4.0.1",
+    "rehype-format": "5.0.0",
     "remark-gfm": "3.0.1",
     "remark-parse": "10.0.2",
     "unified": "10.1.2"
