@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.3",
-    "@babel/core": "7.22.17",
+    "@babel/core": "7.22.19",
     "@babel/eslint-parser": "7.22.15",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "6.0.3",
@@ -48,7 +48,7 @@
     "mini-css-extract-plugin": "2.7.6",
     "mocha": "10.2.0",
     "node-polyfill-webpack-plugin": "2.0.1",
-    "semantic-release": "21.1.1",
+    "semantic-release": "21.1.2",
     "stylelint": "15.10.3",
     "stylelint-config-standard": "34.0.0",
     "webpack": "5.88.2",
