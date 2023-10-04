@@ -1,3 +1,10 @@
+# [1.45.0](https://github.com/adobe/helix-importer-ui/compare/v1.44.15...v1.45.0) (2023-10-04)
+
+
+### Features
+
+* AEM rebranding ([#271](https://github.com/adobe/helix-importer-ui/issues/271)) ([b6178d2](https://github.com/adobe/helix-importer-ui/commit/b6178d26dfc11fe5da10178d91fedbffa638e9ad))
+
 ## [1.44.15](https://github.com/adobe/helix-importer-ui/compare/v1.44.14...v1.44.15) (2023-10-03)
 
 
