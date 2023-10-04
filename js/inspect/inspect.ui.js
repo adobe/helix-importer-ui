@@ -7,6 +7,8 @@ const PARENT_SELECTOR = '.inspect';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} sp-tab-panel div`;
 
+const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
+
 const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 const DROP_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-drop-button`);
 const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-css-button`);
@@ -262,6 +264,8 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   attachListeners();
+
+  SPTABS.selected = 'inspect-logo';
 };
 
 init();
