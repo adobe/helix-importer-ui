@@ -54,7 +54,7 @@ The idea is simple: return a list of elements that will be converted to docx and
 
 ### Note on generated paths
 
-The Franklin URL space is pretty restricted (lower case, only latin characters, only hyphens, no .html) and the recommendation given to authors is to maintain directory and document names following the exact same restrictions in Sharepoint / GDrive to have a one to one mapping between the path+file and its URL. It makes their life so much easier!
+The AEM URL space is pretty restricted (lower case, only latin characters, only hyphens, no .html) and the recommendation given to authors is to maintain directory and document names following the exact same restrictions in Sharepoint / GDrive to have a one to one mapping between the path+file and its URL. It makes their life so much easier!
 
 When importing a site, you will encounter a lot of various fancy URLs. The `generateDocumentPath` function allows you to control the document target path. It is a best practice to apply the `WebImporter.FileUtils.sanitizePath` helper method to all paths as provided in the provided default `import.js` file.
 
@@ -65,7 +65,7 @@ Some examples:
 | https://www.sample.com/A/b/C/d.html                   | /a/b/c/d                | /a/b/c/d.docx               | 
 | https://www.sample.com/Fâncy_URL%20with%20spaces.html | /f-ncy-url-with-spaces  | /f-ncy-url-with-spaces.docx |
 
-If you follow this pattern, the migration should be smooth: the Franklin resolution should find the corresponding document for the old URLs. 
+If you follow this pattern, the migration should be smooth: AEM should find the corresponding document for the old URLs. 
 If you decide to do some more sophisticated transformations (like transform `Fâncy_URL` into `fancy-url`), you will need to recreate the corresponding redirects to make sure the old URLs are still mapped to the new content naming convention. You can use the importer reporting (see below) to report those mappings.
 
 ## Rule examples
@@ -133,7 +133,7 @@ Notes on those 2 different implementations:
 
 ### Create a block
 
-One important step of the content migration is to transform some existing "components" into Franklin blocks. While the Franklin philosophy is to use the maximum of the standard Markdown semantic (text, title, images, links...), sometimes blocks are needed to combine of several of those default elements.
+One important step of the content migration is to transform some existing "components" into AEM blocks. While the AEM philosophy is to use the maximum of the standard Markdown semantic (text, title, images, links...), sometimes blocks are needed to combine of several of those default elements.
 
 In Word, a block is a table. To create a block during the import, you simply then need to create an HTML table. You can do that manually (create `<table>`, `tr`, `td`... elements) but a helper is provided. A block you will almost always need is a metadata table:
 
@@ -577,9 +577,9 @@ While more documentation will be written, you can already find how to use them v
 
 When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
 
-When running `hlx import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
+When running `aem import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
 
-This is a generic solution that works in 90% of the cases. But some sites are pretty imaginative on how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the Franklin team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
+This is a generic solution that works in 90% of the cases. But some sites are pretty imaginative on how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the AEM team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
@@ -591,7 +591,7 @@ to disable CORS headers or set a custom cookie / referer for some of the request
 
 ### Images
 
-When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the Franklin Media bus.
+When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the AEM Edge Delivery media bus.
 
 When images are stored on the same host, this is usually not an issue but, in many cases, images are coming from different hosts or are absolutely referenced. This makes it impossible for the browser to `fetch` the images and generates CORS issues. This is easy to observe in the console logs, you typically get a message like this:
 
@@ -662,7 +662,7 @@ Every new project has its own collection of new use cases which might be totally
    1. execute `npm link`
    1. navigate to `helix-importer-ui` checkout folder from your project root (typically `$PROJECT_ROOT/tools/importer/helix-importer-ui`
    1. execute `npm i`
-      * not required if you've already been working on importer via `hlx import`)
+      * not required if you've already been working on importer via `aem import`)
    1. execute `npm link @adobe/helix-importer`
    1. update the `build:dev` goal in `package.json`, and remove `npm i` execution from the goal
       * this is required, otherwise the symlink created by `npm link @adobe/helix-importer` will be reset

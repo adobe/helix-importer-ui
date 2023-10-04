@@ -1,6 +1,6 @@
-# Contributing to Project Franklin
+# Contributing to AEM
 
-This project (like almost all of Project Franklin) is an Open Development project and welcomes contributions from everyone who finds it useful or lacking.
+This project (like almost all of AEM) is an Open Development project and welcomes contributions from everyone who finds it useful or lacking.
 
 ## Code Of Conduct
 

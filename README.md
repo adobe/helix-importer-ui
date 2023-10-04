@@ -1,17 +1,17 @@
-# Franklin Importer - UI
+# AEM Importer - UI
 
-A collection of tools to support Franklin project imports.
+A collection of tools to support AEM project imports.
 
 **PLEASE DO READ THE [Importer Guidelines](./importer-guidelines.md) before starting any import.**
 
 ## Usage
 
-Check first the [Franklin cli installation](https://github.com/adobe/helix-cli#installation).
+Check first the [AEM cli installation](https://github.com/adobe/helix-cli#installation).
 
 At the root of the project, simply run:
 
 ```
-hlx import
+aem import
 ```
 
 The `import` command clones the helix-import-ui repo for you.
@@ -23,7 +23,7 @@ In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://ww
 ### Options
 
 - `Local save as docx`: enable / disable the save as docx to the local file system. Disabling is useful when working on the `import.js` transformation and checking the docx is not necessarily at that time.
-- `Import file URL`: url of the import transformation file (by convention the `hlx` importer service maps `http://localhost:3001/tools/importer/*` urls to local folder so all import code must be placed under `<PROJECT_ROOT>/tools/importer/`)
+- `Import file URL`: url of the import transformation file (by convention the `aem` importer proxy maps `http://localhost:3001/tools/importer/*` urls to local folder so all import code must be placed under `<PROJECT_ROOT>/tools/importer/`)
 - `Page load timeout`: the transformation uses the target page DOM. This DOM might take some time to be fully decorated. You can reduce the timeout if your transformation does not need to wait or extend if the DOM takes longer to be fully complete
 - `Enable Javascript`: 
   - page to import may have a Javascript redirect to the remote domain (to make sure you stay on their site). This then blocks the tool to access the content via the iframe. Disabling Javascript may help here. 
@@ -45,10 +45,10 @@ Allows to extract the CSS styles (font, colors) for an give page. Those styles c
 
 ## Cache
 
-When `hlx import` serves content, imported resources can be cached locally. After the first import, the files could be served from local file system. To enable the cache:
+When `aem import` serves content, imported resources can be cached locally. After the first import, the files could be served from local file system. To enable the cache:
 
 ```
-hlx import --cache .cache/
+aem import --cache .cache/
 ```
 
 In the `.cache/` folder of the project, you will find all html pages, js, css, images... files requested on the remote host.
