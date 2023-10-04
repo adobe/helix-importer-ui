@@ -1,4 +1,8 @@
-.inspect sp-asset img {
+.inspect sp-asset img, .inspect sp-asset svg {
   max-height: 300px;
   margin-bottom: 30px;
+}
+
+.inspect sp-asset svg {
+  width: 300px;
 }
