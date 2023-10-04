@@ -250,7 +250,7 @@ const attachListeners = () => {
         img.src = value;
         LOGO_IMG_PLACEHOLDER.appendChild(img);
       }
-      
+
       LOGO_FIELD.classList.remove('hidden');
       DOWNLOAD_LOGO_BUTTON.classList.remove('hidden');
     } else {
