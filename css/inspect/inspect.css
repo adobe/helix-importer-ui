@@ -1,3 +1,8 @@
+section sp-tabs sp-tab-panel {
+  padding-left: 2px;
+  padding-right: 2px;
+}
+
 .inspect sp-asset img, .inspect sp-asset svg {
   max-height: 300px;
   margin-bottom: 30px;
