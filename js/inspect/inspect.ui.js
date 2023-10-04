@@ -7,6 +7,8 @@ const PARENT_SELECTOR = '.inspect';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const VARS_PARENT_SELECTOR = `${PARENT_SELECTOR} sp-tab-panel div`;
 
+const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
+
 const PREVIEW_PANEL = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 const DROP_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-drop-button`);
 const COPYCSS_BUTTON = document.querySelector(`${PARENT_SELECTOR} #inspect-copy-css-button`);
@@ -17,7 +19,7 @@ const VARS_PANEL = document.querySelector(VARS_PARENT_SELECTOR);
 const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-textfield`);
 const PICKERS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-action-button`);
 const LOGO_FIELD = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo`);
-const LOGO_IMG = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo img`);
+const LOGO_IMG_PLACEHOLDER = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo div`);
 
 const config = {
   vars: {},
@@ -73,8 +75,15 @@ const doDrop = async () => {
 const getStyle = (win, x, y, type) => {
   const element = win.document.elementFromPoint(x, y);
   if (!element) return null;
-  if (type === 'img' && element.tagName === 'IMG') {
-    return element.src;
+  if (type === 'img') {
+    if (element.tagName === 'IMG') {
+      return element.src;
+    }
+
+    const svg = element.closest('svg');
+    if (svg) {
+      return svg.outerHTML;
+    }
   }
   const style = win.getComputedStyle(element);
   if (type === 'color') {
@@ -173,13 +182,21 @@ const doCopyCSS = async () => {
 
 const downloadLogo = async () => {
   if (!LOGO_FIELD.value) return;
-  const u = new URL(LOGO_FIELD.value);
-  const el = document.createElement('a');
-  el.setAttribute('href', LOGO_FIELD.value);
-  el.setAttribute('download', u.pathname.split('/').pop());
-  document.body.appendChild(el);
-  el.click();
-  el.remove();
+  if (LOGO_FIELD.value === 'none') return;
+
+  const a = document.createElement('a');
+  if (LOGO_FIELD.value.startsWith('<svg')) {
+    const svg = LOGO_FIELD.value;
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    a.setAttribute('href', URL.createObjectURL(blob));
+    a.setAttribute('download', 'logo.svg');
+  } else {
+    const u = new URL(LOGO_FIELD.value);
+    a.setAttribute('href', LOGO_FIELD.value);
+    a.setAttribute('download', u.pathname.split('/').pop());
+  }
+  a.click();
+  a.remove();
 };
 
 const attachListeners = () => {
@@ -225,7 +242,15 @@ const attachListeners = () => {
   LOGO_FIELD.handleChange = () => {
     const { value } = LOGO_FIELD;
     if (value && value !== 'none') {
-      LOGO_IMG.src = value;
+      LOGO_IMG_PLACEHOLDER.innerHTML = '';
+      if (value.startsWith('<svg')) {
+        LOGO_IMG_PLACEHOLDER.innerHTML = value;
+      } else {
+        const img = document.createElement('img');
+        img.src = value;
+        LOGO_IMG_PLACEHOLDER.appendChild(img);
+      }
+
       LOGO_FIELD.classList.remove('hidden');
       DOWNLOAD_LOGO_BUTTON.classList.remove('hidden');
     } else {
@@ -239,6 +264,8 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   attachListeners();
+
+  SPTABS.selected = 'inspect-logo';
 };
 
 init();
