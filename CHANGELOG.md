@@ -1,3 +1,10 @@
+# [1.46.0](https://github.com/adobe/helix-importer-ui/compare/v1.45.0...v1.46.0) (2023-10-04)
+
+
+### Features
+
+* **eyedropper:** add support for catching svg logo ([#272](https://github.com/adobe/helix-importer-ui/issues/272)) ([eded899](https://github.com/adobe/helix-importer-ui/commit/eded899f6631a2e78ea528a1619eb06a5a520194))
+
 # [1.45.0](https://github.com/adobe/helix-importer-ui/compare/v1.44.15...v1.45.0) (2023-10-04)
 
 
