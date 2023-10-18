@@ -20,6 +20,7 @@ const VARS_FIELDS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-textfi
 const PICKERS = document.querySelectorAll(`${VARS_PARENT_SELECTOR} sp-action-button`);
 const LOGO_FIELD = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo`);
 const LOGO_IMG_PLACEHOLDER = document.querySelector(`${PARENT_SELECTOR} #inspect-select-logo div`);
+const LOGO_SVG_SECURITY_MSG = document.querySelector(`${PARENT_SELECTOR} #svg-security-risk`);
 
 const config = {
   vars: {},
@@ -127,7 +128,7 @@ const saveCapture = (event) => {
       pickerField.handleChange();
     } catch (e) {
       // eslint-disable-next-line no-console
-      console.warning(`Error while trying to capture style: ${e.message}`);
+      console.warn(`Error while trying to capture style: ${e.message}`);
     }
   }
   event.preventDefault();
@@ -244,8 +245,13 @@ const attachListeners = () => {
     if (value && value !== 'none') {
       LOGO_IMG_PLACEHOLDER.innerHTML = '';
       if (value.startsWith('<svg')) {
-        LOGO_IMG_PLACEHOLDER.innerHTML = value;
+        LOGO_SVG_SECURITY_MSG.classList.remove('hidden');
+        const div = document.createElement('div');
+        div.style['background-image'] = `url('data:image/svg+xml;base64,${btoa(value)}')`;
+        div.classList.add('svg-placeholder');
+        LOGO_IMG_PLACEHOLDER.appendChild(div);
       } else {
+        LOGO_SVG_SECURITY_MSG.classList.add('hidden');
         const img = document.createElement('img');
         img.src = value;
         LOGO_IMG_PLACEHOLDER.appendChild(img);

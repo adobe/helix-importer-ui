@@ -8,6 +8,9 @@ section sp-tabs sp-tab-panel {
   margin-bottom: 30px;
 }
 
-.inspect sp-asset svg {
+.inspect sp-asset .svg-placeholder {
   width: 300px;
+  height: 300px;
+  margin-bottom: 40px;
+  background-repeat: no-repeat;
 }
