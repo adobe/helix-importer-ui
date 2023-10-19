@@ -220,6 +220,7 @@ const attachListeners = () => {
   DOWNLOAD_LOGO_BUTTON.addEventListener('click', downloadLogo);
   DROP_BUTTON.addEventListener('click', async () => {
     PREVIEW_PANEL.classList.remove('hidden');
+    LOGO_SVG_SECURITY_MSG.classList.add('hidden');
     disableButton();
     toggleLoadingButton(DROP_BUTTON);
     disablePickers();
