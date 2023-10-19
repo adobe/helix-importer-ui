@@ -1,3 +1,10 @@
+# [1.47.0](https://github.com/adobe/helix-importer-ui/compare/v1.46.4...v1.47.0) (2023-10-19)
+
+
+### Features
+
+* eyedropper security ([#280](https://github.com/adobe/helix-importer-ui/issues/280)) ([ce4d964](https://github.com/adobe/helix-importer-ui/commit/ce4d964fe1c06b76c6280db9236e88cdf8c27198))
+
 ## [1.46.4](https://github.com/adobe/helix-importer-ui/compare/v1.46.3...v1.46.4) (2023-10-14)
 
 
