@@ -36,9 +36,12 @@
                             <sp-accordion>
                                 <sp-accordion-item label="Eyedropper Options">
                                     <div>
-                                        <sp-checkbox class="option-field" id="inspect-enable-js" checked>
+                                        <sp-checkbox class="option-field" id="inspect-enable-js">
                                             Enable JavaScript
                                         </sp-checkbox>
+                                        <sp-help-text variant="negative" icon>
+                                            Security risk: only enable Javascript execution when importing from trusted websites.
+                                        </sp-help-text>
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
@@ -65,6 +68,9 @@
                                 <sp-action-button for="inspect-select-logo" data-picker="img" disabled>
                                   <sp-icon-anchor-select></sp-icon-anchor-select>
                                 </sp-action-button>
+                                <sp-help-text variant="negative" icon class="hidden" id="svg-security-risk">
+                                    Security risk: the logo you have selected is an SVG. It may contain malicious code (like Javascript code). You can download it but you should inspect it before using it.
+                                </sp-help-text>
                                 <sp-asset id="inspect-select-logo" class="hidden">
                                     <div></div>
                                 </sp-asset>
