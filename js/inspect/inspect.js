@@ -92,7 +92,7 @@ const drop = (document) => {
   // XSS review - no problem here
   div.innerHTML = '<h1>H1</h1><h2>H2</h2><h3></h3><h4></h4><h5></h5><h6></h6><a href="#">Link</a><p>Some text</p>';
 
-  if (center.parentElement) {
+  if (center && center.parentElement) {
     center.parentElement.insertBefore(div, center);
   } else {
     // fallback to document body
