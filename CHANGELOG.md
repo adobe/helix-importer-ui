@@ -1,3 +1,10 @@
+## [1.47.1](https://github.com/adobe/helix-importer-ui/compare/v1.47.0...v1.47.1) (2023-10-20)
+
+
+### Bug Fixes
+
+* ensure report extra columns are assigned to the correct column in excel ([#284](https://github.com/adobe/helix-importer-ui/issues/284)) ([a432dea](https://github.com/adobe/helix-importer-ui/commit/a432deaccaf92964d04d33ae127d8b7559d920ad))
+
 # [1.47.0](https://github.com/adobe/helix-importer-ui/compare/v1.46.4...v1.47.0) (2023-10-19)
 
 
