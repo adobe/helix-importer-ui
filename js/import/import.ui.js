@@ -320,6 +320,8 @@ const getReport = async () => {
           } else {
             extra.push(JSON.stringify(report[col]));
           }
+        } else {
+          extra.push('');
         }
       });
     }
