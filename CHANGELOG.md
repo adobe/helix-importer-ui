@@ -1,3 +1,10 @@
+# [1.48.0](https://github.com/adobe/helix-importer-ui/compare/v1.47.5...v1.48.0) (2023-11-01)
+
+
+### Features
+
+* exclude background-image none from DOM ([#291](https://github.com/adobe/helix-importer-ui/issues/291)) ([8dbfd5a](https://github.com/adobe/helix-importer-ui/commit/8dbfd5a405c1f3ca8a670eac5225fbe7c5c9cab7))
+
 ## [1.47.5](https://github.com/adobe/helix-importer-ui/compare/v1.47.4...v1.47.5) (2023-10-31)
 
 
