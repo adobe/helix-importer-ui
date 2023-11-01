@@ -11,7 +11,7 @@
  */
 /* global WebImporter */
 
-const DEFAULT_SUPPORTED_STYLES = ['background-image'];
+const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
 
 function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
   const clone = document.cloneNode(true);
@@ -19,9 +19,11 @@ function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
   const applyStyles = (nodeSrc, nodeDest) => {
     const style = window.getComputedStyle(nodeSrc, null);
 
-    styles.forEach((styleName) => {
-      if (style[styleName]) {
-        nodeDest.style[styleName] = style[styleName];
+    styles.forEach((s) => {
+      if (style[s.name]) {
+        if (!s.exclude || !(style[s.name].match(s.exclude))) {
+          nodeDest.style[s.name] = style[s.name];
+        }
       }
     });
 
