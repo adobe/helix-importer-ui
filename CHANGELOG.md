@@ -1,3 +1,10 @@
+# [1.49.0](https://github.com/adobe/helix-importer-ui/compare/v1.48.3...v1.49.0) (2023-11-14)
+
+
+### Features
+
+* expose rules object ([#296](https://github.com/adobe/helix-importer-ui/issues/296)) ([75ea88c](https://github.com/adobe/helix-importer-ui/commit/75ea88c0ef467038f3d6658b1b317c034f08c4cb))
+
 ## [1.48.3](https://github.com/adobe/helix-importer-ui/compare/v1.48.2...v1.48.3) (2023-11-14)
 
 
