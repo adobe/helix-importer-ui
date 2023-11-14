@@ -18,6 +18,7 @@ import {
   Blocks,
   html2docx,
   html2md,
+  rules,
 } from '@adobe/helix-importer';
 
 import docxStylesXML from '../resources/styles.xml';
@@ -89,4 +90,5 @@ export {
   FileUtils,
   html2mdWrapper as html2md,
   html2docxWrapper as html2docx,
+  rules,
 };
