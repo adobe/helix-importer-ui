@@ -23,7 +23,7 @@ Out of the box, the importer should be able to consume any page and output a Mar
 Such a rule is very straight forward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
 
 In your `import.js` transformation file, you can implement 2 modes: 
-- one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7
+- one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7 (the code provided here is equivalent to the default import running if you do not provide an `import.js` file)
 - one input / multiple outputs - default file snippet: https://gist.github.com/kptdobe/7bf50b69194884171b12874fc5c74588
 
 Note: when working on an import with the `Import - Workbench` tool, the `import.js` file is hot-reloaded and the import process is launched automatically each time you modify the file - this allows to immediately see the impact of your changes. This hot-reload behavior is NOT available when working with the `Import - Bulk` tool - this is to avoid the risk of re-launching the full import if you touch your `import.js` file while importing 1k or more pages.
@@ -572,6 +572,15 @@ While more documentation will be written, you can already find how to use them v
 
 - https://github.com/adobe/helix-importer/blob/main/test/utils/DOMUtils.spec.js
 - https://github.com/adobe/helix-importer/blob/main/test/utils/Blocks.spec.js
+
+### Rules
+
+When using one of the default `import.js` file snippets provided above, you'll find some default "rules" being applied:
+
+- `WebImporter.rules.createMetadata` has some logic to handle some of the common metadata you can find on most of the pages (see [implementation here](https://github.com/adobe/helix-importer/blob/main/src/importer/defaults/rules/createMetadata.js))
+- `WebImporter.rules.transformBackgroundImages` converts the background images into proper `img` elements which are then imported (see [implementation here](https://github.com/adobe/helix-importer/blob/main/src/importer/defaults/rules/transformBackgroundImages.js))
+- `WebImporter.rules.adjustImageUrls` converts all image src into fully qualified urls using the proxy host. This allows the docx conversion to be able to find and download the images. (see [implementation here](https://github.com/adobe/helix-importer/blob/main/src/importer/defaults/rules/adjustImageUrls.js))
+- `WebImporter.rules.convertIcons` converts the svg images into a span using the `:icon-file-name:` convention. Note that this does not download the images which have to be handled separately (see [implementation here](https://github.com/adobe/helix-importer/blob/main/src/importer/defaults/rules/convertIcons.js))
 
 ## Proxy, security and memory
 
