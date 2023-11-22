@@ -1,3 +1,10 @@
+# [1.50.0](https://github.com/adobe/helix-importer-ui/compare/v1.49.1...v1.50.0) (2023-11-22)
+
+
+### Features
+
+* **release:** announce releases on discord ([39f8980](https://github.com/adobe/helix-importer-ui/commit/39f89808fd0fc02923e2abc13b8b61df5bdc8481))
+
 ## [1.49.1](https://github.com/adobe/helix-importer-ui/compare/v1.49.0...v1.49.1) (2023-11-18)
 
 
