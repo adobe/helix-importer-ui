@@ -1,7 +1,11 @@
 "use strict";(globalThis.webpackChunk_adobe_helix_importer_ui=globalThis.webpackChunk_adobe_helix_importer_ui||[]).push([[789],{789:(t,o,p)=>{p.r(o);var e=p(321),r=p(392),s=p(338);const i=r.iv`
 :host{--spectrum-overlay-animation-distance:6px;--spectrum-overlay-animation-duration:var(
 --spectrum-animation-duration-100
-);opacity:0;pointer-events:none;transition:transform var(--spectrum-overlay-animation-duration) ease-in-out,opacity var(--spectrum-overlay-animation-duration) ease-in-out,visibility 0s linear var(--spectrum-overlay-animation-duration);visibility:hidden}:host([open]){opacity:1;pointer-events:auto;transition-delay:0s;visibility:visible}:host([open]) .spectrum-Popover--bottom-end,:host([open]) .spectrum-Popover--bottom-left,:host([open]) .spectrum-Popover--bottom-right,:host([open]) .spectrum-Popover--bottom-start,:host([placement*=bottom][open]){--spectrum-overlay-animation-distance:6px;transform:translateY(var(--spectrum-overlay-animation-distance))}:host([open]) .spectrum-Popover--top-end,:host([open]) .spectrum-Popover--top-left,:host([open]) .spectrum-Popover--top-right,:host([open]) .spectrum-Popover--top-start,:host([placement*=top][open]){--spectrum-overlay-animation-distance:6px;transform:translateY(calc(var(--spectrum-overlay-animation-distance)*-1))}:host([dir=rtl][open]) .spectrum-Popover--start,:host([dir=rtl][open]) .spectrum-Popover--start-bottom,:host([dir=rtl][open]) .spectrum-Popover--start-top,:host([open]) .spectrum-Popover--end,:host([open]) .spectrum-Popover--end-bottom,:host([open]) .spectrum-Popover--end-top,:host([open]) .spectrum-Popover--right-bottom,:host([open]) .spectrum-Popover--right-top,:host([placement*=right][open]){--spectrum-overlay-animation-distance:6px;transform:translateX(var(--spectrum-overlay-animation-distance))}:host([dir=rtl][open]) .spectrum-Popover--end,:host([dir=rtl][open]) .spectrum-Popover--end-bottom,:host([dir=rtl][open]) .spectrum-Popover--end-top,:host([open]) .spectrum-Popover--left-bottom,:host([open]) .spectrum-Popover--left-top,:host([open]) .spectrum-Popover--start,:host([open]) .spectrum-Popover--start-bottom,:host([open]) .spectrum-Popover--start-top,:host([placement*=left][open]){--spectrum-overlay-animation-distance:6px;transform:translateX(calc(var(--spectrum-overlay-animation-distance)*-1))}:host{--flow-direction:1;--spectrum-popover-offset:0px;--spectrum-popover-background-color:var(
+);--spectrum-overlay-animation-duration-opened:var(
+--spectrum-animation-duration-0
+);opacity:0;pointer-events:none;transition:transform var(--spectrum-overlay-animation-duration) ease-in-out,opacity var(--spectrum-overlay-animation-duration) ease-in-out,visibility 0s linear var(--spectrum-overlay-animation-duration);visibility:hidden}:host([open]){opacity:1;pointer-events:auto;transition-delay:var(
+--mod-overlay-animation-duration-opened,var(--spectrum-overlay-animation-duration-opened)
+);visibility:visible}:host{--flow-direction:1;--spectrum-popover-animation-distance:var(--spectrum-spacing-100);--spectrum-popover-background-color:var(
 --spectrum-background-layer-2-color
 );--spectrum-popover-border-color:var(--spectrum-gray-400);--spectrum-popover-content-area-spacing-vertical:var(
 --spectrum-popover-top-to-content-area
@@ -29,11 +33,51 @@
 --highcontrast-popover-border-color,var(--mod-popover-border-color,var(--spectrum-popover-border-color))
 );stroke-width:var(
 --mod-popover-border-width,var(--spectrum-popover-border-width)
-)}*{--mod-popover-filter:none}.spectrum-Popover--top-end,.spectrum-Popover--top-left,.spectrum-Popover--top-right,.spectrum-Popover--top-start,:host([placement*=top]){margin-bottom:var(--mod-popover-offset,var(--spectrum-popover-offset))}.spectrum-Popover--bottom-end,.spectrum-Popover--bottom-left,.spectrum-Popover--bottom-right,.spectrum-Popover--bottom-start,:host([placement*=bottom]){margin-top:var(--mod-popover-offset,var(--spectrum-popover-offset))}.spectrum-Popover--right-bottom,.spectrum-Popover--right-top,:host([placement*=right]){margin-left:var(--mod-popover-offset,var(--spectrum-popover-offset))}.spectrum-Popover--left-bottom,.spectrum-Popover--left-top,:host([placement*=left]){margin-right:var(--mod-popover-offset,var(--spectrum-popover-offset))}.spectrum-Popover--start,.spectrum-Popover--start-bottom,.spectrum-Popover--start-top{margin-inline-end:var(
---mod-popover-offset,var(--spectrum-popover-offset)
-)}.spectrum-Popover--end,.spectrum-Popover--end-bottom,.spectrum-Popover--end-top{margin-inline-start:var(
---mod-popover-offset,var(--spectrum-popover-offset)
-)}:host([tip]) #tip,:host([tip]) .spectrum-Popover--bottom-end #tip,:host([tip]) .spectrum-Popover--bottom-left #tip,:host([tip]) .spectrum-Popover--bottom-right #tip,:host([tip]) .spectrum-Popover--bottom-start #tip,:host([tip]) .spectrum-Popover--top-end #tip,:host([tip]) .spectrum-Popover--top-left #tip,:host([tip]) .spectrum-Popover--top-right #tip,:host([tip]) .spectrum-Popover--top-start #tip,:host([tip][placement*=bottom]) #tip,:host([tip][placement*=top]) #tip{height:var(
+)}*{--mod-popover-filter:none}:host([placement*=top][tip]),:host([tip]) .spectrum-Popover--top-end,:host([tip]) .spectrum-Popover--top-left,:host([tip]) .spectrum-Popover--top-right,:host([tip]) .spectrum-Popover--top-start{margin-bottom:calc(var(
+--mod-popover-pointer-height,
+var(--spectrum-popover-pointer-height)
+) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--top-end,:host([open]) .spectrum-Popover--top-left,:host([open]) .spectrum-Popover--top-right,:host([open]) .spectrum-Popover--top-start,:host([placement*=top][open]){transform:translateY(calc(var(
+--mod-popover-animation-distance,
+var(--spectrum-popover-animation-distance)
+)*-1))}:host([placement*=bottom][tip]),:host([tip]) .spectrum-Popover--bottom-end,:host([tip]) .spectrum-Popover--bottom-left,:host([tip]) .spectrum-Popover--bottom-right,:host([tip]) .spectrum-Popover--bottom-start{margin-top:calc(var(
+--mod-popover-pointer-height,
+var(--spectrum-popover-pointer-height)
+) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--bottom-end,:host([open]) .spectrum-Popover--bottom-left,:host([open]) .spectrum-Popover--bottom-right,:host([open]) .spectrum-Popover--bottom-start,:host([placement*=bottom][open]){transform:translateY(var(
+--mod-popover-animation-distance,var(--spectrum-popover-animation-distance)
+))}:host([placement*=right][tip]),:host([tip]) .spectrum-Popover--right-bottom,:host([tip]) .spectrum-Popover--right-top{margin-left:calc(var(--mod-popover-pointer-width, var(--spectrum-popover-pointer-width)) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--right-bottom,:host([open]) .spectrum-Popover--right-top,:host([placement*=right][open]){transform:translateX(var(
+--mod-popover-animation-distance,var(--spectrum-popover-animation-distance)
+))}:host([placement*=left][tip]),:host([tip]) .spectrum-Popover--left-bottom,:host([tip]) .spectrum-Popover--left-top{margin-right:calc(var(--mod-popover-pointer-width, var(--spectrum-popover-pointer-width)) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--left-bottom,:host([open]) .spectrum-Popover--left-top,:host([placement*=left][open]){transform:translateX(calc(var(
+--mod-popover-animation-distance,
+var(--spectrum-popover-animation-distance)
+)*-1))}:host([tip]) .spectrum-Popover--start,:host([tip]) .spectrum-Popover--start-bottom,:host([tip]) .spectrum-Popover--start-top{margin-inline-end:calc(var(--mod-popover-pointer-width, var(--spectrum-popover-pointer-width)) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--start,:host([open]) .spectrum-Popover--start-bottom,:host([open]) .spectrum-Popover--start-top{transform:translateX(calc(var(
+--mod-popover-animation-distance,
+var(--spectrum-popover-animation-distance)
+)*-1))}:host([dir=rtl][open]) .spectrum-Popover--start,:host([dir=rtl][open]) .spectrum-Popover--start-bottom,:host([dir=rtl][open]) .spectrum-Popover--start-top{transform:translateX(var(
+--mod-popover-animation-distance,var(--spectrum-popover-animation-distance)
+))}:host([tip]) .spectrum-Popover--end,:host([tip]) .spectrum-Popover--end-bottom,:host([tip]) .spectrum-Popover--end-top{margin-inline-start:calc(var(--mod-popover-pointer-width, var(--spectrum-popover-pointer-width)) - var(
+--mod-popover-border-width,
+var(--spectrum-popover-border-width)
+))}:host([open]) .spectrum-Popover--end,:host([open]) .spectrum-Popover--end-bottom,:host([open]) .spectrum-Popover--end-top{transform:translateX(var(
+--mod-popover-animation-distance,var(--spectrum-popover-animation-distance)
+))}:host([dir=rtl][open]) .spectrum-Popover--end,:host([dir=rtl][open]) .spectrum-Popover--end-bottom,:host([dir=rtl][open]) .spectrum-Popover--end-top{transform:translateX(calc(var(
+--mod-popover-animation-distance,
+var(--spectrum-popover-animation-distance)
+)*-1))}:host([tip]) #tip,:host([tip]) .spectrum-Popover--bottom-end #tip,:host([tip]) .spectrum-Popover--bottom-left #tip,:host([tip]) .spectrum-Popover--bottom-right #tip,:host([tip]) .spectrum-Popover--bottom-start #tip,:host([tip]) .spectrum-Popover--top-end #tip,:host([tip]) .spectrum-Popover--top-left #tip,:host([tip]) .spectrum-Popover--top-right #tip,:host([tip]) .spectrum-Popover--top-start #tip,:host([tip][placement*=bottom]) #tip,:host([tip][placement*=top]) #tip{height:var(
 --mod-popover-pointer-height,var(--spectrum-popover-pointer-height)
 );left:0;margin:auto;position:absolute;right:0;top:100%;transform:translate(0);width:var(
 --mod-popover-pointer-width,var(--spectrum-popover-pointer-width)
@@ -63,11 +107,11 @@
 --mod-popover-pointer-edge-spacing,var(--spectrum-popover-pointer-edge-spacing)
 );top:auto}:host([tip]) .spectrum-Popover--start #tip,:host([tip]) .spectrum-Popover--start-bottom #tip,:host([tip]) .spectrum-Popover--start-top #tip{margin-inline-start:100%}:host([dir=rtl][tip]) .spectrum-Popover--start #tip,:host([dir=rtl][tip]) .spectrum-Popover--start-bottom #tip,:host([dir=rtl][tip]) .spectrum-Popover--start-top #tip{transform:none}:host([tip]) .spectrum-Popover--end #tip,:host([tip]) .spectrum-Popover--end-bottom #tip,:host([tip]) .spectrum-Popover--end-top #tip{margin-inline-end:100%;transform:scaleX(-1)}:host([dir=rtl][tip]) .spectrum-Popover--end #tip,:host([dir=rtl][tip]) .spectrum-Popover--end-bottom #tip,:host([dir=rtl][tip]) .spectrum-Popover--end-top #tip{transform:scaleX(1)}:host{--spectrum-popover-border-width:var(
 --system-spectrum-popover-border-width
-)}:host{--sp-popover-tip-size:24px;--mod-popover-pointer-width:max(var(--spectrum-popover-pointer-width),var(--spectrum-popover-pointer-height));--mod-popover-pointer-height:max(var(--spectrum-popover-pointer-width),var(--spectrum-popover-pointer-height));clip-path:none;max-height:100%;max-width:100%;min-width:min-content}::slotted(*){overscroll-behavior:contain}:host([placement*=left]) #tip[style],:host([placement*=right]) #tip[style]{bottom:auto}:host([placement*=bottom]) #tip[style],:host([placement*=top]) #tip[style]{right:auto}.block{display:block;height:50%;width:100%}.inline{display:block;height:100%;width:50%}:host([placement*=left]) .block,:host([placement*=right]) .block{display:none}:host([placement*=bottom]) .inline,:host([placement*=top]) .inline{display:none}::slotted(.visually-hidden){clip:rect(0,0,0,0);border:0;clip-path:inset(50%);height:1px;margin:0 -1px -1px 0;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}::slotted(sp-menu){margin:0}:host([dialog]){min-width:var(
+)}:host{--sp-popover-tip-size:24px;clip-path:none;max-height:100%;max-width:100%;min-width:min-content}::slotted(*){overscroll-behavior:contain}:host([placement*=left]) #tip[style],:host([placement*=right]) #tip[style]{bottom:auto}:host([placement*=bottom]) #tip[style],:host([placement*=top]) #tip[style]{right:auto}.block{display:block;height:50%;width:100%}.inline{display:block;height:100%;width:50%}:host([placement*=left]) .block,:host([placement*=right]) .block{display:none}:host([placement*=bottom]) .inline,:host([placement*=top]) .inline{display:none}::slotted(.visually-hidden){clip:rect(0,0,0,0);border:0;clip-path:inset(50%);height:1px;margin:0 -1px -1px 0;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}::slotted(sp-menu){margin:0}:host([dialog]){min-width:var(
 --mod-popover-dialog-min-width,var(--spectrum-popover-dialog-min-width,270px)
 );padding:var(
 --mod-popover-dialog-padding,var(--spectrum-popover-dialog-padding,30px 29px)
-)}
+)}:host([tip][placement]) #tip{height:auto}
 `;var m=Object.defineProperty,c=Object.getOwnPropertyDescriptor,v=(t,o,p,e)=>{for(var r,s=e>1?void 0:e?c(o,p):o,i=t.length-1;i>=0;i--)(r=t[i])&&(s=(e?r(o,p,s):r(s))||s);return e&&s&&m(o,p,s),s};class a extends e.o{constructor(){super(...arguments),this.dialog=!1,this.open=!1,this.tip=!1}static get styles(){return[i]}renderTip(){return r.dy`
             <div id="tip" aria-hidden="true">
                 <svg class="tip block" viewBox="0 -0.5 16 9">
