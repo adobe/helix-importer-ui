@@ -219,13 +219,13 @@ const postSuccessfulStep = async (results, originalURL) => {
       path,
     };
     
-    if (isSaveLocal && dirHandle) {
+    if (isSaveLocal && dirHandle && (docx || html || md)) {
       const files = [];
       if (config.fields['import-local-docx'] && docx)
         files.push({ type: 'docx', filename: filename, data: docx });
-      if (config.fields['import-local-html'])
+      if (config.fields['import-local-html'] && html)
         files.push({ type: 'html', filename: `${path}.html`, data: html });
-      if (config.fields['import-local-md'])
+      if (config.fields['import-local-md'] && md)
         files.push({ type: 'md', filename: `${path}.md`, data: md });
 
       files.forEach((file) => {
