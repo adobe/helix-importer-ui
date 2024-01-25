@@ -48,7 +48,9 @@ const ui = {};
 const config = {};
 const importStatus = {};
 
+let isSaveLocal = false;
 let dirHandle = null;
+
 
 const setupUI = () => {
   ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
@@ -210,28 +212,35 @@ const getProxyURLSetup = (url, origin) => {
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
   await asyncForEach(results, async ({
-    docx, filename, path, report, from,
+    docx, html, md, filename, path, report, from,
   }) => {
     const data = {
       url: originalURL,
       path,
     };
+    
+    if (isSaveLocal && dirHandle) {
+      const files = [];
+      if (config.fields['import-local-docx'] && docx)
+        files.push({ type: 'docx', filename: filename, data: docx });
+      if (config.fields['import-local-html'])
+        files.push({ type: 'html', filename: `${path}.html`, data: html });
+      if (config.fields['import-local-md'])
+        files.push({ type: 'md', filename: `${path}.md`, data: md });
 
-    if (docx) {
-      if (dirHandle) {
+      files.forEach((file) => {
         try {
-          await saveFile(dirHandle, filename, docx);
-          data.file = filename;
+          const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
+          saveFile(dirHandle, filePath, file.data);
+          data.file = filePath;
           data.status = 'Success';
         } catch (e) {
           // eslint-disable-next-line no-console
-          console.error(`Failed to save file ${path} for ${originalURL}`, e);
-          data.status = `Error: Failed to save file ${path} - ${e.message}`;
+          console.error(`Failed to save ${file.type} file ${path} for ${originalURL}`, e);
+          data.status = `Error: Failed to save ${file.type} file ${path} - ${e.message}`;
           error = true;
         }
-      } else {
-        data.status = 'Success - No file created';
-      }
+      });
     } else if (from) {
       try {
         const res = await fetch(from);
@@ -427,7 +436,8 @@ const attachListeners = () => {
 
     disableProcessButtons();
     toggleLoadingButton(IMPORT_BUTTON);
-    if (config.fields['import-local-save'] && !dirHandle) {
+    isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
+      if (isSaveLocal && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
         await dirHandle.requestPermission({
@@ -494,7 +504,7 @@ const attachListeners = () => {
               }
 
               const onLoad = async () => {
-                const includeDocx = !!dirHandle;
+                const includeDocx = !!dirHandle && config.fields['import-local-docx'];
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window);

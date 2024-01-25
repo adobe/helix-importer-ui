@@ -46,9 +46,17 @@
                                         <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
                                         <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
-                                        <sp-checkbox class="option-field" id="import-local-save" checked>
-                                            Save files locally
-                                        </sp-checkbox>
+                                        <div class="local-save">
+                                            <sp-checkbox class="option-field" id="import-local-docx" checked>
+                                                Save as docx
+                                            </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-html">
+                                                Save as HTML
+                                            </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-md">
+                                                Save as Markdown
+                                            </sp-checkbox>
+                                        </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">
                                             Enable JavaScript
