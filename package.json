@@ -20,7 +20,7 @@
     "@adobe/remark-gridtables": "2.0.2",
     "@spectrum-web-components/bundle": "0.40.3",
     "@spectrum-web-components/icons-workflow": "0.40.3",
-    "hast-util-raw": "9.0.1",
+    "hast-util-raw": "9.0.2",
     "hast-util-to-html": "9.0.0",
     "mdast-util-to-hast": "13.1.0",
     "parcel": "2.11.0",
@@ -32,8 +32,8 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.5",
-    "@babel/core": "7.23.7",
-    "@babel/eslint-parser": "7.23.3",
+    "@babel/core": "7.23.9",
+    "@babel/eslint-parser": "7.23.9",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "6.0.3",
     "@semantic-release/git": "10.0.1",
@@ -52,7 +52,7 @@
     "semantic-release-discord-bot": "^1.1.0",
     "stylelint": "16.2.0",
     "stylelint-config-standard": "36.0.0",
-    "webpack": "5.89.0",
+    "webpack": "5.90.0",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "4.15.1",
     "webpack-merge": "5.10.0"
