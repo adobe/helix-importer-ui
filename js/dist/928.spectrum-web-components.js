@@ -1,15 +1,17 @@
-"use strict";(globalThis.webpackChunk_adobe_helix_importer_ui=globalThis.webpackChunk_adobe_helix_importer_ui||[]).push([[789],{789:(t,o,p)=>{p.r(o);var e=p(321),r=p(392),s=p(338);const i=r.iv`
-:host{--spectrum-overlay-animation-distance:6px;--spectrum-overlay-animation-duration:var(
---spectrum-animation-duration-100
-);--spectrum-overlay-animation-duration-opened:var(
---spectrum-animation-duration-0
-);opacity:0;pointer-events:none;transition:transform var(--spectrum-overlay-animation-duration) ease-in-out,opacity var(--spectrum-overlay-animation-duration) ease-in-out,visibility 0s linear var(--spectrum-overlay-animation-duration);visibility:hidden}:host([open]){opacity:1;pointer-events:auto;transition-delay:var(
---mod-overlay-animation-duration-opened,var(--spectrum-overlay-animation-duration-opened)
-);visibility:visible}:host{--flow-direction:1;--spectrum-popover-animation-distance:var(--spectrum-spacing-100);--spectrum-popover-background-color:var(
+"use strict";(globalThis.webpackChunk_adobe_helix_importer_ui=globalThis.webpackChunk_adobe_helix_importer_ui||[]).push([[928],{928:(t,o,p)=>{p.r(o);var e=p(392),r=p(440),s=p(708);const i=r.gV`
+:host{opacity:0;pointer-events:none;transition:transform var(
+--mod-overlay-animation-duration,var(--spectrum-animation-duration-100,.13s)
+) ease-in-out,opacity var(
+--mod-overlay-animation-duration,var(--spectrum-animation-duration-100,.13s)
+) ease-in-out,visibility 0s linear var(
+--mod-overlay-animation-duration,var(--spectrum-animation-duration-100,.13s)
+);visibility:hidden}:host([open]){opacity:1;pointer-events:auto;transition-delay:var(
+--mod-overlay-animation-duration-opened,var(--spectrum-animation-duration-0,0s)
+);visibility:visible}:host{--flow-direction:1}:host([dir=rtl]){--flow-direction:-1}:host{--spectrum-popover-animation-distance:var(--spectrum-spacing-100);--spectrum-popover-background-color:var(
 --spectrum-background-layer-2-color
 );--spectrum-popover-border-color:var(--spectrum-gray-400);--spectrum-popover-content-area-spacing-vertical:var(
 --spectrum-popover-top-to-content-area
-);--spectrum-popover-shadow-horizontal:var(--spectrum-drop-shadow-x);--spectrum-popover-shadow-vertical:var(--spectrum-drop-shadow-y);--spectrum-popover-shadow-blur:var(--spectrum-drop-shadow-blur);--spectrum-popover-shadow-color:var(--spectrum-drop-shadow-color);--spectrum-popover-corner-radius:var(--spectrum-corner-radius-100);--spectrum-popover-pointer-width:var(--spectrum-popover-tip-width);--spectrum-popover-pointer-height:var(--spectrum-popover-tip-height);--spectrum-popover-pointer-edge-offset:calc(var(--spectrum-corner-radius-100) + var(--spectrum-popover-tip-width)/2);--spectrum-popover-pointer-edge-spacing:calc(var(--spectrum-popover-pointer-edge-offset) - var(--spectrum-popover-tip-width)/2)}:host([dir=rtl]){--flow-direction:-1}@media (forced-colors:active){:host{--highcontrast-popover-border-color:CanvasText}}:host{--spectrum-popover-filter:drop-shadow(var(
+);--spectrum-popover-shadow-horizontal:var(--spectrum-drop-shadow-x);--spectrum-popover-shadow-vertical:var(--spectrum-drop-shadow-y);--spectrum-popover-shadow-blur:var(--spectrum-drop-shadow-blur);--spectrum-popover-shadow-color:var(--spectrum-drop-shadow-color);--spectrum-popover-corner-radius:var(--spectrum-corner-radius-100);--spectrum-popover-pointer-width:var(--spectrum-popover-tip-width);--spectrum-popover-pointer-height:var(--spectrum-popover-tip-height);--spectrum-popover-pointer-edge-offset:calc(var(--spectrum-corner-radius-100) + var(--spectrum-popover-tip-width)/2);--spectrum-popover-pointer-edge-spacing:calc(var(--spectrum-popover-pointer-edge-offset) - var(--spectrum-popover-tip-width)/2)}@media (forced-colors:active){:host{--highcontrast-popover-border-color:CanvasText}}:host{--spectrum-popover-filter:drop-shadow(var(
 --mod-popover-shadow-horizontal,var(--spectrum-popover-shadow-horizontal)
 ) var(
 --mod-popover-shadow-vertical,var(--spectrum-popover-shadow-vertical)
@@ -112,7 +114,7 @@ var(--spectrum-popover-animation-distance)
 );padding:var(
 --mod-popover-dialog-padding,var(--spectrum-popover-dialog-padding,30px 29px)
 )}:host([tip][placement]) #tip{height:auto}
-`;var m=Object.defineProperty,c=Object.getOwnPropertyDescriptor,v=(t,o,p,e)=>{for(var r,s=e>1?void 0:e?c(o,p):o,i=t.length-1;i>=0;i--)(r=t[i])&&(s=(e?r(o,p,s):r(s))||s);return e&&s&&m(o,p,s),s};class a extends e.o{constructor(){super(...arguments),this.dialog=!1,this.open=!1,this.tip=!1}static get styles(){return[i]}renderTip(){return r.dy`
+`;var m=Object.defineProperty,c=Object.getOwnPropertyDescriptor,v=(t,o,p,e)=>{for(var r,s=e>1?void 0:e?c(o,p):o,i=t.length-1;i>=0;i--)(r=t[i])&&(s=(e?r(o,p,s):r(s))||s);return e&&s&&m(o,p,s),s};class a extends e.m{constructor(){super(...arguments),this.dialog=!1,this.open=!1,this.tip=!1}static get styles(){return[i]}renderTip(){return r.kP`
             <div id="tip" aria-hidden="true">
                 <svg class="tip block" viewBox="0 -0.5 16 9">
                     <path class="triangle" d="M-1,-1 8,8 17,-1"></path>
@@ -121,7 +123,7 @@ var(--spectrum-popover-animation-distance)
                     <path class="triangle" d="M-1,-1 8,8 -1,17"></path>
                 </svg>
             </div>
-        `}update(t){super.update(t)}render(){return r.dy`
+        `}update(t){super.update(t)}render(){return r.kP`
             <slot></slot>
-            ${this.tip?this.renderTip():r.Ld}
-        `}}v([(0,s.Cb)({type:Boolean,reflect:!0})],a.prototype,"dialog",2),v([(0,s.Cb)({type:Boolean,reflect:!0})],a.prototype,"open",2),v([(0,s.Cb)({reflect:!0})],a.prototype,"placement",2),v([(0,s.Cb)({type:Boolean,reflect:!0})],a.prototype,"tip",2),v([(0,s.IO)("#tip")],a.prototype,"tipElement",2),(0,p(200).N)("sp-popover",a)}}]);
+            ${this.tip?this.renderTip():r.qs}
+        `}}v([(0,s.qq)({type:Boolean,reflect:!0})],a.prototype,"dialog",2),v([(0,s.qq)({type:Boolean,reflect:!0})],a.prototype,"open",2),v([(0,s.qq)({reflect:!0})],a.prototype,"placement",2),v([(0,s.qq)({type:Boolean,reflect:!0})],a.prototype,"tip",2),v([(0,s.kt)("#tip")],a.prototype,"tipElement",2),(0,p(856).w)("sp-popover",a)}}]);
