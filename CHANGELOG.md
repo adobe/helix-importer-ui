@@ -1,3 +1,10 @@
+## [1.50.14](https://github.com/adobe/helix-importer-ui/compare/v1.50.13...v1.50.14) (2024-02-15)
+
+
+### Bug Fixes
+
+* handle nothing to preview case ([#330](https://github.com/adobe/helix-importer-ui/issues/330)) ([89a818a](https://github.com/adobe/helix-importer-ui/commit/89a818a129ce874ba987a754745db1af7ca604cd))
+
 ## [1.50.13](https://github.com/adobe/helix-importer-ui/compare/v1.50.12...v1.50.13) (2024-02-14)
 
 
