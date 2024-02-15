@@ -73,98 +73,111 @@ const setupUI = () => {
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
-  ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
-    indent_size: '2',
-  }));
-  ui.markdownEditor.setValue(md || '');
+  if (outputHTML) {
+    ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
+      indent_size: '2',
+    }));
+  }
 
-  const mdPreview = WebImporter.md2html(md);
-  // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
-  ui.markdownPreview.innerHTML = mdPreview;
+  if (md) {
+    ui.markdownEditor.setValue(md || '');
 
-  // remove existing classes and styles
-  Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
-    t.removeAttribute('class');
-    t.removeAttribute('style');
-  });
+    const mdPreview = WebImporter.md2html(md);
+    // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
+    ui.markdownPreview.innerHTML = mdPreview;
+
+    // remove existing classes and styles
+    Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
+      t.removeAttribute('class');
+      t.removeAttribute('style');
+    });
+  } else {
+    ui.markdownEditor.setValue('No preview available.');
+    ui.markdownPreview.innerHTML = 'No preview available.';
+  }
 };
 
 const updateImporterUI = (results, originalURL) => {
-  const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
-  if (!IS_BULK) {
-    IMPORT_FILE_PICKER_CONTAINER.textContent = '';
+  try {
+    const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
+    if (!IS_BULK) {
+      IMPORT_FILE_PICKER_CONTAINER.textContent = '';
 
-    if (status === 'success') {
-      const picker = document.createElement('sp-picker');
-      picker.setAttribute('size', 'm');
+      if (status === 'success') {
+        const picker = document.createElement('sp-picker');
+        picker.setAttribute('size', 'm');
 
-      if (results.length < 2) {
-        picker.setAttribute('quiet', true);
-        picker.setAttribute('disabled', true);
-      }
-
-      results.forEach((result, index) => {
-        const { path } = result;
-
-        // add result to picker list
-        const item = document.createElement('sp-menu-item');
-        item.textContent = path;
-        if (index === 0) {
-          item.setAttribute('selected', true);
-          picker.setAttribute('label', path);
-          picker.setAttribute('value', path);
+        if (results.length < 2) {
+          picker.setAttribute('quiet', true);
+          picker.setAttribute('disabled', true);
         }
-        picker.appendChild(item);
-      });
 
-      IMPORT_FILE_PICKER_CONTAINER.append(picker);
+        results.forEach((result, index) => {
+          const { path } = result;
 
-      if (results.length > 0) {
-        picker.addEventListener('change', (e) => {
-          const r = results.filter((i) => i.path === e.target.value)[0];
-          loadResult(r);
+          // add result to picker list
+          const item = document.createElement('sp-menu-item');
+          item.textContent = path;
+          if (index === 0) {
+            item.setAttribute('selected', true);
+            picker.setAttribute('label', path);
+            picker.setAttribute('value', path);
+          }
+          picker.appendChild(item);
         });
+
+        IMPORT_FILE_PICKER_CONTAINER.append(picker);
+
+        if (results.length > 0) {
+          picker.addEventListener('change', (e) => {
+            const r = results.filter((i) => i.path === e.target.value)[0];
+            loadResult(r);
+          });
+        }
+
+        loadResult(results[0]);
+      } else if (status === 'redirect') {
+        alert.warning(`No page imported: ${results[0].from} redirects to ${results[0].to}`);
+      }
+    } else {
+      const li = document.createElement('li');
+      const link = document.createElement('sp-link');
+      link.setAttribute('size', 'm');
+      link.setAttribute('target', '_blank');
+      link.setAttribute('href', originalURL);
+      link.textContent = originalURL;
+      li.append(link);
+
+      let name = 'sp-icon-checkmark-circle';
+      let label = 'Success';
+      if (status === 'redirect') {
+        name = 'sp-icon-alias';
+        label = 'Redirect';
+      } else if (status === 'error') {
+        name = 'sp-icon-alert';
+        label = 'Error';
       }
 
-      loadResult(results[0]);
-    } else if (status === 'redirect') {
-      alert.warning(`No page imported: ${results[0].from} redirects to ${results[0].to}`);
-    }
-  } else {
-    const li = document.createElement('li');
-    const link = document.createElement('sp-link');
-    link.setAttribute('size', 'm');
-    link.setAttribute('target', '_blank');
-    link.setAttribute('href', originalURL);
-    link.textContent = originalURL;
-    li.append(link);
+      const icon = document.createElement(name);
+      icon.setAttribute('label', label);
+      li.append(icon);
 
-    let name = 'sp-icon-checkmark-circle';
-    let label = 'Success';
-    if (status === 'redirect') {
-      name = 'sp-icon-alias';
-      label = 'Redirect';
-    } else if (status === 'error') {
-      name = 'sp-icon-alert';
-      label = 'Error';
-    }
+      BULK_URLS_LIST.append(li);
 
-    const icon = document.createElement(name);
-    icon.setAttribute('label', label);
-    li.append(icon);
-
-    BULK_URLS_LIST.append(li);
-
-    const totalTime = Math.round((new Date() - importStatus.startTime) / 1000);
-    let timeStr = `${totalTime}s`;
-    if (totalTime > 60) {
-      timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
-      if (totalTime > 3600) {
-        timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
+      const totalTime = Math.round((new Date() - importStatus.startTime) / 1000);
+      let timeStr = `${totalTime}s`;
+      if (totalTime > 60) {
+        timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
+        if (totalTime > 3600) {
+          timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
+        }
       }
-    }
 
-    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
+      BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error(`Error while updating the UI: ${err.message}`, err);
   }
 };
 
