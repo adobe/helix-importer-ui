@@ -1,4 +1,4 @@
-"use strict";(globalThis.webpackChunk_adobe_helix_importer_ui=globalThis.webpackChunk_adobe_helix_importer_ui||[]).push([[676],{888:(a,r,t)=>{t.d(r,{G:()=>e,q:()=>i});var n=t(893);const i=a=>a.querySelector(n.u),e=a=>a.assignedElements().find((a=>a.matches(n.u)))},893:(a,r,t)=>{t.d(r,{u:()=>e});const n=["button","[focusable]","[href]","input","label","select","textarea","[tabindex]"],i=':not([tabindex="-1"])',e=n.join(`${i}, `)+i;n.join(", ")},676:(a,r,t)=>{t.r(r);var n=t(392),i=t(440),e=t(708);const o=i.gV`
+"use strict";(globalThis.webpackChunk_adobe_helix_importer_ui=globalThis.webpackChunk_adobe_helix_importer_ui||[]).push([[775],{415:(a,r,t)=>{t.d(r,{I:()=>i,L:()=>e});var n=t(367);const i=a=>a.querySelector(n.x),e=a=>a.assignedElements().find((a=>a.matches(n.x)))},367:(a,r,t)=>{t.d(r,{x:()=>e});const n=["button","[focusable]","[href]","input","label","select","textarea","[tabindex]"],i=':not([tabindex="-1"])',e=n.join(`${i}, `)+i;n.join(", ")},775:(a,r,t)=>{t.r(r);var n=t(463),i=t(684),e=t(352);const o=i.AH`
 :host{opacity:0;pointer-events:none;transition:transform var(
 --mod-overlay-animation-duration,var(--spectrum-animation-duration-100,.13s)
 ) ease-in-out,opacity var(
@@ -42,7 +42,7 @@ var(
 ) var(
 --mod-underlay-background-entry-animation-delay,var(--spectrum-underlay-background-entry-animation-delay)
 )}
-`;var m=Object.defineProperty;Object.getOwnPropertyDescriptor;class s extends n.m{constructor(){super(...arguments),this.open=!1}static get styles(){return[o]}render(){return i.kP``}}((a,r,t,n)=>{for(var i,e=void 0,o=a.length-1;o>=0;o--)(i=a[o])&&(e=i(r,t,e)||e);e&&m(r,t,e)})([(0,e.qq)({type:Boolean,reflect:!0})],s.prototype,"open");var d=t(856);(0,d.w)("sp-underlay",s);var c=t(888),u=t(755);const l=i.gV`
+`;var s=Object.defineProperty;Object.getOwnPropertyDescriptor;class d extends n.w{constructor(){super(...arguments),this.canClick=!1,this.open=!1}static get styles(){return[o]}click(){this.dispatchEvent(new Event("close"))}handlePointerdown(){this.canClick=!0}handlePointerup(){this.canClick&&this.click(),this.canClick=!1}render(){return i.qy``}firstUpdated(){this.addEventListener("pointerdown",this.handlePointerdown),this.addEventListener("pointerup",this.handlePointerup)}}((a,r,t,n)=>{for(var i,e=void 0,o=a.length-1;o>=0;o--)(i=a[o])&&(e=i(r,t,e)||e);e&&s(r,t,e)})([(0,e.MZ)({type:Boolean,reflect:!0})],d.prototype,"open");var m=t(308);(0,m.e)("sp-underlay",d);var c=t(415),u=t(239);const l=i.AH`
 .modal{opacity:0;pointer-events:none;transition:transform var(
 --mod-overlay-animation-duration,var(--spectrum-animation-duration-100,.13s)
 ) ease-in-out,opacity var(
@@ -106,7 +106,7 @@ var(--spectrum-modal-confirm-exit-animation-duration)
 )}.fullscreen,.fullscreenTakeover{max-inline-size:none;max-height:none;position:fixed}.fullscreenTakeover{border:none;border-radius:0;box-sizing:border-box;inset:0}.fullscreenTakeover,:host([open]) .fullscreenTakeover{transform:none}:host{--spectrum-dialog-confirm-exit-animation-duration:var(--swc-test-duration);--spectrum-dialog-confirm-entry-animation-duration:var(
 --swc-test-duration
 );height:100dvh}.modal{overflow:visible}
-`,p=i.gV`
+`,p=i.AH`
 :host{display:flex;inline-size:100%;inset-block-end:0;inset-inline-start:0;justify-content:center;position:fixed}:host{--spectrum-tray-exit-animation-delay:0s;--spectrum-tray-entry-animation-delay:0.16s;--spectrum-tray-max-inline-size:375px;--spectrum-tray-spacing-edge-to-tray-safe-zone:64px;--spectrum-tray-entry-animation-duration:var(
 --spectrum-animation-duration-500
 );--spectrum-tray-exit-animation-duration:var(
@@ -152,11 +152,11 @@ var(--spectrum-tray-exit-animation-duration)
 --mod-tray-corner-radius,var(--spectrum-tray-corner-radius)
 );max-inline-size:var(
 --mod-tray-max-inline-size,var(--spectrum-tray-max-inline-size)
-)}}:host{align-items:flex-end;max-height:100vh;max-height:100dvh;position:fixed!important}sp-underlay{touch-action:none}.tray{display:inline-flex;overscroll-behavior:contain}::slotted(.visually-hidden){clip:rect(0,0,0,0);border:0;clip-path:inset(50%);height:1px;margin:0 -1px -1px 0;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}
-`;var y=Object.defineProperty,v=Object.getOwnPropertyDescriptor,h=(a,r,t,n)=>{for(var i,e=n>1?void 0:n?v(r,t):r,o=a.length-1;o>=0;o--)(i=a[o])&&(e=(n?i(r,t,e):i(e))||e);return n&&e&&y(r,t,e),e};class b extends n.m{constructor(){super(...arguments),this.open=!1,this.prefersMotion=new u.st(this,"(prefers-reduced-motion: no-preference)"),this.transitionPromise=Promise.resolve(),this.animating=!1}static get styles(){return[l,p]}focus(){const a=(0,c.q)(this);a?a.focus():1===this.children.length?this.tray.focus():super.focus()}overlayWillCloseCallback(){return this.open?(this.close(),!0):this.animating}close(){this.open=!1,this.prefersMotion.matches||this.dispatchClosed()}dispatchClosed(){this.dispatchEvent(new Event("close",{bubbles:!0}))}handleUnderlayTransitionend(){this.open||(this.resolveTransitionPromise(),this.dispatchClosed())}handleTrayTransitionend(){this.open&&this.resolveTransitionPromise()}update(a){a.has("open")&&void 0!==a.get("open")&&this.prefersMotion.matches&&(this.animating=!0,this.transitionPromise=new Promise((a=>{this.resolveTransitionPromise=()=>{this.animating=!1,a()}}))),super.update(a)}render(){return i.kP`
+)}}:host{align-items:flex-end;max-height:100vh;max-height:100dvh;position:fixed!important}sp-underlay{touch-action:none}.tray{display:inline-flex;overscroll-behavior:contain}::slotted(.visually-hidden){border:0;clip:rect(0,0,0,0);clip-path:inset(50%);height:1px;margin:0 -1px -1px 0;overflow:hidden;padding:0;position:absolute;white-space:nowrap;width:1px}
+`;var y=Object.defineProperty,v=Object.getOwnPropertyDescriptor,h=(a,r,t,n)=>{for(var i,e=n>1?void 0:n?v(r,t):r,o=a.length-1;o>=0;o--)(i=a[o])&&(e=(n?i(r,t,e):i(e))||e);return n&&e&&y(r,t,e),e};class b extends n.w{constructor(){super(...arguments),this.open=!1,this.prefersMotion=new u._9(this,"(prefers-reduced-motion: no-preference)"),this.transitionPromise=Promise.resolve(),this.animating=!1}static get styles(){return[l,p]}focus(){const a=(0,c.I)(this);a?a.focus():1===this.children.length?this.tray.focus():super.focus()}overlayWillCloseCallback(){return this.open?(this.close(),!0):this.animating}close(){this.open=!1,this.prefersMotion.matches||this.dispatchClosed()}dispatchClosed(){this.dispatchEvent(new Event("close",{bubbles:!0}))}handleUnderlayTransitionend(){this.open||(this.resolveTransitionPromise(),this.dispatchClosed())}handleTrayTransitionend(){this.open&&this.resolveTransitionPromise()}update(a){a.has("open")&&void 0!==a.get("open")&&this.prefersMotion.matches&&(this.animating=!0,this.transitionPromise=new Promise((a=>{this.resolveTransitionPromise=()=>{this.animating=!1,a()}}))),super.update(a)}render(){return i.qy`
             <sp-underlay
                 ?open=${this.open}
-                @click=${this.close}
+                @close=${this.close}
                 @transitionend=${this.handleUnderlayTransitionend}
             ></sp-underlay>
             <div
@@ -166,4 +166,4 @@ var(--spectrum-tray-exit-animation-duration)
             >
                 <slot></slot>
             </div>
-        `}async getUpdateComplete(){const a=await super.getUpdateComplete();return await this.transitionPromise,a}}h([(0,e.qq)({type:Boolean,reflect:!0})],b.prototype,"open",2),h([(0,e.kt)(".tray")],b.prototype,"tray",2),(0,d.w)("sp-tray",b)}}]);
+        `}async getUpdateComplete(){const a=await super.getUpdateComplete();return await this.transitionPromise,a}}h([(0,e.MZ)({type:Boolean,reflect:!0})],b.prototype,"open",2),h([(0,e.P)(".tray")],b.prototype,"tray",2),(0,m.e)("sp-tray",b)}}]);
