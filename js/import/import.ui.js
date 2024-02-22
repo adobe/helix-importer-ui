@@ -224,7 +224,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       if (config.fields['import-local-docx'] && docx)
         files.push({ type: 'docx', filename: filename, data: docx });
       if (config.fields['import-local-html'] && html)
-        files.push({ type: 'html', filename: `${path}.html`, data: html });
+        files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
       if (config.fields['import-local-md'] && md)
         files.push({ type: 'md', filename: `${path}.md`, data: md });
 
