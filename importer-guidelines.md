@@ -560,6 +560,7 @@ Here is growing list of case studies to help you drive some more sophisticated i
 
 1. [Convert a page and download all PDF files referenced on the page](./docs/download-pdf.md)
 2. [Import content from a JSON API](./docs/import-from-json.md)
+3. [Download as html with images](./docs/download-as-html.md)
 
 ## Helpers
 

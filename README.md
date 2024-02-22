@@ -22,7 +22,7 @@ In the `URL(s)` field, give a list of page URLs to be imported (e.g. {https://ww
 
 ### Options
 
-- `Local save as docx`: enable / disable the save as docx to the local file system. Disabling is useful when working on the `import.js` transformation and checking the docx is not necessarily at that time.
+- `Local save`: enable / disable the save as `docx`, `html` or `md` to the local file system. Disabling is useful when working on the `import.js` transformation and checking the docx is not necessarily at that time. `html` or `md` can be used for further processing or debugging.
 - `Import file URL`: url of the import transformation file (by convention the `aem` importer proxy maps `http://localhost:3001/tools/importer/*` urls to local folder so all import code must be placed under `<PROJECT_ROOT>/tools/importer/`)
 - `Page load timeout`: the transformation uses the target page DOM. This DOM might take some time to be fully decorated. You can reduce the timeout if your transformation does not need to wait or extend if the DOM takes longer to be fully complete
 - `Enable Javascript`: 
