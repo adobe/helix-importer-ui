@@ -11,9 +11,9 @@ body, sp-theme[color="dark"] {
 }
 
 body.parent > sp-theme {
-  display: grid; 
-  grid-template-columns: 240px 1fr; 
-  grid-template-rows: 1fr; 
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  grid-template-rows: 1fr;
   /* stylelint-disable-next-line declaration-block-no-redundant-longhand-properties */
   grid-template-areas: 'sidebar main';
 }
@@ -165,8 +165,8 @@ main .field-group sp-color-handle {
 main .field-cols {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr; 
-  gap: 0 12px; 
+  grid-template-rows: 1fr;
+  gap: 0 12px;
   margin-top: 12px;
 }
 
@@ -194,9 +194,9 @@ section .section-title {
 
 section .section-cols {
   display: grid;
-  grid-template-columns: 3fr 4fr; 
-  grid-template-rows: 1fr; 
-  gap: 0 40px; 
+  grid-template-columns: 3fr 4fr;
+  grid-template-rows: 1fr;
+  gap: 0 40px;
 }
 
 section .section-cols .section-col {
@@ -214,11 +214,11 @@ section sp-accordion sp-accordion-item {
 
 section .local-save {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr; 
-  grid-template-rows: 1fr; 
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr;
 }
 
-section .local-save .option-field + sp-checkbox { 
+section .local-save .option-field + sp-checkbox {
   margin-top: 0;
 }
 

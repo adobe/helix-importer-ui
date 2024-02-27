@@ -51,7 +51,6 @@ const importStatus = {};
 let isSaveLocal = false;
 let dirHandle = null;
 
-
 const setupUI = () => {
   ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
     lineNumbers: true,
@@ -231,15 +230,13 @@ const postSuccessfulStep = async (results, originalURL) => {
       url: originalURL,
       path,
     };
-    
+
     if (isSaveLocal && dirHandle && (docx || html || md)) {
       const files = [];
-      if (config.fields['import-local-docx'] && docx)
-        files.push({ type: 'docx', filename: filename, data: docx });
-      if (config.fields['import-local-html'] && html)
-        files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
-      if (config.fields['import-local-md'] && md)
-        files.push({ type: 'md', filename: `${path}.md`, data: md });
+      if (config.fields['import-local-docx'] && docx) files.push({ type: 'docx', filename, data: docx });
+      if (config.fields['import-local-html'] && html) files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
+      if (config.fields['import-local-md'] && md) files.push({ type: 'md', filename: `${path}.md`, data: md });
+      if (config.fields['import-local-jcr'] && md) files.push({ type: 'jcr', filename: `${path}.zip`, data: md });
 
       files.forEach((file) => {
         try {
@@ -449,8 +446,8 @@ const attachListeners = () => {
 
     disableProcessButtons();
     toggleLoadingButton(IMPORT_BUTTON);
-    isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
-      if (isSaveLocal && !dirHandle) {
+    isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-local-jcr'];
+    if (isSaveLocal && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
         await dirHandle.requestPermission({
@@ -518,6 +515,7 @@ const attachListeners = () => {
 
               const onLoad = async () => {
                 const includeDocx = !!dirHandle && config.fields['import-local-docx'];
+                const createJCR = !!dirHandle && config.fields['import-local-jcr'];
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window);
@@ -544,6 +542,7 @@ const attachListeners = () => {
                       document: frame.contentDocument,
                       includeDocx,
                       params: { originalURL },
+                      createJCR,
                     });
                     await config.importer.transform();
                   }

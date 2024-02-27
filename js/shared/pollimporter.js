@@ -133,7 +133,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params,
+      includeDocx, url, document, params, createJCR
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -156,6 +156,8 @@ export default class PollImporter {
           const { path } = result;
           result.filename = `${path}.docx`;
         });
+      } else if (createJCR) {
+        console.log('Creating JCR');
       } else {
         const out = await WebImporter.html2md(
           url,
@@ -190,12 +192,14 @@ export default class PollImporter {
     document,
     includeDocx = false,
     params,
+    createJCR = false
   }) {
     this.transformation = {
       url,
       document,
       includeDocx,
       params,
+      createJCR,
     };
   }
 
