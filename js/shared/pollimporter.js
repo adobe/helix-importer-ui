@@ -38,6 +38,26 @@ function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
   return clone;
 }
 
+function removeExtension(pathname) {
+  const extension = pathname.split('.').pop();
+  return pathname.replace(`.${extension}`, '');
+}
+
+function getPath(url) {
+  const { pathname } = new URL(url);
+  return removeExtension(pathname);
+}
+
+// TODO: replace with webImporterHtml2Xml
+function webImporterHtml2Xml(url) {
+  const xml = `<?xml version='1.0' encoding='UTF-8'?>
+                            <!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+                            <comment>xml for: ${url}}</comment>`;
+  const path = getPath(url);
+  const filename = path.split('/').pop();
+  return { xml, path, filename };
+}
+
 export default class PollImporter {
   constructor(cfg) {
     this.config = {
@@ -133,7 +153,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params, createJCR
+      includeDocx, url, document, params, createJCR,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -158,6 +178,8 @@ export default class PollImporter {
         });
       } else if (createJCR) {
         console.log('Creating JCR');
+        const out = webImporterHtml2Xml(url);
+        results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
           url,
@@ -192,7 +214,7 @@ export default class PollImporter {
     document,
     includeDocx = false,
     params,
-    createJCR = false
+    createJCR = false,
   }) {
     this.transformation = {
       url,

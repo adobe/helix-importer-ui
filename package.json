@@ -22,6 +22,7 @@
     "@spectrum-web-components/icons-workflow": "0.41.0",
     "hast-util-raw": "9.0.2",
     "hast-util-to-html": "9.0.0",
+    "jszip": "^3.10.1",
     "mdast-util-to-hast": "13.1.0",
     "parcel": "2.11.0",
     "path-browserify": "1.0.1",
