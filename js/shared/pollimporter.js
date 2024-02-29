@@ -49,10 +49,11 @@ function getPath(url) {
 }
 
 // TODO: replace with webImporterHtml2Xml
-function webImporterHtml2Xml(url) {
+function webImporterHtml2Xml(url, githubUrl) {
   const xml = `<?xml version='1.0' encoding='UTF-8'?>
                             <!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
-                            <comment>xml for: ${url}}</comment>`;
+                            <comment>url: ${url}}</comment>
+                            <comment>githubUrl: ${githubUrl}}</comment>`;
   const path = getPath(url);
   const filename = path.split('/').pop();
   return { xml, path, filename };
@@ -153,7 +154,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params, createJCR,
+      includeDocx, url, document, params, createJCR, githubUrl,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -177,8 +178,7 @@ export default class PollImporter {
           result.filename = `${path}.docx`;
         });
       } else if (createJCR) {
-        console.log('Creating JCR');
-        const out = webImporterHtml2Xml(url);
+        const out = webImporterHtml2Xml(url, githubUrl);
         results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
@@ -215,6 +215,7 @@ export default class PollImporter {
     includeDocx = false,
     params,
     createJCR = false,
+    githubUrl,
   }) {
     this.transformation = {
       url,
@@ -222,6 +223,7 @@ export default class PollImporter {
       includeDocx,
       params,
       createJCR,
+      githubUrl,
     };
   }
 
