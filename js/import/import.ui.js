@@ -35,6 +35,7 @@ const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
 const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
+const SAVE_JCR_PACKAGE_CHECKBOX = document.getElementById('import-local-jcr');
 
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
@@ -448,6 +449,11 @@ const smartScroll = async (window) => {
   }
 };
 
+const displayGithubConfig = (jcr) => {
+  document.getElementById('github-project-url').classList.toggle('hidden', !jcr);
+  document.getElementById('github-project-url-label').classList.toggle('hidden', !jcr);
+};
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
@@ -681,6 +687,10 @@ const attachListeners = () => {
     a.click();
   }));
 
+  SAVE_JCR_PACKAGE_CHECKBOX.addEventListener('click', (event) => {
+    displayGithubConfig(!event.target.checked);
+  });
+
   if (SPTABS) {
     SPTABS.addEventListener('change', () => {
       // required for code to load in editors
@@ -697,6 +707,8 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   createImporter();
+
+  displayGithubConfig(SAVE_JCR_PACKAGE_CHECKBOX.checked);
 
   if (!IS_BULK) setupUI();
   attachListeners();
