@@ -449,9 +449,16 @@ const smartScroll = async (window) => {
   }
 };
 
-const displayGithubConfig = (jcr) => {
-  document.getElementById('github-project-url').classList.toggle('hidden', !jcr);
-  document.getElementById('github-project-url-label').classList.toggle('hidden', !jcr);
+const displayGithubConfig = (show) => {
+  const githubProjectUrl = document.getElementById('github-project-url');
+  const githubProjectUrlLabel = document.getElementById('github-project-url-label');
+  if (show) {
+    githubProjectUrl.classList.remove('hidden');
+    githubProjectUrlLabel.classList.remove('hidden');
+  } else {
+    githubProjectUrl.classList.add('hidden');
+    githubProjectUrlLabel.classList.add('hidden');
+  }
 };
 
 const attachListeners = () => {
