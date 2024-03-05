@@ -48,12 +48,44 @@ function getPath(url) {
   return removeExtension(pathname);
 }
 
-// TODO: replace with webImporterHtml2Xml
-function webImporterHtml2Xml(url, githubUrl) {
-  const xml = `<?xml version='1.0' encoding='UTF-8'?>
-                            <!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
-                            <comment>url: ${url}}</comment>
-                            <comment>githubUrl: ${githubUrl}}</comment>`;
+async function loadComponents(config) {
+  const components = {};
+  if (config.githubUrl) {
+    const [
+      componentModels, componentsDefinition, componentFilters,
+    ] = await Promise.all([
+      fetch(`${config.githubUrl}/component-models.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-models.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+      fetch(`${config.githubUrl}/component-definition.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-definition.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+      fetch(`${config.githubUrl}/component-filters.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-filters.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+    ]);
+    components.componentModels = JSON.parse(componentModels);
+    components.componentDefinition = JSON.parse(componentsDefinition);
+    components.filters = JSON.parse(componentFilters);
+  }
+  return components;
+}
+
+async function webImporterHtml2Xml(url, doc, cfg, params) {
+  const out = await WebImporter.html2jcr(url, doc, cfg, params);
+  const xml = out?.jcr;
   const path = getPath(url);
   const filename = path.split('/').pop();
   return { xml, path, filename };
@@ -154,7 +186,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params, createJCR, githubUrl,
+      includeDocx, url, document, params, createJCR,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -178,7 +210,10 @@ export default class PollImporter {
           result.filename = `${path}.docx`;
         });
       } else if (createJCR) {
-        const out = webImporterHtml2Xml(url, githubUrl);
+        const components = await loadComponents(this.config);
+        const out = await webImporterHtml2Xml(url, documentClone, this.projectTransform, {
+          components, ...params,
+        });
         results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
@@ -215,7 +250,6 @@ export default class PollImporter {
     includeDocx = false,
     params,
     createJCR = false,
-    githubUrl,
   }) {
     this.transformation = {
       url,
@@ -223,7 +257,6 @@ export default class PollImporter {
       includeDocx,
       params,
       createJCR,
-      githubUrl,
     };
   }
 

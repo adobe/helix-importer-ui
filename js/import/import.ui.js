@@ -425,6 +425,7 @@ const createImporter = () => {
     origin: config.origin,
     poll: !IS_BULK,
     importFileURL: config.fields['import-file-url'],
+    githubUrl: config.fields['github-project-url'],
   });
 };
 
@@ -585,7 +586,6 @@ const attachListeners = () => {
               const onLoad = async () => {
                 const includeDocx = !!dirHandle && config.fields['import-local-docx'];
                 const createJCR = !!dirHandle && config.fields['import-local-jcr'];
-                const githubUrl = config.fields['github-project-url'];
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window);
@@ -613,7 +613,6 @@ const attachListeners = () => {
                       includeDocx,
                       params: { originalURL },
                       createJCR,
-                      githubUrl,
                     });
                     await config.importer.transform();
                   }
