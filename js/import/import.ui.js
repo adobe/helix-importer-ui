@@ -35,7 +35,7 @@ const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
 const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
-const SAVE_JCR_PACKAGE_CHECKBOX = document.getElementById('import-local-jcr');
+const SAVE_JCR_CHECKBOX = document.getElementById('import-local-jcr');
 
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
@@ -236,6 +236,7 @@ const createJcrPackage = (pages) => {
   pages.forEach((page) => {
     const contentXML = page.data;
     const jcrPath = `jcr_root${page.path}/.content.xml`;
+    saveFile(dirHandle, jcrPath, contentXML);
     zip.file(jcrPath, contentXML);
     pageFilters += `<filter root='${page.path}'/>\n`;
   });
@@ -245,7 +246,9 @@ const createJcrPackage = (pages) => {
     <workspaceFilter version='1.0'>
       ${pageFilters}
     </workspaceFilter>`;
-  zip.file('META-INF/vault/filter.xml', filterXML);
+  const filterPath = 'META-INF/vault/filter.xml';
+  saveFile(dirHandle, filterPath, filterXML);
+  zip.file(filterPath, filterXML);
 
   // add properties.xml file
   const propertiesXML = `<?xml version='1.0' encoding='UTF-8'?>
@@ -268,7 +271,9 @@ const createJcrPackage = (pages) => {
     <entry key='name'>${packageName}</entry>
     <entry key='lastModified'>${now}</entry>
     </properties>`;
-  zip.file('META-INF/vault/properties.xml', propertiesXML);
+  const propertiesPath = 'META-INF/vault/properties.xml';
+  saveFile(dirHandle, propertiesPath, propertiesXML);
+  zip.file(propertiesPath, propertiesXML);
 
   // save the zip file
   zip.generateAsync({ type: 'blob' })
@@ -693,7 +698,7 @@ const attachListeners = () => {
     a.click();
   }));
 
-  SAVE_JCR_PACKAGE_CHECKBOX.addEventListener('click', (event) => {
+  SAVE_JCR_CHECKBOX.addEventListener('click', (event) => {
     displayGithubConfig(!event.target.checked);
   });
 
@@ -714,7 +719,7 @@ const init = () => {
 
   createImporter();
 
-  displayGithubConfig(SAVE_JCR_PACKAGE_CHECKBOX.checked);
+  displayGithubConfig(SAVE_JCR_CHECKBOX.checked);
 
   if (!IS_BULK) setupUI();
   attachListeners();
