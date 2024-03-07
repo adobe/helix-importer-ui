@@ -23,7 +23,6 @@ import {
 } from '@adobe/helix-importer';
 
 import docxStylesXML from '../resources/styles.xml';
-import md2html from './md2html.js';
 
 const options = {
   docxStylesXML,

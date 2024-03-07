@@ -106,6 +106,7 @@
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
+                            <sp-tab label="JCR" value="import-jcr"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="import-preview">
                                 <sp-theme color="light" scale="medium">
@@ -125,6 +126,13 @@
                                     <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
                                   </div>
                                 </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-jcr">
+                              <div data-panel="source">
+                                <div class="code">
+                                  <textarea id="import-jcr" rows="4" cols="10"></textarea>
+                                </div>
+                              </div>
                             </sp-tab-panel>
                         </sp-tabs>
                         <sp-button-group>

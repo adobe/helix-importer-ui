@@ -31,6 +31,7 @@ const FOLDERNAME_SPAN = document.getElementById('folder-name');
 const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-html');
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
+const JCR_PANEL = document.getElementById('import-jcr');
 
 const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
@@ -61,6 +62,13 @@ const setupUI = () => {
   });
   ui.transformedEditor.setSize('100%', '100%');
 
+  ui.jcrEditor = CodeMirror.fromTextArea(JCR_PANEL, {
+    lineNumbers: true,
+    mode: 'htmlmixed',
+    theme: 'base16-dark',
+  });
+  ui.jcrEditor.setSize('100%', '100%');
+
   ui.markdownEditor = CodeMirror.fromTextArea(MD_SOURCE_TEXTAREA, {
     lineNumbers: true,
     mode: 'markdown',
@@ -75,9 +83,15 @@ const setupUI = () => {
   SPTABS.selected = 'import-preview';
 };
 
-const loadResult = ({ md, html: outputHTML }) => {
+const loadResult = ({ md, html: outputHTML, xml }) => {
   if (outputHTML) {
     ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
+      indent_size: '2',
+    }));
+  }
+
+  if (xml) {
+    ui.jcrEditor.setValue(html_beautify(xml.replaceAll(/\s+/g, ' '), {
       indent_size: '2',
     }));
   }
@@ -708,6 +722,7 @@ const attachListeners = () => {
       setTimeout(() => {
         ui.transformedEditor.refresh();
         ui.markdownEditor.refresh();
+        ui.jcrEditor.refresh();
       }, 1);
     });
   }
