@@ -1,3 +1,10 @@
+# [1.51.0](https://github.com/adobe/helix-importer-ui/compare/v1.50.15...v1.51.0) (2024-03-13)
+
+
+### Features
+
+* save as md & HTML ([#318](https://github.com/adobe/helix-importer-ui/issues/318)) ([c567395](https://github.com/adobe/helix-importer-ui/commit/c567395fd40a6051dccf394443bb5645930991c8))
+
 ## [1.50.15](https://github.com/adobe/helix-importer-ui/compare/v1.50.14...v1.50.15) (2024-02-17)
 
 
