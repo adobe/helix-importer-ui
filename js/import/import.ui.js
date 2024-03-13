@@ -51,7 +51,6 @@ const importStatus = {};
 let isSaveLocal = false;
 let dirHandle = null;
 
-
 const setupUI = () => {
   ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
     lineNumbers: true,
@@ -231,15 +230,16 @@ const postSuccessfulStep = async (results, originalURL) => {
       url: originalURL,
       path,
     };
-    
+
     if (isSaveLocal && dirHandle && (docx || html || md)) {
       const files = [];
-      if (config.fields['import-local-docx'] && docx)
-        files.push({ type: 'docx', filename: filename, data: docx });
-      if (config.fields['import-local-html'] && html)
+      if (config.fields['import-local-docx'] && docx) {
+        files.push({ type: 'docx', filename, data: docx });
+      } else if (config.fields['import-local-html'] && html) {
         files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
-      if (config.fields['import-local-md'] && md)
+      } else if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
+      }
 
       files.forEach((file) => {
         try {
@@ -450,7 +450,7 @@ const attachListeners = () => {
     disableProcessButtons();
     toggleLoadingButton(IMPORT_BUTTON);
     isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
-      if (isSaveLocal && !dirHandle) {
+    if (isSaveLocal && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
         await dirHandle.requestPermission({
