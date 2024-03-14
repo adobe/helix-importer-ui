@@ -38,6 +38,59 @@ function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
   return clone;
 }
 
+function removeExtension(pathname) {
+  const extension = pathname.split('.').pop();
+  return pathname.replace(`.${extension}`, '');
+}
+
+function getPath(url) {
+  const { pathname } = new URL(url);
+  return removeExtension(pathname);
+}
+
+async function loadComponents(config) {
+  const components = {};
+  if (config.githubUrl) {
+    const [
+      componentModels, componentsDefinition, componentFilters,
+    ] = await Promise.all([
+      fetch(`${config.githubUrl}/component-models.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-models.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+      fetch(`${config.githubUrl}/component-definition.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-definition.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+      fetch(`${config.githubUrl}/component-filters.json`).then((res) => {
+        if (!res.ok) {
+          throw new Error(`Failed to fetch component-filters.json: ${res.status}`);
+        } else {
+          return res.text();
+        }
+      }),
+    ]);
+    components.componentModels = JSON.parse(componentModels);
+    components.componentDefinition = JSON.parse(componentsDefinition);
+    components.filters = JSON.parse(componentFilters);
+  }
+  return components;
+}
+
+async function webImporterHtml2Xml(url, doc, cfg, params) {
+  const out = await WebImporter.html2jcr(url, doc, cfg, params);
+  const xml = out?.jcr;
+  const path = getPath(url);
+  const filename = path.split('/').pop();
+  return { xml, path, filename };
+}
+
 export default class PollImporter {
   constructor(cfg) {
     this.config = {
@@ -130,6 +183,18 @@ export default class PollImporter {
     return true;
   }
 
+  async addXmlToResults(results, url, documentClone, params) {
+    const components = await loadComponents(this.config);
+    const out = await webImporterHtml2Xml(url, documentClone, this.projectTransform, {
+      components, ...params,
+    });
+    const xmlResults = Array.isArray(out) ? out : [out];
+    results.forEach((result, idx) => {
+      result.xml = xmlResults[idx].xml;
+      result.filename = xmlResults[idx].filename;
+    });
+  }
+
   async transform() {
     this.running = true;
     const {
@@ -165,6 +230,7 @@ export default class PollImporter {
         );
         results = Array.isArray(out) ? out : [out];
       }
+      await this.addXmlToResults(results, url, documentClone, params);
 
       this.listeners.forEach((listener) => {
         listener({
@@ -190,12 +256,14 @@ export default class PollImporter {
     document,
     includeDocx = false,
     params,
+    createJCR = false,
   }) {
     this.transformation = {
       url,
       document,
       includeDocx,
       params,
+      createJCR,
     };
   }
 

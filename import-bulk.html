@@ -16,6 +16,7 @@
     <script src="./js/dist/helix-importer.js"></script>
 
     <script src="./js/import/import.ui.js" type="module"></script>
+    <script src="./js/libs/vendors/jszip/jszip.min.js"></script>
 </head>
 
 <body class="tool">
@@ -56,6 +57,9 @@
                                             <sp-checkbox class="option-field" id="import-local-md">
                                                 Save as Markdown
                                             </sp-checkbox>
+                                          <sp-checkbox class="option-field" id="import-local-jcr">
+                                            Save as JCR
+                                          </sp-checkbox>
                                         </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">
@@ -73,8 +77,12 @@
                                             Scroll to bottom
                                         </sp-checkbox>
 
+                                        <sp-field-label for="github-project-url" id="github-project-url-label"  required>Github project URL</sp-field-label>
+                                        <sp-textfield class="option-field" id="github-project-url" type="url" value=""></sp-textfield>
+
                                         <sp-field-label for="import-custom-headers">Custom headers</sp-field-label>
                                         <sp-textfield class="option-field" id="import-custom-headers" multiline placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
+
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>

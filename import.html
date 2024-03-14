@@ -20,6 +20,7 @@
     <script src="./js/libs/vendors/js-beautify/beautify-html.min.js"></script>
     <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
     <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
+    <script src="./js/libs/vendors/jszip/jszip.min.js"></script>
 
     <script src="./js/dist/helix-importer.js"></script>
 
@@ -63,6 +64,9 @@
                                             <sp-checkbox class="option-field" id="import-local-md">
                                                 Save as Markdown
                                             </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-jcr">
+                                                Save as JCR
+                                            </sp-checkbox>
                                         </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">
@@ -76,8 +80,12 @@
                                             Scroll to bottom
                                         </sp-checkbox>
 
+                                        <sp-field-label for="github-project-url" id="github-project-url-label" required>Github project URL</sp-field-label>
+                                        <sp-textfield class="option-field" id="github-project-url" type="url" value=""></sp-textfield>
+
                                         <sp-field-label for="import-custom-headers">Custom headers</sp-field-label>
                                         <sp-textfield class="option-field" id="import-custom-headers" multiline placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
+
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
@@ -98,6 +106,7 @@
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
+                            <sp-tab label="JCR" value="import-jcr"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="import-preview">
                                 <sp-theme color="light" scale="medium">
@@ -117,6 +126,13 @@
                                     <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
                                   </div>
                                 </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-jcr">
+                              <div data-panel="source">
+                                <div class="code">
+                                  <textarea id="import-jcr" rows="4" cols="10"></textarea>
+                                </div>
+                              </div>
                             </sp-tab-panel>
                         </sp-tabs>
                         <sp-button-group>

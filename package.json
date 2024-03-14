@@ -15,13 +15,14 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "3.2.3",
+    "@adobe/helix-importer": "github:bpauli/helix-importer#html2jcr",
     "@adobe/mdast-util-gridtables": "4.0.0",
     "@adobe/remark-gridtables": "3.0.0",
     "@spectrum-web-components/bundle": "0.41.0",
     "@spectrum-web-components/icons-workflow": "0.41.0",
     "hast-util-raw": "9.0.2",
     "hast-util-to-html": "9.0.0",
+    "jszip": "^3.10.1",
     "mdast-util-to-hast": "13.1.0",
     "parcel": "2.11.0",
     "path-browserify": "1.0.1",

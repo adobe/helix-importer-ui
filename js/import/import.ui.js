@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global CodeMirror, html_beautify, ExcelJS, WebImporter */
+/* global JSZip, CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
@@ -31,10 +31,12 @@ const FOLDERNAME_SPAN = document.getElementById('folder-name');
 const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-html');
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
+const JCR_PANEL = document.getElementById('import-jcr');
 
 const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
+const SAVE_JCR_CHECKBOX = document.getElementById('import-local-jcr');
 
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
@@ -50,7 +52,7 @@ const importStatus = {};
 
 let isSaveLocal = false;
 let dirHandle = null;
-
+let jcrPages = [];
 
 const setupUI = () => {
   ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
@@ -59,6 +61,13 @@ const setupUI = () => {
     theme: 'base16-dark',
   });
   ui.transformedEditor.setSize('100%', '100%');
+
+  ui.jcrEditor = CodeMirror.fromTextArea(JCR_PANEL, {
+    lineNumbers: true,
+    mode: 'htmlmixed',
+    theme: 'base16-dark',
+  });
+  ui.jcrEditor.setSize('100%', '100%');
 
   ui.markdownEditor = CodeMirror.fromTextArea(MD_SOURCE_TEXTAREA, {
     lineNumbers: true,
@@ -74,9 +83,15 @@ const setupUI = () => {
   SPTABS.selected = 'import-preview';
 };
 
-const loadResult = ({ md, html: outputHTML }) => {
+const loadResult = ({ md, html: outputHTML, xml }) => {
   if (outputHTML) {
     ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
+      indent_size: '2',
+    }));
+  }
+
+  if (xml) {
+    ui.jcrEditor.setValue(html_beautify(xml.replaceAll(/\s+/g, ' '), {
       indent_size: '2',
     }));
   }
@@ -222,24 +237,82 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
+const createJcrPackage = (pages) => {
+  if (pages.length === 0) return;
+
+  const zip = new JSZip();
+  const packageName = (pages.length === 1) ? pages[0].path.split('/').pop() : 'my_package';
+  const author = 'anonymous';
+  const now = new Date().toISOString();
+  const prefix = 'jcr';
+
+  // add content.xml files
+  let pageFilters = '';
+  pages.forEach((page) => {
+    const contentXML = page.data;
+    const jcrPath = `${prefix}/jcr_root${page.path}/.content.xml`;
+    saveFile(dirHandle, jcrPath, contentXML);
+    zip.file(jcrPath, contentXML);
+    pageFilters += `<filter root='${page.path}'/>\n`;
+  });
+
+  // add filter.xml file
+  const filterXML = `<?xml version='1.0' encoding='UTF-8'?>
+    <workspaceFilter version='1.0'>
+      ${pageFilters}
+    </workspaceFilter>`;
+  const filterPath = `${prefix}/META-INF/vault/filter.xml`;
+  saveFile(dirHandle, filterPath, filterXML);
+  zip.file(filterPath, filterXML);
+
+  // add properties.xml file
+  const propertiesXML = `<?xml version='1.0' encoding='UTF-8'?>
+    <!DOCTYPE properties SYSTEM 'http://java.sun.com/dtd/properties.dtd'>
+    <properties>
+    <comment>FileVault Package Properties</comment>
+    <entry key='description'></entry>
+    <entry key='generator'>org.apache.jackrabbit.vault:3.7.1-T20231005151103-335689a8</entry>
+    <entry key='packageType'>content</entry>
+    <entry key='lastWrappedBy'>${author}</entry>
+    <entry key='packageFormatVersion'>2</entry>
+    <entry key='group'>my_packages</entry>
+    <entry key='created'>${now}</entry>
+    <entry key='lastModifiedBy'>${author}</entry>
+    <entry key='buildCount'>1</entry>
+    <entry key='lastWrapped'>${now}</entry>
+    <entry key='version'></entry>
+    <entry key='dependencies'></entry>
+    <entry key='createdBy'>${author}</entry>
+    <entry key='name'>${packageName}</entry>
+    <entry key='lastModified'>${now}</entry>
+    </properties>`;
+  const propertiesPath = `${prefix}/META-INF/vault/properties.xml`;
+  saveFile(dirHandle, propertiesPath, propertiesXML);
+  zip.file(propertiesPath, propertiesXML);
+
+  // save the zip file
+  zip.generateAsync({ type: 'blob' })
+    .then((blob) => {
+      saveFile(dirHandle, `${prefix}/${packageName}.zip`, blob);
+    });
+};
+
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
   await asyncForEach(results, async ({
-    docx, html, md, filename, path, report, from,
+    docx, html, md, xml, filename, path, report, from,
   }) => {
     const data = {
       url: originalURL,
       path,
     };
-    
-    if (isSaveLocal && dirHandle && (docx || html || md)) {
+
+    if (isSaveLocal && dirHandle && (docx || html || md || xml)) {
       const files = [];
-      if (config.fields['import-local-docx'] && docx)
-        files.push({ type: 'docx', filename: filename, data: docx });
-      if (config.fields['import-local-html'] && html)
-        files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
-      if (config.fields['import-local-md'] && md)
-        files.push({ type: 'md', filename: `${path}.md`, data: md });
+      if (config.fields['import-local-docx'] && docx) files.push({ type: 'docx', filename, data: docx });
+      if (config.fields['import-local-html'] && html) files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
+      if (config.fields['import-local-md'] && md) files.push({ type: 'md', filename: `${path}.md`, data: md });
+      if (config.fields['import-local-jcr'] && xml) jcrPages.push({ type: 'jcr', path, data: xml });
 
       files.forEach((file) => {
         try {
@@ -372,6 +445,7 @@ const createImporter = () => {
     origin: config.origin,
     poll: !IS_BULK,
     importFileURL: config.fields['import-file-url'],
+    githubUrl: config.fields['github-project-url'],
   });
 };
 
@@ -393,6 +467,18 @@ const smartScroll = async (window) => {
     maxLoops -= 1;
     // eslint-disable-next-line no-await-in-loop
     await sleep(250);
+  }
+};
+
+const displayGithubConfig = (show) => {
+  const githubProjectUrl = document.getElementById('github-project-url');
+  const githubProjectUrlLabel = document.getElementById('github-project-url-label');
+  if (show) {
+    githubProjectUrl.classList.remove('hidden');
+    githubProjectUrlLabel.classList.remove('hidden');
+  } else {
+    githubProjectUrl.classList.add('hidden');
+    githubProjectUrlLabel.classList.add('hidden');
   }
 };
 
@@ -433,6 +519,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
     initImportStatus();
+    jcrPages = [];
 
     if (IS_BULK) {
       clearResultPanel();
@@ -449,8 +536,8 @@ const attachListeners = () => {
 
     disableProcessButtons();
     toggleLoadingButton(IMPORT_BUTTON);
-    isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
-      if (isSaveLocal && !dirHandle) {
+    isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-local-jcr'];
+    if (isSaveLocal && !dirHandle) {
       try {
         dirHandle = await getDirectoryHandle();
         await dirHandle.requestPermission({
@@ -518,6 +605,7 @@ const attachListeners = () => {
 
               const onLoad = async () => {
                 const includeDocx = !!dirHandle && config.fields['import-local-docx'];
+                const createJCR = !!dirHandle && config.fields['import-local-jcr'];
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window);
@@ -544,6 +632,7 @@ const attachListeners = () => {
                       document: frame.contentDocument,
                       includeDocx,
                       params: { originalURL },
+                      createJCR,
                     });
                     await config.importer.transform();
                   }
@@ -600,6 +689,7 @@ const attachListeners = () => {
       } else {
         const frame = getContentFrame();
         frame.removeEventListener('transformation-complete', processNext);
+        createJcrPackage(jcrPages);
         DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
         enableProcessButtons();
         toggleLoadingButton(IMPORT_BUTTON);
@@ -623,12 +713,17 @@ const attachListeners = () => {
     a.click();
   }));
 
+  SAVE_JCR_CHECKBOX.addEventListener('click', (event) => {
+    displayGithubConfig(!event.target.checked);
+  });
+
   if (SPTABS) {
     SPTABS.addEventListener('change', () => {
       // required for code to load in editors
       setTimeout(() => {
         ui.transformedEditor.refresh();
         ui.markdownEditor.refresh();
+        ui.jcrEditor.refresh();
       }, 1);
     });
   }
@@ -639,6 +734,8 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   createImporter();
+
+  displayGithubConfig(SAVE_JCR_CHECKBOX.checked);
 
   if (!IS_BULK) setupUI();
   attachListeners();
