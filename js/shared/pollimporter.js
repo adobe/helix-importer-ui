@@ -183,10 +183,22 @@ export default class PollImporter {
     return true;
   }
 
+  async addXmlToResults(results, url, documentClone, params) {
+    const components = await loadComponents(this.config);
+    const out = await webImporterHtml2Xml(url, documentClone, this.projectTransform, {
+      components, ...params,
+    });
+    const xmlResults = Array.isArray(out) ? out : [out];
+    results.forEach((result, idx) => {
+      result.xml = xmlResults[idx].xml;
+      result.filename = xmlResults[idx].filename;
+    });
+  }
+
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params, createJCR,
+      includeDocx, url, document, params,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -209,12 +221,6 @@ export default class PollImporter {
           const { path } = result;
           result.filename = `${path}.docx`;
         });
-      } else if (createJCR) {
-        const components = await loadComponents(this.config);
-        const out = await webImporterHtml2Xml(url, documentClone, this.projectTransform, {
-          components, ...params,
-        });
-        results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
           url,
@@ -224,6 +230,7 @@ export default class PollImporter {
         );
         results = Array.isArray(out) ? out : [out];
       }
+      await this.addXmlToResults(results, url, documentClone, params);
 
       this.listeners.forEach((listener) => {
         listener({

@@ -244,12 +244,13 @@ const createJcrPackage = (pages) => {
   const packageName = (pages.length === 1) ? pages[0].path.split('/').pop() : 'my_package';
   const author = 'anonymous';
   const now = new Date().toISOString();
+  const prefix = 'jcr';
 
   // add content.xml files
   let pageFilters = '';
   pages.forEach((page) => {
     const contentXML = page.data;
-    const jcrPath = `jcr_root${page.path}/.content.xml`;
+    const jcrPath = `${prefix}/jcr_root${page.path}/.content.xml`;
     saveFile(dirHandle, jcrPath, contentXML);
     zip.file(jcrPath, contentXML);
     pageFilters += `<filter root='${page.path}'/>\n`;
@@ -260,7 +261,7 @@ const createJcrPackage = (pages) => {
     <workspaceFilter version='1.0'>
       ${pageFilters}
     </workspaceFilter>`;
-  const filterPath = 'META-INF/vault/filter.xml';
+  const filterPath = `${prefix}/META-INF/vault/filter.xml`;
   saveFile(dirHandle, filterPath, filterXML);
   zip.file(filterPath, filterXML);
 
@@ -285,14 +286,14 @@ const createJcrPackage = (pages) => {
     <entry key='name'>${packageName}</entry>
     <entry key='lastModified'>${now}</entry>
     </properties>`;
-  const propertiesPath = 'META-INF/vault/properties.xml';
+  const propertiesPath = `${prefix}/META-INF/vault/properties.xml`;
   saveFile(dirHandle, propertiesPath, propertiesXML);
   zip.file(propertiesPath, propertiesXML);
 
   // save the zip file
   zip.generateAsync({ type: 'blob' })
     .then((blob) => {
-      saveFile(dirHandle, `${packageName}.zip`, blob);
+      saveFile(dirHandle, `${prefix}/${packageName}.zip`, blob);
     });
 };
 
