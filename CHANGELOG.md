@@ -1,3 +1,10 @@
+## [1.51.4](https://github.com/adobe/helix-importer-ui/compare/v1.51.3...v1.51.4) (2024-03-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/remark-gridtables to v3.0.2 ([#338](https://github.com/adobe/helix-importer-ui/issues/338)) ([a882f7b](https://github.com/adobe/helix-importer-ui/commit/a882f7b08d2e84de3dbf00c5a9d0f015437da60c))
+
 ## [1.51.3](https://github.com/adobe/helix-importer-ui/compare/v1.51.2...v1.51.3) (2024-03-20)
 
 
