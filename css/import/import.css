@@ -193,3 +193,30 @@
 .import #import-result sp-icon-alert {
   color: rgb(215 25 19);
 }
+
+/* sections mapping */
+.import #mapping-editor-sections {
+  & h3 {
+    font-family: monospace;
+    margin: 0;
+  }
+
+  & .row {
+    padding: 1rem 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: center;
+    cursor: pointer;
+
+    & #sec-color {
+      min-width: 1rem;
+      height: 1rem;
+      border: none;
+    }
+
+    & #sec-layout {
+      flex-shrink: 0;
+    }
+  }
+}

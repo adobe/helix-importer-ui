@@ -16,6 +16,7 @@ import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
+// import { getAllVisibleDivs } from '../libs/vendors/detect/detect.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -41,6 +42,12 @@ const BULK_URLS_HEADING = document.querySelector('#import-result h2');
 const BULK_URLS_LIST = document.querySelector('#import-result ul');
 
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
+
+// manual mapping elements
+const DETECT_BUTTON = document.getElementById('detect-sections-button');
+const IMPORT_SM_BUTTON = document.getElementById('import-sections-mapping-doimport-button');
+const MAPPING_EDITOR = document.getElementById('mapping-editor');
+const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
 
 const REPORT_FILENAME = 'import-report.xlsx';
 
@@ -70,7 +77,7 @@ const setupUI = () => {
   // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
   ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
 
-  SPTABS.selected = 'import-preview';
+  SPTABS.selected = 'mapping-editor';
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
@@ -383,7 +390,7 @@ const sleep = (ms) => new Promise(
   },
 );
 
-const smartScroll = async (window) => {
+const smartScroll = async (window, reset = false) => {
   let scrolledOffset = 0;
   let maxLoops = 4;
   while (maxLoops > 0 && window.document.body.scrollHeight > scrolledOffset) {
@@ -393,6 +400,9 @@ const smartScroll = async (window) => {
     maxLoops -= 1;
     // eslint-disable-next-line no-await-in-loop
     await sleep(250);
+  }
+  if (reset) {
+    window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
   }
 };
 
@@ -519,14 +529,17 @@ const attachListeners = () => {
               const onLoad = async () => {
                 const includeDocx = !!dirHandle && config.fields['import-local-docx'];
 
+                // sell.amazon.com has a frame-busting script!
+                frame.contentDocument.body.setAttribute('style', 'display:block !important');
+
                 if (config.fields['import-scroll-to-bottom']) {
-                  await smartScroll(frame.contentWindow.window);
+                  await smartScroll(frame.contentWindow.window, true);
                 }
 
                 await sleep(config.fields['import-pageload-timeout'] || 100);
 
                 if (config.fields['import-scroll-to-bottom']) {
-                  await smartScroll(frame.contentWindow.window);
+                  await smartScroll(frame.contentWindow.window, true);
                 }
 
                 if (frame.contentDocument) {
@@ -585,6 +598,8 @@ const attachListeners = () => {
               updateImporterUI([{ status: 'success' }], url);
               processNext();
             }
+
+            SPTABS.selected = 'import-preview';
           }
         } else {
           // eslint-disable-next-line no-console
@@ -603,6 +618,328 @@ const attachListeners = () => {
         DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
         enableProcessButtons();
         toggleLoadingButton(IMPORT_BUTTON);
+      }
+    };
+    processNext();
+  }));
+
+  DETECT_BUTTON.addEventListener('click', (async () => {
+    initImportStatus();
+
+    // if (IS_BULK) {
+    //   clearResultPanel();
+    //   if (config.fields['import-show-preview']) {
+    //     PREVIEW_CONTAINER.classList.remove('hidden');
+    //   } else {
+    //     PREVIEW_CONTAINER.classList.add('hidden');
+    //   }
+    //   DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
+    // } else {
+      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
+      PREVIEW_CONTAINER.classList.remove('hidden');
+      MAPPING_EDITOR_SECTIONS.innerHTML = '';
+
+    // }
+
+    disableProcessButtons();
+    toggleLoadingButton(DETECT_BUTTON);
+    // isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
+    // if (isSaveLocal && !dirHandle) {
+    //   try {
+    //     dirHandle = await getDirectoryHandle();
+    //     await dirHandle.requestPermission({
+    //       mode: 'readwrite',
+    //     });
+    //     FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
+    //     FOLDERNAME_SPAN.classList.remove('hidden');
+    //   } catch (e) {
+    //     // eslint-disable-next-line no-console
+    //     console.log('No directory selected');
+    //   }
+    // }
+
+    const field = /* IS_BULK ? 'import-urls' : */ 'import-url';
+    const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
+    importStatus.total = urlsArray.length;
+    importStatus.startTime = Date.now();
+    const processNext = async () => {
+      if (urlsArray.length > 0) {
+        const url = urlsArray.pop();
+        const { remote, proxy } = getProxyURLSetup(url, config.origin);
+        const src = proxy.url;
+
+        importStatus.imported += 1;
+        // eslint-disable-next-line no-console
+        console.log(`Importing: ${importStatus.imported} => ${src}`);
+
+        let res;
+        try {
+          const headers = JSON.parse(config.fields['import-custom-headers'] || '{}');
+          res = await fetch(src, {
+            headers,
+          });
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error(`Unexpected error when trying to fetch ${src} - CORS issue or invalid headers ?`, e);
+        }
+        if (res && res.ok) {
+          if (res.redirected) {
+            const u = new URL(res.url);
+            let redirect = res.url;
+            if (u.origin === window.location.origin) {
+              redirect = `${remote.origin}${u.pathname}`;
+            }
+            importStatus.rows.push({
+              url,
+              status: 'Redirect',
+              redirect,
+            });
+            // eslint-disable-next-line no-console
+            console.warn(`Cannot transform ${url} - redirected to ${redirect}`);
+            updateImporterUI([{ status: 'redirect', from: url, to: redirect }], url);
+            processNext();
+          } else {
+            const contentType = res.headers.get('content-type');
+            if (contentType.includes('html') || contentType.includes('json')) {
+              const frame = document.createElement('iframe');
+              frame.id = 'import-content-frame';
+
+              if (config.fields['import-enable-js']) {
+                frame.removeAttribute('sandbox');
+              } else {
+                frame.setAttribute('sandbox', 'allow-same-origin');
+              }
+
+              const onLoad = async () => {
+                const includeDocx = !!dirHandle && config.fields['import-local-docx'];
+
+                // sell.amazon.com has a frame-busting script!
+                frame.contentDocument.body.setAttribute('style', 'display:block !important');
+
+                const style = frame.contentDocument.createElement('style');
+                style.innerHTML = `
+                .xp-overlay:hover {
+                  background-color: rgba(0, 0, 125, 0.1) !important;
+                  cursor: pointer;
+                }
+                .xp-overlay.hover {
+                  background-color: rgba(0, 0, 125, 0.1) !important;
+                  cursor: pointer;
+                }
+                `;
+                frame.contentDocument.head.appendChild(style);
+
+                // await sleep(config.fields['import-pageload-timeout'] || 100);
+
+                if (config.fields['import-scroll-to-bottom']) {
+                  await smartScroll(frame.contentWindow.window, true);
+                }
+
+                await sleep(config.fields['import-pageload-timeout'] || 100);
+
+                if (config.fields['import-scroll-to-bottom']) {
+                  await smartScroll(frame.contentWindow.window, true);
+                }
+
+                console.log('window.xp', window.xp);
+                const sections = await window.xp.detectSections(
+                  frame.contentDocument.body,
+                  frame.contentWindow.window,
+                );
+                console.log('sections', sections);
+
+                const selectedSection = {
+                  id: null,
+                };
+
+                const selectedSectionProxy = new Proxy(selectedSection, {
+                  set: (target, key, value) => {
+                    const oldValue = target[key];
+                    console.log(`${key} set from ${selectedSection.id} to ${value}`);
+                    target[key] = value;
+
+                    const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
+                    if (oldOverlayDiv) {
+                      oldOverlayDiv.classList.remove('hover');
+                    }
+
+                    const overlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${value}"]`);
+                    if (overlayDiv) {
+                      overlayDiv.classList.add('hover');
+                    }
+
+                    return true;
+                  },
+                });
+
+                const mappingData = [
+                  // {
+                  //   id: <sectionId>,
+                  //   xpath: <xpath>,
+                  //   mapping: <mapping>,
+                  // },
+                ];
+
+                function getBlockPicker() {
+                  const blockPicker = document.createElement('sp-picker');
+                  blockPicker.setAttribute('label', 'Mapping ...');
+                  blockPicker.setAttribute('id', 'block-picker');
+
+                  [
+                    ['Exclude'],
+                    ['Default Content'],
+                    [
+                      'Hero',
+                      'Columns',
+                      'Carousel',
+                    ],
+                    ['Snapshot'],
+                  ].forEach((group, idx, arr) => {
+                    group.forEach((type) => {
+                      const item = document.createElement('sp-menu-item');
+                      item.setAttribute('value', type.replaceAll(' ', '-').toLowerCase());
+                      if (['Hero', 'Carousel', 'Snapshot'].includes(type)) {
+                        item.setAttribute('disabled', '');
+                      }
+                      item.textContent = type;
+                      blockPicker.appendChild(item);
+                    });
+                    if (idx < arr.length - 1) {
+                      blockPicker.appendChild(document.createElement('sp-menu-divider'));
+                    }
+                  });
+
+                  blockPicker.addEventListener('change', (e) => {
+                    // console.log('blockPicker change', e);
+                    // console.log('blockPicker change', e.target.value);
+
+                    mappingData.find((d) => d.id === selectedSection.id).mapping = e.target.value;
+
+                    // mappingData = [e.target.dataset.sectionId] = {
+                    //   xpath: e.target.dataset.xpath,
+                    //   parser: e.target.value,
+                    // };
+
+                    console.log('mappingData', mappingData);
+
+                    // save sections mapping data
+                    localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
+                      url: src,
+                      mapping: mappingData,
+                    }));
+                  });
+
+                  return blockPicker;
+                }
+                sections.children.forEach((section, idx) => {
+                  const row = document.createElement('div');
+                  row.dataset.idx = idx;
+                  row.classList.add('row');
+                  row.innerHTML = `
+                  <div id="sec-color" style="background-color: ${section.color};"></div>
+                  <h3 id="sec-id"><strong>${section.id}</strong></h3>
+                  <h3 id="sec-layout">${section.layout.numRows} x ${section.layout.numCols}</h3>
+                  `;
+
+                  const mappingPicker = getBlockPicker();
+                  mappingPicker.dataset.sectionId = section.id;
+                  mappingPicker.dataset.xpath = section.xpath;
+
+                  row.appendChild(mappingPicker);
+                  MAPPING_EDITOR_SECTIONS.appendChild(row);
+
+                  // init mapping data
+                  mappingData.push({
+                    id: section.id,
+                    xpath: section.xpath,
+                    mapping: 'unset',
+                  });
+
+                  row.addEventListener('mouseenter', (e) => {
+                    const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
+                    if (target.nodeName === 'DIV') {
+                      const { id, div } = sections.children[target.dataset.idx];
+                      div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+
+                      selectedSectionProxy.id = id;
+                    }
+                  });
+                });
+
+                if (frame.contentDocument) {
+                  const { originalURL, replacedURL } = frame.dataset;
+
+                  /* const onLoadSucceeded = */ await config.importer.onLoad({
+                    url: replacedURL,
+                    document: frame.contentDocument,
+                    params: { originalURL },
+                  });
+
+                  // if (onLoadSucceeded) {
+                  //   config.importer.setTransformationInput({
+                  //     url: replacedURL,
+                  //     document: frame.contentDocument,
+                  //     includeDocx,
+                  //     params: { originalURL },
+                  //   });
+                  //   await config.importer.transform();
+                  // }
+                }
+
+                const event = new Event('detection-complete');
+                frame.dispatchEvent(event);
+              };
+
+              frame.addEventListener('load', onLoad);
+              frame.addEventListener('detection-complete', processNext);
+
+              frame.dataset.originalURL = url;
+              frame.dataset.replacedURL = src;
+
+              if (contentType.includes('json')) {
+                const blob = await res.blob();
+                frame.src = URL.createObjectURL(blob);
+              } else {
+                frame.src = src;
+              }
+
+              const current = getContentFrame();
+              current.removeEventListener('load', onLoad);
+              current.removeEventListener('detection-complete', processNext);
+
+              current.replaceWith(frame);
+            } else if (dirHandle) {
+              const blob = await res.blob();
+              const u = new URL(src);
+              const path = WebImporter.FileUtils.sanitizePath(u.pathname);
+
+              await saveFile(dirHandle, path, blob);
+              importStatus.rows.push({
+                url,
+                status: 'Success',
+                path,
+              });
+              updateImporterUI([{ status: 'success' }], url);
+              processNext();
+            }
+          }
+        } else {
+          // eslint-disable-next-line no-console
+          console.warn(`Cannot transform ${src} - page may not exist (status ${res?.status || 'unknown status'})`);
+          alert.error(`Cannot transform ${src} - page may not exist (status ${res?.status || 'unknown status'})`);
+          importStatus.rows.push({
+            url,
+            status: `Invalid: ${res?.status || 'unknown status'}`,
+          });
+          updateImporterUI([{ status: 'error' }], url);
+          processNext();
+        }
+      } else {
+        const frame = getContentFrame();
+        frame.removeEventListener('transformation-complete', processNext);
+        // DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
+        enableProcessButtons();
+        toggleLoadingButton(DETECT_BUTTON);
       }
     };
     processNext();

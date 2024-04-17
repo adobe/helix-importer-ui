@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Import - Manual Mapping Tool</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="./css/import/import.css" />
+
+    <script src="./js/shared/log.js"></script>
+    <script src="./js/dist/spectrum-web-components.js"></script>
+
+    <script src="./js/libs/vendors/codemirror/codemirror.js"></script>
+    <script src="./js/libs/vendors/codemirror/xml.js"></script>
+    <script src="./js/libs/vendors/codemirror/javascript.js"></script>
+    <script src="./js/libs/vendors/codemirror/css.js"></script>
+    <script src="./js/libs/vendors/codemirror/htmlmixed.js"></script>
+    <script src="./js/libs/vendors/codemirror/markdown.js"></script>
+    <script src="./js/libs/vendors/js-beautify/beautify-html.min.js"></script>
+    <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
+    <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
+    <script src="./js/libs/vendors/detect/detect.min.js" type="module"></script>
+
+    <script src="./js/dist/helix-importer.js"></script>
+
+    <script src="./js/import/import.ui.js" type="module"></script>
+
+    <script>
+        localStorage.setItem('option-field-import-file-url', 'http://localhost:3001/tools/importer/helix-importer-ui/js/sections-mapping/section-mapping-importer.js');
+    </script>
+</head>
+
+<body class="tool">
+    <sp-theme color="dark" scale="medium">
+        <main>
+            <!-- IMPORT SECTION -->
+            <section class="import">
+                <div class="section-title">
+                    <h2>Import - Manual Mapping</h2>
+                    <p>Manually map page sections to existing block.</p>
+                    <sp-divider size="l"></sp-divider>
+                </div>
+                <div class="section-cols">
+                    <div class="section-col">
+                        <form class="import-form">
+                            <sp-field-label for="import-url" required>URL</sp-field-label>
+                            <sp-textfield class="option-field" id="import-url" type="url">
+                                <sp-help-text slot="help-text">https://www.example.com</sp-help-text>
+                                <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
+                            </sp-textfield>
+                            <sp-accordion>
+                                <sp-accordion-item label="Load Options">
+                                    <div>
+                                        <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
+                                        <sp-textfield class="option-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/helix-importer-ui/js/sections-mapping/section-mapping-importer.js" disabled></sp-textfield>
+
+                                        <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
+                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+
+                                        <div class="local-save">
+                                            <sp-checkbox class="option-field" id="import-local-docx" checked>
+                                                Save as docx
+                                            </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-html">
+                                                Save as HTML
+                                            </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-md">
+                                                Save as Markdown
+                                            </sp-checkbox>
+                                        </div>
+
+                                        <sp-checkbox class="option-field" id="import-enable-js">
+                                            Enable JavaScript
+                                        </sp-checkbox>
+                                        <sp-help-text variant="negative" icon>
+                                            Security risk: only enable Javascript execution when importing from trusted websites.
+                                        </sp-help-text>
+
+                                        <sp-checkbox class="option-field" id="import-scroll-to-bottom" checked>
+                                            Scroll to bottom
+                                        </sp-checkbox>
+
+                                        <sp-field-label for="import-custom-headers">Custom headers</sp-field-label>
+                                        <sp-textfield class="option-field" id="import-custom-headers" multiline placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
+                                    </div>
+                                </sp-accordion-item>
+                            </sp-accordion>
+
+                            <sp-button-group>
+                                <sp-button id="detect-sections-button">Detect Sections</sp-button>
+                                <sp-button id="import-doimport-button">Import</sp-button>
+                            </sp-button-group>
+                        </form>
+                        <span id="folder-name"></span>
+                        <div class="page-preview hidden">
+                            <sp-divider size="s"></sp-divider>
+                            <h3>Page preview</h3>
+                            <iframe id="import-content-frame" frameborder="0"></iframe>
+                        </div>
+                    </div>
+                    <div class="section-col">
+                        <sp-tabs selected="mapping-editor">
+                          <sp-tab label="Mapping" value="mapping-editor"></sp-tab>
+                          <sp-tab label="Preview" value="import-preview"></sp-tab>
+                          <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                            <sp-tab label="HTML" value="import-html"></sp-tab>
+                            <div id="import-file-picker-container"></div>
+                            <sp-tab-panel value="mapping-editor">
+                              <sp-theme color="light" scale="medium">
+                                  <div id="mapping-editor">
+
+                                    <!-- <sp-checkbox class="option-field" id="import-mapping-exclude-hidden-elements" checked>
+                                        Exclude hidden elements
+                                    </sp-checkbox> -->
+
+                                    <div id="mapping-editor-sections">
+                                    </div>
+                                  </div>
+                              </sp-theme>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-preview">
+                                <sp-theme color="light" scale="medium">
+                                    <div id="import-markdown-preview"></div>
+                                </sp-theme>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-markdown">
+                                <div data-panel="source">
+                                  <div class="code">
+                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                  </div>
+                                </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-html">
+                                <div data-panel="source">
+                                  <div class="code">
+                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                  </div>
+                                </div>
+                            </sp-tab-panel>
+                        </sp-tabs>
+                        <sp-button-group>
+                            <sp-button id="import-downloadImportReport" class="hidden">Download import report</sp-button>
+                        </sp-button-group>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div id="alert-container"></div>
+    </sp-theme>
+</body>
+
+</html>
