@@ -18,7 +18,7 @@ From an AEM EDs project root folder:
   `cd tools/importer/helix-importer-ui`
 
 * Checkout the branch containing the new flow  
-  `git checkout feat-import-manual-mapping`
+  `git checkout feat-import-manual-mapping-flow2`
 
 * Build the UI in dev mode  
   `npm run build:dev`
@@ -38,12 +38,13 @@ From an AEM EDs project root folder:
     use the generic import script supporting the sections mapping data)
   * Put the URL you want to use
   * Click `Detect Sections` button
-  * When Done, the `Mapping` tab on the right part of the page should be populated
-    with the list of detected sections.
-  * For each of them define the mapping via the picker
+  * When Done, the loaded page should be augmented with all the detected boxes
+  * Mouse over the boxes to find the ones you are interested in and click on them
+    to add mapping rows on the right part of the UI.
+  * For each row you added, define the mapping via the picker
   * Finally, click `Import` button!
 
-
+> NOTE: unmapped section are excluded by default!
 
 
 ## Resources
