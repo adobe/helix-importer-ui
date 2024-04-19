@@ -5,6 +5,12 @@ POC demonstrating a new flow where a less technical persona can **manually** def
 
 ... *zero-code import* ?
 
+
+
+https://github.com/adobe/helix-importer-ui/assets/40354404/c1178215-9c29-456f-b526-43fbd46efa34
+
+
+
 ## 1. Enable Feature
 
 From an AEM EDs project root folder:
