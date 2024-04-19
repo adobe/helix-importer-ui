@@ -101,23 +101,18 @@
                     </div>
                     <div class="section-col">
                         <sp-tabs selected="mapping-editor">
-                          <sp-tab label="Mapping" value="mapping-editor"></sp-tab>
-                          <sp-tab label="Preview" value="import-preview"></sp-tab>
-                          <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                            <sp-tab label="Mapping" value="mapping-editor"></sp-tab>
+                            <sp-tab label="Preview" value="import-preview"></sp-tab>
+                            <sp-tab label="Markdown" value="import-markdown"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="mapping-editor">
-                              <sp-theme color="light" scale="medium">
-                                  <div id="mapping-editor">
-
-                                    <!-- <sp-checkbox class="option-field" id="import-mapping-exclude-hidden-elements" checked>
-                                        Exclude hidden elements
-                                    </sp-checkbox> -->
-
+                                <sp-theme color="light" scale="medium">
+                                    <div id="mapping-editor">
                                     <div id="mapping-editor-sections">
                                     </div>
-                                  </div>
-                              </sp-theme>
+                                    </div>
+                                </sp-theme>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-preview">
                                 <sp-theme color="light" scale="medium">
@@ -126,16 +121,16 @@
                             </sp-tab-panel>
                             <sp-tab-panel value="import-markdown">
                                 <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-html">
                                 <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                         </sp-tabs>
