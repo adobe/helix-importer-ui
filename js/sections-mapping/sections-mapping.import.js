@@ -1,4 +1,8 @@
-import * as parsers from './sections-mapping/parsers/parsers.js';
+/**
+ * GENERIC IMPORT SCRIPT FOR SECTIONS MAPPING DATA
+ */
+
+import * as parsers from './parsers/parsers.js';
 
 /**
  * functions
@@ -42,7 +46,26 @@ const IMPORT_REPORT = {};
  */
 
 export default {
-  onLoad: async ({ document, url, params }) => {
+  onLoad: async ({ document /* , url, params */ }) => {
+    // send 'esc' keydown event to close the dialog
+    document.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        altKey: false,
+        code: 'Escape',
+        ctrlKey: false,
+        isComposing: false,
+        key: 'Escape',
+        location: 0,
+        metaKey: false,
+        repeat: false,
+        shiftKey: false,
+        which: 27,
+        charCode: 0,
+        keyCode: 27,
+      }),
+    );
+    document.elementFromPoint(0, 0).click();
+
     // mark hidden divs + add bounding client rect data to all "visible" divs
     document.querySelectorAll('div').forEach((div) => {
       if (div && /none/i.test(window.getComputedStyle(div).display.trim())) {
@@ -84,6 +107,7 @@ export default {
     }
 
     const main = document.querySelector('main') || document.body;
+
     /**
      * parse sections mapping data
      */
@@ -102,7 +126,10 @@ export default {
         console.log('found element', m.section, el);
         const parser = parsers[m.mapping];
         if (parser) {
-          parser(el, window);
+          const block = parser(el, window);
+          if (block) {
+            importedContent.appendChild(block);
+          }
         } else {
           console.warn('parser not found', m.mapping);
         }
@@ -139,7 +166,7 @@ export default {
     // Object.keys(IMPORT_REPORT).map(k => (IMPORT_REPORT[k] = '' + IMPORT_REPORT[k]));
 
     const elements = [{
-      element: main,
+      element: importedContent,
       path: generateDocumentPath({ document, url: params.originalURL }),
       report: IMPORT_REPORT,
     }];

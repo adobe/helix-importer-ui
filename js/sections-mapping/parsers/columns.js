@@ -88,6 +88,7 @@ export function columnsParser(el, window) {
       [`columns`],
       columns,
     ], document);
-    el.replaceWith(block);
+    // el.replaceWith(block);
+    return block;
   }
 }
