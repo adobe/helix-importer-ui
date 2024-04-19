@@ -195,7 +195,7 @@
 }
 
 /* sections mapping */
-.import #mapping-editor-sections {
+.import #mapping-editor {
   & h3 {
     font-family: monospace;
     margin: 0;
@@ -205,12 +205,19 @@
     padding: 1rem 1rem;
     display: flex;
     flex-direction: row;
-    gap: 2rem;
+    /* justify-content: space-between; */
+    gap: 5rem;
     align-items: center;
     cursor: pointer;
 
+    & #sec-id {
+      min-width: 200px;
+      height: 1rem;
+      border: none;
+    }
+
     & #sec-color {
-      min-width: 1rem;
+      min-width: 50px;
       height: 1rem;
       border: none;
     }

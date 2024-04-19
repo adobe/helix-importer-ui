@@ -12,11 +12,10 @@
 /* global CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
-import { asyncForEach } from '../shared/utils.js';
+import { asyncForEach, getElementByXpath } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
-// import { getAllVisibleDivs } from '../libs/vendors/detect/detect.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -45,8 +44,6 @@ const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker
 
 // manual mapping elements
 const DETECT_BUTTON = document.getElementById('detect-sections-button');
-const IMPORT_SM_BUTTON = document.getElementById('import-sections-mapping-doimport-button');
-const MAPPING_EDITOR = document.getElementById('mapping-editor');
 const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
 
 const REPORT_FILENAME = 'import-report.xlsx';
@@ -406,6 +403,179 @@ const smartScroll = async (window, reset = false) => {
   }
 };
 
+const detectSections = async (src, frame) => {
+  const { originalURL } = frame.dataset;
+  const sections = await window.xp.detectSections(
+    frame.contentDocument.body,
+    frame.contentWindow.window,
+  );
+  const selectedSection = { id: null };
+
+  console.log('sections', sections);
+
+  const selectedSectionProxy = new Proxy(selectedSection, {
+    set: (target, key, value) => {
+      const oldValue = target[key];
+      console.log(`${key} set from ${selectedSection.id} to ${value}`);
+      target[key] = value;
+      const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
+      if (oldOverlayDiv) {
+        oldOverlayDiv.classList.remove('hover');
+      }
+      const overlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${value}"]`);
+      if (overlayDiv) {
+        overlayDiv.classList.add('hover');
+      }
+      return true;
+    },
+  });
+
+  let mappingData = [
+    // {
+    //   id: <sectionId>,
+    //   xpath: <xpath>,
+    //   mapping: <mapping>,
+    // },
+  ];
+
+  function getBlockPicker(value = 'unset') {
+    const blockPicker = document.createElement('sp-picker');
+    blockPicker.setAttribute('label', 'Mapping ...');
+    blockPicker.setAttribute('id', 'block-picker');
+
+    [
+      [{ label: 'Exclude', attributes: { value: 'exclude' } }],
+      [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
+      [
+        { label: 'Hero', attributes: { value: 'hero', disabled: true } },
+        { label: 'Columns', attributes: { value: 'columns' } },
+        { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
+      ],
+      [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
+    ].forEach((group, idx, arr) => {
+      group.forEach((item) => {
+        const mItem = document.createElement('sp-menu-item');
+        item.attributes = item.attributes || [];
+        Object.keys(item.attributes).forEach((k) => {
+          mItem.setAttribute(k, item.attributes[k]);
+        });
+        mItem.textContent = item.label;
+        blockPicker.appendChild(mItem);
+      });
+      if (idx < arr.length - 1) {
+        blockPicker.appendChild(document.createElement('sp-menu-divider'));
+      }
+    });
+
+    blockPicker.setAttribute('value', value);
+
+    blockPicker.addEventListener('change', (e) => {
+      // update mapping data
+      const mItem = mappingData.find((m) => m.id === selectedSection.id);
+      if (mItem) {
+        mItem.mapping = e.target.value;
+      } else {
+        mappingData.push({
+          id: selectedSection.id,
+          xpath: selectedSection.xpath,
+          mapping: e.target.value,
+        });
+      }
+      // save sections mapping data
+      localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
+        url: originalURL,
+        mapping: mappingData,
+      }));
+    });
+
+    return blockPicker;
+  }
+
+  function getMappingRow(section, idx = 1) {
+    const row = document.createElement('div');
+    row.dataset.idx = idx;
+    row.dataset.sectionId = section.id;
+    row.dataset.xpath = section.xpath;
+    row.classList.add('row');
+    row.innerHTML = `
+    <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
+    <h3 id="sec-id"><strong>${section.id}</strong></h3>
+    <h3 id="sec-layout">${section.layout.numCols} x ${section.layout.numRows}</h3>
+    `;
+
+    const mappingPicker = getBlockPicker(section.mapping);
+    mappingPicker.dataset.sectionId = section.id;
+    mappingPicker.dataset.xpath = section.xpath;
+
+    row.appendChild(mappingPicker);
+
+    const deleteBtn = document.createElement('sp-button');
+    deleteBtn.setAttribute('variant', 'negative');
+    deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
+    row.appendChild(deleteBtn);
+    deleteBtn.addEventListener('click', (e) => {
+      console.log(e);
+      console.log('delete section', section.id);
+      // row
+      const rowEl = e.target.closest('.row');
+      if (rowEl) {
+        const id = rowEl.dataset.sectionId;
+        mappingData = mappingData.filter((m) => m.id !== id);
+
+        // save sections mapping data
+        localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
+          url: originalURL,
+          mapping: mappingData,
+        }));
+
+        rowEl.remove();
+      }
+    });
+
+    row.addEventListener('mouseenter', (e) => {
+      const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
+      if (target.nodeName === 'DIV') {
+        const id = target.dataset.sectionId;
+        const div = getElementByXpath(frame.contentDocument, target.dataset.xpath);
+        div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+        selectedSectionProxy.id = id;
+      }
+    });
+
+    return row;
+  }
+
+  // look for existing mapping data
+  try {
+    const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
+    if (mapping && mapping.url === originalURL) {
+      mappingData = mapping.mapping;
+      mapping.mapping.forEach((m) => {
+        const row = getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
+        MAPPING_EDITOR_SECTIONS.appendChild(row);
+      });
+    }
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(`Error loading sections mapping data for url ${originalURL}`, e);
+  }
+
+  frame.contentDocument.body.addEventListener('click', (e) => {
+    const overlayDiv = e.target; // .closest('.xp-overlay');
+    if (overlayDiv.dataset.boxData) {
+      const section = JSON.parse(overlayDiv.dataset.boxData);
+      section.color = overlayDiv.style.borderColor;
+      section.mapping = 'unset';
+
+      if (!mappingData.find((m) => m.id === section.id)) {
+        mappingData.push(section);
+        const row = getMappingRow(section, MAPPING_EDITOR_SECTIONS.children.length);
+        MAPPING_EDITOR_SECTIONS.appendChild(row);
+      }
+    }
+  });
+};
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
@@ -625,38 +795,12 @@ const attachListeners = () => {
 
   DETECT_BUTTON.addEventListener('click', (async () => {
     initImportStatus();
-
-    // if (IS_BULK) {
-    //   clearResultPanel();
-    //   if (config.fields['import-show-preview']) {
-    //     PREVIEW_CONTAINER.classList.remove('hidden');
-    //   } else {
-    //     PREVIEW_CONTAINER.classList.add('hidden');
-    //   }
-    //   DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
-    // } else {
-      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
-      PREVIEW_CONTAINER.classList.remove('hidden');
-      MAPPING_EDITOR_SECTIONS.innerHTML = '';
-
-    // }
+    DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
+    PREVIEW_CONTAINER.classList.remove('hidden');
+    MAPPING_EDITOR_SECTIONS.innerHTML = '';
 
     disableProcessButtons();
     toggleLoadingButton(DETECT_BUTTON);
-    // isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
-    // if (isSaveLocal && !dirHandle) {
-    //   try {
-    //     dirHandle = await getDirectoryHandle();
-    //     await dirHandle.requestPermission({
-    //       mode: 'readwrite',
-    //     });
-    //     FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
-    //     FOLDERNAME_SPAN.classList.remove('hidden');
-    //   } catch (e) {
-    //     // eslint-disable-next-line no-console
-    //     console.log('No directory selected');
-    //   }
-    // }
 
     const field = /* IS_BULK ? 'import-urls' : */ 'import-url';
     const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
@@ -711,179 +855,46 @@ const attachListeners = () => {
               }
 
               const onLoad = async () => {
-                const includeDocx = !!dirHandle && config.fields['import-local-docx'];
-
                 // sell.amazon.com has a frame-busting script!
                 frame.contentDocument.body.setAttribute('style', 'display:block !important');
 
                 const style = frame.contentDocument.createElement('style');
                 style.innerHTML = `
-                .xp-overlay:hover {
-                  background-color: rgba(0, 0, 125, 0.1) !important;
-                  cursor: pointer;
-                }
-                .xp-overlay.hover {
-                  background-color: rgba(0, 0, 125, 0.1) !important;
-                  cursor: pointer;
-                }
+                  .xp-overlay:hover {
+                    box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
+                    background-color: rgba(0, 0, 125, 0.1) !important;
+                    cursor: pointer;
+                  }
+                  .xp-overlay.hover {
+                    box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
+                    background-color: rgba(0, 0, 125, 0.1) !important;
+                    cursor: pointer;
+                  }
                 `;
                 frame.contentDocument.head.appendChild(style);
 
-                // await sleep(config.fields['import-pageload-timeout'] || 100);
-
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window, true);
                 }
 
-                await sleep(config.fields['import-pageload-timeout'] || 100);
+                await sleep(config.fields['import-pageload-timeout'] || 5000);
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window, true);
                 }
-
-                console.log('window.xp', window.xp);
-                const sections = await window.xp.detectSections(
-                  frame.contentDocument.body,
-                  frame.contentWindow.window,
-                );
-                console.log('sections', sections);
-
-                const selectedSection = {
-                  id: null,
-                };
-
-                const selectedSectionProxy = new Proxy(selectedSection, {
-                  set: (target, key, value) => {
-                    const oldValue = target[key];
-                    console.log(`${key} set from ${selectedSection.id} to ${value}`);
-                    target[key] = value;
-
-                    const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
-                    if (oldOverlayDiv) {
-                      oldOverlayDiv.classList.remove('hover');
-                    }
-
-                    const overlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${value}"]`);
-                    if (overlayDiv) {
-                      overlayDiv.classList.add('hover');
-                    }
-
-                    return true;
-                  },
-                });
-
-                const mappingData = [
-                  // {
-                  //   id: <sectionId>,
-                  //   xpath: <xpath>,
-                  //   mapping: <mapping>,
-                  // },
-                ];
-
-                function getBlockPicker() {
-                  const blockPicker = document.createElement('sp-picker');
-                  blockPicker.setAttribute('label', 'Mapping ...');
-                  blockPicker.setAttribute('id', 'block-picker');
-
-                  [
-                    ['Exclude'],
-                    ['Default Content'],
-                    [
-                      'Hero',
-                      'Columns',
-                      'Carousel',
-                    ],
-                    ['Snapshot'],
-                  ].forEach((group, idx, arr) => {
-                    group.forEach((type) => {
-                      const item = document.createElement('sp-menu-item');
-                      item.setAttribute('value', type.replaceAll(' ', '-').toLowerCase());
-                      if (['Hero', 'Carousel', 'Snapshot'].includes(type)) {
-                        item.setAttribute('disabled', '');
-                      }
-                      item.textContent = type;
-                      blockPicker.appendChild(item);
-                    });
-                    if (idx < arr.length - 1) {
-                      blockPicker.appendChild(document.createElement('sp-menu-divider'));
-                    }
-                  });
-
-                  blockPicker.addEventListener('change', (e) => {
-                    // console.log('blockPicker change', e);
-                    // console.log('blockPicker change', e.target.value);
-
-                    mappingData.find((d) => d.id === selectedSection.id).mapping = e.target.value;
-
-                    // mappingData = [e.target.dataset.sectionId] = {
-                    //   xpath: e.target.dataset.xpath,
-                    //   parser: e.target.value,
-                    // };
-
-                    console.log('mappingData', mappingData);
-
-                    // save sections mapping data
-                    localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-                      url: src,
-                      mapping: mappingData,
-                    }));
-                  });
-
-                  return blockPicker;
-                }
-                sections.children.forEach((section, idx) => {
-                  const row = document.createElement('div');
-                  row.dataset.idx = idx;
-                  row.classList.add('row');
-                  row.innerHTML = `
-                  <div id="sec-color" style="background-color: ${section.color};"></div>
-                  <h3 id="sec-id"><strong>${section.id}</strong></h3>
-                  <h3 id="sec-layout">${section.layout.numRows} x ${section.layout.numCols}</h3>
-                  `;
-
-                  const mappingPicker = getBlockPicker();
-                  mappingPicker.dataset.sectionId = section.id;
-                  mappingPicker.dataset.xpath = section.xpath;
-
-                  row.appendChild(mappingPicker);
-                  MAPPING_EDITOR_SECTIONS.appendChild(row);
-
-                  // init mapping data
-                  mappingData.push({
-                    id: section.id,
-                    xpath: section.xpath,
-                    mapping: 'unset',
-                  });
-
-                  row.addEventListener('mouseenter', (e) => {
-                    const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
-                    if (target.nodeName === 'DIV') {
-                      const { id, div } = sections.children[target.dataset.idx];
-                      div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
-
-                      selectedSectionProxy.id = id;
-                    }
-                  });
-                });
 
                 if (frame.contentDocument) {
                   const { originalURL, replacedURL } = frame.dataset;
 
-                  /* const onLoadSucceeded = */ await config.importer.onLoad({
+                  const onLoadSucceeded = await config.importer.onLoad({
                     url: replacedURL,
                     document: frame.contentDocument,
                     params: { originalURL },
                   });
 
-                  // if (onLoadSucceeded) {
-                  //   config.importer.setTransformationInput({
-                  //     url: replacedURL,
-                  //     document: frame.contentDocument,
-                  //     includeDocx,
-                  //     params: { originalURL },
-                  //   });
-                  //   await config.importer.transform();
-                  // }
+                  if (onLoadSucceeded) {
+                    await detectSections(src, frame);
+                  }
                 }
 
                 const event = new Event('detection-complete');

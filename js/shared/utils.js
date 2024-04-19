@@ -5,7 +5,17 @@ async function asyncForEach(array, callback) {
   }
 }
 
+function getElementByXpath(document, path) {
+  return document.evaluate(
+    path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null,
+  ).singleNodeValue;
+}
+
 export {
-  // eslint-disable-next-line import/prefer-default-export
   asyncForEach,
+  getElementByXpath,
 };
