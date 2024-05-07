@@ -40,7 +40,7 @@ From an AEM EDs project root folder:
 (requires `1. Enable Feature`)
 
 * (From the root of the EDs project) Start Importer Server using modified code (do not fetch latest version!)  
-  `aem import --skip-ui` 
+  `aem import --skip-ui --cache cache-folder` 
 
 * In Chrome:
   * Access http://localhost:3001/tools/importer/helix-importer-ui/index.html
