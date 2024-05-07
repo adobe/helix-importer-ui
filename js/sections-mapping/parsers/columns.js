@@ -42,7 +42,7 @@ function getNSiblingsDivs(el, document, n = null) {
   let selectedXpathPattern = '';
   const xpathGrouping = [];
 
-  el.querySelectorAll('div').forEach(d => {
+  el.querySelectorAll('*').forEach(d => {
     const xpath = getXPath(d, document);
     const xp = xpath.substring(0, xpath.lastIndexOf('['));
     if (!xpathGrouping[xp]) {
