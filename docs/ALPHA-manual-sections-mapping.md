@@ -25,13 +25,14 @@ From an AEM EDs project root folder:
 
 * Checkout the branch containing the new flow  
   ```
-  git checkout -b feat-import-manual-mapping-flow2
-  git fetch
-  git checkout d2a8b0d
+  git pull
+  git checkout feat-import-manual-mapping-flow2
   ```
 
 * Build the UI in dev mode  
-  `npm run build:dev`
+  ```
+  npm run build:dev
+  ```
 
 
 ## 2. Use Manual Sections Mapping Flow
