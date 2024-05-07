@@ -202,10 +202,9 @@
   }
 
   & .row {
-    padding: 1rem 1rem;
+    padding: 1rem;
     display: flex;
     flex-direction: row;
-    /* justify-content: space-between; */
     gap: 5rem;
     align-items: center;
     cursor: pointer;
