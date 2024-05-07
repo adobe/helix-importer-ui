@@ -27,7 +27,7 @@ From an AEM EDs project root folder:
   ```
   git checkout -b feat-import-manual-mapping-flow2
   git fetch
-  git checkout fa44d01
+  git checkout d2a8b0d
   ```
 
 * Build the UI in dev mode  
