@@ -24,7 +24,11 @@ From an AEM EDs project root folder:
   `cd tools/importer/helix-importer-ui`
 
 * Checkout the branch containing the new flow  
-  `git checkout feat-import-manual-mapping-flow2`
+  ```
+  git checkout -b feat-import-manual-mapping-flow2
+  git fetch
+  git checkout fa44d01
+  ```
 
 * Build the UI in dev mode  
   `npm run build:dev`
