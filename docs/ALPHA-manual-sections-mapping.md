@@ -16,7 +16,7 @@ https://github.com/adobe/helix-importer-ui/assets/40354404/c1178215-9c29-456f-b5
 From an AEM EDs project root folder:
 
 * Install latest version of `helix-importer-ui` (`tools/importer/helix-importer-ui`)  
-  `aem import`  
+  `aem import --no-open`  
   Once started, stop it  
   `Cmd/Ctrl + c`
   
@@ -34,7 +34,7 @@ From an AEM EDs project root folder:
 
 (requires `1. Enable Feature`)
 
-* Start Importer Server using modified code (do not fetch latest version!)  
+* (From the root of the EDs project) Start Importer Server using modified code (do not fetch latest version!)  
   `aem import --skip-ui` 
 
 * In Chrome:
