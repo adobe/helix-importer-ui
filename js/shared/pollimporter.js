@@ -9,6 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import createImportScript from './import.js';
+
 /* global WebImporter */
 
 const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
@@ -58,10 +60,17 @@ export default class PollImporter {
 
   async #loadProjectTransform() {
     const $this = this;
+
     const loadModule = async (projectTransformFileURL) => {
       const mod = await import(projectTransformFileURL);
       if (mod.default) {
-        $this.projectTransform = mod.default;
+        const isImportScript = Object.keys(mod.default).some((key) => key === 'transformDOM' || key === 'transform');
+        if (isImportScript) {
+          $this.projectTransform = mod.default;
+        } else {
+          // declarative transformation
+          $this.projectTransform = createImportScript(mod.default);
+        }
       }
     };
 
