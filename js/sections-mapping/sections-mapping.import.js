@@ -3,6 +3,7 @@
  */
 
 import * as parsers from './parsers/parsers.js';
+import { getImporterSectionMapping } from '../shared/mappings.js';
 
 /**
  * functions
@@ -15,19 +16,7 @@ export function generateDocumentPath({ document, url }) {
 }
 
 function getSectionsMappingData(url) {
-  const item = localStorage.getItem('helix-importer-sections-mapping');
-
-  if (item) {
-    const mData = JSON.parse(item);
-    return mData.mapping;
-    // TODO - support multiple mappings
-    // const found = mData.find((m) => m.url === url);
-    // if (found) {
-    //   return found;
-    // }
-  }
-
-  return null;
+  return getImporterSectionMapping(url) ?? null;
 }
 
 function getElementByXpath(document, path) {
@@ -90,7 +79,7 @@ export default {
         }
       }
     });
-    
+
   },
 
   transform: async ({ document, params }) => {
