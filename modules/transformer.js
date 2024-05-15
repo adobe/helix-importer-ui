@@ -2,22 +2,25 @@ import parsers from './parsers/index.js';
 
 /* global WebImporter */
 
-function convertToTitleCase(str) {
-  if (!str) {
-    return ""
+function isValidCSSSelector(selector) {
+  try {
+    document.querySelector(selector);
+    return true;
+  } catch (e) {
+    return false;
   }
-  return str.toLowerCase().replace(/\b\w/g, s => s.toUpperCase());
 }
 
 export default class Transformer {
   static transform(rules, source) {
-    console.log(rules);
+    console.log('Transformer Rules', rules);
     const { document } = source;
 
     const {
       root,
       cleanup: {
-        remove = [],
+        start: removeStart = [],
+        end: removeEnd = [],
       },
       blocks = [],
     } = rules;
@@ -25,34 +28,92 @@ export default class Transformer {
     //phase 1: get root element
     const main = root ? document.querySelector(root) : document.body;
 
-    // phase 2: DOM removal
-    WebImporter.DOMUtils.remove(document, remove);
+    // phase 2: DOM removal - start
+    WebImporter.DOMUtils.remove(document, removeStart);
 
     // phase 3: block creation
     blocks.forEach((blockCfg) => {
-      const { type, selectors = [], parse, target = 'replace' } = blockCfg;
-      const parserFn = parse || parsers[type] || (() => []);
+      const { type, selectors = [], parse, target = 'replace', params = {} } = blockCfg;
+      const parserFn = parse || parsers[type] || parsers['block'];
       const elements = selectors.length
         ? selectors.reduce((acc, selector) => [...acc, ...main.querySelectorAll(selector)], [])
         : [main];
       // process every element for this block
       elements.forEach((element) => {
-          // parse the element into block items
-          const items = parserFn.call(this, element, source);
-          // create the block
-          const block = WebImporter.Blocks.createBlock(document, {
-            name: convertToTitleCase(type),
-            cells: items
-          });
-          if (target === 'append') {
-            main.append(block);
-          } else {
-            element.replaceWith(block);
-          }
+        // add params to source
+        source.params = { ...source.params, ...params};
+        // parse the element into block items
+        const items = parserFn.call(this, element, source);
+        // create the block
+        const block = WebImporter.Blocks.createBlock(document, {
+          name: WebImporter.Blocks.computeBlockName(type),
+          cells: items
+        });
+        // add block to DOM
+        if (target === 'append') {
+          main.append(block);
+        } else {
+          element.replaceWith(block);
+        }
       });
+
+      // phase 3: DOM removal - end
+      WebImporter.DOMUtils.remove(document, removeEnd);
+
     });
 
     return main;
+  }
+
+  /**
+   * Build a name/value pair block configuration from a selector object.
+   *
+   * Selector Object:
+   * {
+   *   name: value_selector | [condition_selector, value_selector]
+   * }
+   *
+   *
+   * @param element Root element to query from
+   * @param params Object of selector conditions
+   */
+  static buildBlockConfig(element, params) {
+    const cfg = {};
+    Object.entries(params).forEach(([name, value]) => {
+      let selector = value;
+      if (Array.isArray(value)) {
+        // find first matching element
+        const [, conditionalSelector] = value.find(([condition]) => element.querySelector(condition)) || []
+        selector = conditionalSelector;
+      }
+      let cfgValue = selector;
+      if (selector && isValidCSSSelector(selector)) {
+        cfgValue = [...element.querySelectorAll(selector)].map((el) => el.textContent || el.content);
+        if (cfgValue.length === 1) {
+          cfgValue = cfgValue[0];
+        }
+      }
+      if (cfgValue !== undefined) {
+        cfg[name] = cfgValue;
+      }
+    });
+    return cfg;
+  }
+
+  /**
+   * Build a two-dimensional array of block cells from a selector object.
+   * @param element
+   * @param cells
+   */
+  static buildBlockCells(element, cells) {
+    return cells.map((row) => {
+      if (Array.isArray(row)) {
+        return row.map((col) => {
+          return [...element.querySelectorAll(col)];
+        });
+      }
+      return [...element.querySelectorAll(row)];
+    });
   }
 
 }

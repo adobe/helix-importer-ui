@@ -17,6 +17,7 @@
  * @param {String} url The url of the document being transformed.
  * @param {HTMLDocument} document The document
  */
+// TODO: add to import config
 // eslint-disable-next-line arrow-body-style
 const generateDocumentPath = ({ url }) => {
   let p = new URL(url).pathname;
@@ -31,9 +32,7 @@ const generateDocumentPath = ({ url }) => {
 
 const createImporter = (rules) => ({
   transform: (source) => {
-
     const element = WebImporter.Transformer.transform(rules, source);
-
     return [{
       element,
       path: generateDocumentPath(source),

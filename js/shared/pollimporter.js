@@ -74,6 +74,25 @@ export default class PollImporter {
       }
     };
 
+    /**
+     * Create a project transform from a JSON object
+     *
+     * @param json Import configuration JSON
+     */
+    const loadJson = (json) => {
+      try {
+        const importCfg = JSON.parse(json);
+        $this.projectTransform = createImportScript(importCfg);
+      } catch (err) {
+        console.error('Invalid transformation JSON');
+      }
+    };
+
+    const isJsonResponse = (response) => {
+      const contentType = response.headers.get("content-type");
+      return contentType && contentType.includes("application/json");
+    };
+
     const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
     let body = '';
     try {
@@ -82,7 +101,11 @@ export default class PollImporter {
 
       if (res.ok && body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
-        await loadModule(projectTransformFileURL);
+        if (isJsonResponse(res)) {
+          loadJson(body);
+        } else {
+          await loadModule(projectTransformFileURL);
+        }
         this.projectTransformFileURL = projectTransformFileURL;
         // eslint-disable-next-line no-console
         console.log(`Loaded importer file: ${projectTransformFileURL}`);

@@ -15,7 +15,7 @@
 export default {
   root: 'main',
   cleanup: {
-    remove: [
+    start: [
       '.cookie-status-message',
       '.breadcrumbs',
       '.messages',
@@ -28,50 +28,43 @@ export default {
     {
       type: 'metadata',
       target: 'append',
-      parse: (element, { document }) => {
-        const meta = WebImporter.Blocks.buildMetaData(document) || {};
-        const keywords = document.querySelector('[name="keywords"]');
-        if (keywords) {
-          meta.keywords = keywords.content;
+      params: {
+        metadata: {
+          keywords: '[name="keywords"]',
+          ['Publication Date']: '[property="og:article:published_time"]',
+          category: [
+            [':scope:has(.is-blog) .webinar-speaker-img', 'Webinars'],
+            [':scope:has(.is-blog)', ''],
+          ],
+          series: [
+            [':has(.is-blog) .webinar-speaker-img', ''],
+          ],
+          eventDate: [
+            [':has(.is-blog) .webinar-speaker-img', ''],
+          ],
+          speakers: [
+            [':has(.is-blog) .webinar-speaker-img', '.webinar-speaker-img + strong'],
+          ],
         }
-
-        const date = document.querySelector('[property="og:article:published_time"]');
-        if (date) {
-          meta['Publication Date'] = date.content.substring(0, date.content.indexOf('T'));
-        }
-
-        if (document.body.classList.contains('is-blog')) {
-          meta.category = '';
-
-          element.querySelectorAll('.webinar-speaker-img').forEach((img) => {
-            const speakerParent = img.parentElement;
-            meta.category = 'Webinars';
-            meta.series = '';
-            meta.eventDate = '';
-            const webinarSpeaker = speakerParent.querySelector('div strong');
-            meta.speakers = meta.speakers ? `${meta.speakers} and ${webinarSpeaker?.textContent}` : webinarSpeaker?.textContent;
-          });
-        }
-        return meta;
-      }
+      },
     },
     {
       type: 'overview',
       selectors: [
         '.entry div:has(div > p > img)',
+        '.entry > div > div:first-of-type:has(div > img)',
       ],
-      parse: (element, { document }) => {
-        const image = element.querySelector('div img');
-        const content = element.querySelector(':scope > div:last-child');
-        return [
-          [image.closest('div'), content]
-        ];
-      }
+      params: {
+        cells: [
+          ['div:has(img)', ':scope > div:last-child']
+        ]
+      },
     },
     {
       type: 'columns',
       selectors: [
         '.entry > .about-content',
+        '.desc-img-wrapper:has(> :nth-child(2):last-child)',
       ],
     },
   ]
