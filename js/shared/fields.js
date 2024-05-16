@@ -18,14 +18,13 @@ const initOptionFields = (parent) => {
   const optionFields = getOptionFields(parent);
   optionFields.forEach((field) => {
     const value = localStorage.getItem(`option-field-${field.id}`);
-    if (value !== null) {
+    if (!field.classList.contains('locked') && value !== null) {
       if (isCheckbox(field)) {
         field.checked = (value === 'true');
       } else {
         field.value = value;
       }
     }
-
     fields[field.id] = isCheckbox(field) ? field.checked : field.value;
   });
 
