@@ -153,7 +153,7 @@ export default class PollImporter {
 
         results = Array.isArray(out) ? out : [out];
         results.forEach((result) => {
-          const path = result.path.substring(result.path.lastIndexOf('/')+1) === '' ? `${result.path}index` : result.path;
+          const { path } = result;
 
           result.filename = `${path}.docx`;
         });
