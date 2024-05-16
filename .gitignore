@@ -5,3 +5,4 @@ coverage/*
 logs/*
 node_modules/*
 *.map
+importer/*
