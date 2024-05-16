@@ -16,7 +16,7 @@ import { asyncForEach, getElementByXpath } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
-import { getImporterSectionMapping, saveImporterSectionsMapping } from '../shared/mappings.js';
+import { getImporterSectionsMapping, saveImporterSectionsMapping } from '../shared/mappings.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -542,7 +542,7 @@ const detectSections = async (src, frame) => {
 
   // look for existing mapping data
   try {
-    const mapping = getImporterSectionMapping(originalURL);
+    const mapping = getImporterSectionsMapping(originalURL);
     if (mapping) {
       mappingData = mapping;
       mapping.forEach((m) => {

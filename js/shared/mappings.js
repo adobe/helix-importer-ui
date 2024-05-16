@@ -10,7 +10,7 @@
  * @returns {mapping|undefined} Return the mapping as an array (not string) or 'undefined' if it
  *                              doesn't exist for the provided URL.
  */
-function getImporterSectionMapping(url) {
+function getImporterSectionsMapping(url) {
   try {
     const allMappings = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
     if (allMappings) {
@@ -74,6 +74,6 @@ function saveImporterSectionsMapping(url, mapping) {
 
 export {
   // eslint-disable-next-line import/prefer-default-export
-  getImporterSectionMapping,
+  getImporterSectionsMapping,
   saveImporterSectionsMapping,
 };

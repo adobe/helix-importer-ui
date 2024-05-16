@@ -3,7 +3,7 @@
  */
 
 import * as parsers from './parsers/parsers.js';
-import { getImporterSectionMapping } from '../shared/mappings.js';
+import { getImporterSectionsMapping } from '../shared/mappings.js';
 
 /**
  * functions
@@ -13,10 +13,6 @@ export function generateDocumentPath({ document, url }) {
   let { pathname } = new URL(url);
   pathname = pathname.replace('.html', '')
   return WebImporter.FileUtils.sanitizePath(pathname);
-}
-
-function getSectionsMappingData(url) {
-  return getImporterSectionMapping(url) ?? null;
 }
 
 function getElementByXpath(document, path) {
@@ -79,7 +75,6 @@ export default {
         }
       }
     });
-
   },
 
   transform: async ({ document, params }) => {
@@ -90,7 +85,7 @@ export default {
     /**
      * get sections mapping data
      */
-    const mapping = getSectionsMappingData(params.originalURL);
+    const mapping = getImporterSectionsMapping(params.originalURL);
     if (!mapping) {
       throw new Error('No sections mapping data found, aborting');
     }
