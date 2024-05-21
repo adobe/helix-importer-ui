@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import createImportScript from './import.js';
+import { TransformFactory } from './transformfactory.js';
 
 /* global WebImporter */
 
@@ -69,7 +69,7 @@ export default class PollImporter {
           $this.projectTransform = mod.default;
         } else {
           // declarative transformation
-          $this.projectTransform = createImportScript(mod.default);
+          $this.projectTransform = TransformFactory.create(mod.default);
         }
       }
     };
@@ -82,7 +82,7 @@ export default class PollImporter {
     const loadJson = (json) => {
       try {
         const importCfg = JSON.parse(json);
-        $this.projectTransform = createImportScript(importCfg);
+        $this.projectTransform = TransformFactory.create(importCfg);
       } catch (err) {
         console.error('Invalid transformation JSON');
       }

@@ -30,14 +30,14 @@ const generateDocumentPath = ({ url }) => {
     .replace(/[^a-z0-9/]/gm, '-');
 };
 
-const createImporter = (rules) => ({
-  transform: (source) => {
-    const element = WebImporter.Transformer.transform(rules, source);
-    return [{
-      element,
-      path: generateDocumentPath(source),
-    }];
-  },
-});
-
-export default createImporter;
+export const TransformFactory = {
+  create: (rules) => ({
+    transform: (source) => {
+      const element = WebImporter.Transformer.transform(rules, source);
+      return [{
+        element,
+        path: generateDocumentPath(source),
+      }];
+    },
+  }),
+};
