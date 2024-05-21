@@ -6,7 +6,7 @@ function isDate(str) {
 }
 
 
-export default function parse(element, { document, params: { metadata } }) {
+export default function parse(element, { document, params: { metadata = {} } }) {
   const baseMetadata = WebImporter.Blocks.getMetadata(document) || {};
   const customMetadata = WebImporter.Transformer.buildBlockConfig(document, metadata);
   // convert dates
