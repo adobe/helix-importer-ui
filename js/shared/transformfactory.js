@@ -30,7 +30,16 @@ const generateDocumentPath = ({ url }) => {
     .replace(/[^a-z0-9/]/gm, '-');
 };
 
+/**
+ * Factory to create a transformation object using a given set of rules.
+ */
 export const TransformFactory = {
+  /***
+   * Creates a new transformation object.
+   *
+   * @param rules JSON object with the transformation rules.
+   * @return {Object} A transformation object for use during an import.
+   */
   create: (rules) => ({
     transform: (source) => {
       const element = WebImporter.Transformer.transform(rules, source);
