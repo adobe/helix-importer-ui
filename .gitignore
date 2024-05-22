@@ -2,6 +2,5 @@
 coverage/*
 logs/*
 node_modules/*
-# js/dist/* (maybe?)
 *.map
 /.idea/**
