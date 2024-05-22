@@ -12,6 +12,13 @@ function isValidCSSSelector(selector) {
 }
 
 export default class Transformer {
+  /**
+   * Transform a source document from a set of rules.
+   *
+   * @param rules Transformation ruleset
+   * @param source Source document properties
+   * @return Transformed root element
+   */
   static transform(rules, source) {
     console.log('Transformer Rules', rules);
     const { document } = source;
@@ -52,15 +59,16 @@ export default class Transformer {
         // add block to DOM
         if (target === 'append') {
           main.append(block);
+        } else if (target === 'prepend') {
+          main.prepend(block);
         } else {
           element.replaceWith(block);
         }
       });
-
-      // phase 3: DOM removal - end
-      WebImporter.DOMUtils.remove(document, removeEnd);
-
     });
+
+    // phase 3: DOM removal - end
+    WebImporter.DOMUtils.remove(document, removeEnd);
 
     return main;
   }
@@ -72,7 +80,6 @@ export default class Transformer {
    * {
    *   name: value_selector | [condition_selector, value_selector]
    * }
-   *
    *
    * @param element Root element to query from
    * @param params Object of selector conditions
