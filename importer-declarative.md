@@ -9,11 +9,12 @@ A declarative transformation is a JSON object that describes how a site should b
   "root": "<string>",
   "cleanup": {
     "start": ["<string>"]
+    "end": ["<string>"]
   },
   "blocks": [
     {
       "type": "<block name>",
-      "target": "append | replace | prepend",
+      "insertMode": "append | replace | prepend",
       "selectors": ["<string>"],
       "params": {}
     }
@@ -39,8 +40,8 @@ The `start` property is an array of CSS selectors that are used to identify elem
 
 The bulk of the import is done in the `blocks` array. Each block item is a JSON object that describes how a block should be created.
 
-- `type`: The name of the block to create
-- `target`: The DOM target of the block creation. This can be `append`, `replace`, or `prepend`.
+- `type`: The name of the block to create. The name will also be used for finding a custom parser, otherwise the default block parser will be used.
+- `insertMode`: How the block should be added to the target DOM. This can be `append`, `prepend`, or `replace`. `replace` is the default insert mode.
 - `selectors`: An array of CSS selectors that are used to identify the source element that represents this block type.
 - `params`: Additional parameters that are passed to the block parsing function.
 
@@ -70,7 +71,7 @@ By leveraging selector expressions it is possible to create complex transformati
 
 The `buildBlockConfig` function of the `Transformer` class can be used to create a block configuration object by mapping from an object of CSS selector expressions.
 
-An expression item could be a single name/value pair that maps directly. An item could be a simple expression where the value is obtained from a single CSs selector. 
+An expression item could be a single name/value pair that maps directly. An item could be a simple expression where the value is obtained from a single CSS selector. 
 Finally, multiple expressions can be defined in an array to allow values to be conditionally applied based on the page structure.
 
 Example:

@@ -40,7 +40,7 @@ export default class Transformer {
 
     // phase 3: block creation
     blocks.forEach((blockCfg) => {
-      const { type, selectors = [], parse, target = 'replace', params = {} } = blockCfg;
+      const { type, selectors = [], parse, insertMode = 'replace', params = {} } = blockCfg;
       const parserFn = parse || parsers[type] || parsers['block'];
       const elements = selectors.length
         ? selectors.reduce((acc, selector) => [...acc, ...main.querySelectorAll(selector)], [])
@@ -57,9 +57,9 @@ export default class Transformer {
           cells: items
         });
         // add block to DOM
-        if (target === 'append') {
+        if (insertMode === 'append') {
           main.append(block);
-        } else if (target === 'prepend') {
+        } else if (insertMode === 'prepend') {
           main.prepend(block);
         } else {
           element.replaceWith(block);
@@ -67,7 +67,7 @@ export default class Transformer {
       });
     });
 
-    // phase 3: DOM removal - end
+    // phase 4: DOM removal - end
     WebImporter.DOMUtils.remove(document, removeEnd);
 
     return main;
