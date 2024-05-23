@@ -73,7 +73,6 @@ function saveImporterSectionsMapping(url, mapping) {
 }
 
 export {
-  // eslint-disable-next-line import/prefer-default-export
   getImporterSectionsMapping,
   saveImporterSectionsMapping,
 };

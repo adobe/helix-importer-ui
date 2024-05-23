@@ -3,7 +3,7 @@
  */
 
 import * as parsers from './parsers/parsers.js';
-import { getImporterSectionsMapping } from './mappings.js';
+import { getImporterSectionsMapping } from './utils.ui.js';
 
 /**
  * functions

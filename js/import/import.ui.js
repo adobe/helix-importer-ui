@@ -16,7 +16,7 @@ import { asyncForEach, getElementByXpath } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
-import { getImporterSectionsMapping, saveImporterSectionsMapping } from '../sections-mapping/mappings.js';
+import { getImporterSectionsMapping, saveImporterSectionsMapping } from '../sections-mapping/utils.ui.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
