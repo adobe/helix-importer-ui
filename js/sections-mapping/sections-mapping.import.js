@@ -3,6 +3,7 @@
  */
 
 import * as parsers from './parsers/parsers.js';
+import { getImporterSectionsMapping } from './utils.ui.js';
 
 /**
  * functions
@@ -18,22 +19,6 @@ export function generateDocumentPath({ document, url }) {
     .replace(/\.html$/, '')
     .replace(/[^a-z0-9/]/gm, '-');
   return WebImporter.FileUtils.sanitizePath(p);
-}
-
-function getSectionsMappingData(url) {
-  const item = localStorage.getItem('helix-importer-sections-mapping');
-
-  if (item) {
-    const mData = JSON.parse(item);
-    return mData.mapping;
-    // TODO - support multiple mappings
-    // const found = mData.find((m) => m.url === url);
-    // if (found) {
-    //   return found;
-    // }
-  }
-
-  return null;
 }
 
 function getElementByXpath(document, path) {
@@ -96,7 +81,6 @@ export default {
         }
       }
     });
-    
   },
 
   transform: async ({ document, params }) => {
@@ -107,7 +91,7 @@ export default {
     /**
      * get sections mapping data
      */
-    const mapping = getSectionsMappingData(params.originalURL);
+    const mapping = getImporterSectionsMapping(params.originalURL);
     if (!mapping) {
       throw new Error('No sections mapping data found, aborting');
     }

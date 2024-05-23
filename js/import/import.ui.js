@@ -16,6 +16,7 @@ import { asyncForEach, getElementByXpath } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
+import { getImporterSectionsMapping, saveImporterSectionsMapping } from '../sections-mapping/utils.ui.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -482,10 +483,7 @@ const detectSections = async (src, frame) => {
         });
       }
       // save sections mapping data
-      localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-        url: originalURL,
-        mapping: mappingData,
-      }));
+      saveImporterSectionsMapping(originalURL, mappingData);
     });
 
     return blockPicker;
@@ -514,8 +512,8 @@ const detectSections = async (src, frame) => {
     deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
     row.appendChild(deleteBtn);
     deleteBtn.addEventListener('click', (e) => {
-      console.log(e);
-      console.log('delete section', section.id);
+      // console.log(e);
+      // console.log('delete section', section.id);
       // row
       const rowEl = e.target.closest('.row');
       if (rowEl) {
@@ -523,10 +521,7 @@ const detectSections = async (src, frame) => {
         mappingData = mappingData.filter((m) => m.id !== id);
 
         // save sections mapping data
-        localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-          url: originalURL,
-          mapping: mappingData,
-        }));
+        saveImporterSectionsMapping(originalURL, mappingData);
 
         rowEl.remove();
       }
@@ -547,10 +542,10 @@ const detectSections = async (src, frame) => {
 
   // look for existing mapping data
   try {
-    const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
-    if (mapping && mapping.url === originalURL) {
-      mappingData = mapping.mapping;
-      mapping.mapping.forEach((m) => {
+    const mapping = getImporterSectionsMapping(originalURL);
+    if (mapping) {
+      mappingData = mapping;
+      mapping.forEach((m) => {
         const row = getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
         MAPPING_EDITOR_SECTIONS.appendChild(row);
       });
