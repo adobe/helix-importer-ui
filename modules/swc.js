@@ -42,3 +42,4 @@ import '@spectrum-web-components/progress-circle/sp-progress-circle.js';
 
 import '@spectrum-web-components/menu/sp-menu-divider.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-delete.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-arrow-up.js';
