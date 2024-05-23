@@ -1,6 +1,7 @@
+.idea
+*.iml
 .hlx/*
 coverage/*
 logs/*
 node_modules/*
 *.map
-/.idea/**
