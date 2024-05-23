@@ -16,11 +16,19 @@ It is worth mentioning that this is a developer tool and requires some understan
 
 Reading this document before starting with content import is highly recommended. You'll find some [tips and tricks at the end](#tips-and-tricks).
 
-### `import.js` transformation file
+## Transformation file
 
 Out of the box, the importer should be able to consume any page and output a Markdown file out of it. Some parts like the navigation, the header or the footer should not appear in all the docx files, the first element of the docx should be a Heading 1, some data are metadata that can be stored in a Metadata block... these are basic rules to structure the content in the Word documents and the transformation file is the place to write those rules.
 
 Such a rule is very straight forward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
+
+A transformation file can either be a JSON object or a Javascript file. 
+
+### `import.json` transformation file
+
+The JSON object is the simplest way to define the transformation rules. Refer to the [declarative transformation](./importer-declarative.md) documentation for more details.
+
+### `import.js` transformation file
 
 In your `import.js` transformation file, you can implement 2 modes: 
 - one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7 (the code provided here is equivalent to the default import running if you do not provide an `import.js` file)
