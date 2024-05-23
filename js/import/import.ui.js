@@ -12,7 +12,7 @@
 /* global CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
-import { asyncForEach, getElementByXpath } from '../shared/utils.js';
+import { asyncForEach, getElementByXpath, createElement } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
@@ -495,22 +495,46 @@ const detectSections = async (src, frame) => {
     row.dataset.sectionId = section.id;
     row.dataset.xpath = section.xpath;
     row.classList.add('row');
-    row.innerHTML = `
-    <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
-    <h3 id="sec-id"><strong>${section.id}</strong></h3>
-    <h3 id="sec-layout">${section.layout.numCols} x ${section.layout.numRows}</h3>
-    `;
+    const numCols = section?.layout?.numCols ? section.layout.numCols : 0;
+    const numRows = section?.layout?.numRows ? section.layout.numRows : 0;
+
+    const color = createElement('div', { id: 'sec-color', class: 'sec-color', style: `background-color: ${section.color || 'white'}` });
+    const moveUpBtn = createElement(
+      'sp-button',
+      {
+        variant: 'accent',
+        title: 'Move this item up one row',
+        style: `background-color: ${section.color}`,
+        class: 'move-up',
+      },
+    );
+    moveUpBtn.innerHTML = '<sp-icon-arrow-up>^</sp-icon-arrow-up>';
+    moveUpBtn.addEventListener('click', (e) => {
+      const rowEl = e.target.closest('.row');
+      if (rowEl) {
+        const id = rowEl.dataset.sectionId;
+        const index = mappingData.findIndex((m) => m.id === id);
+        if (index >= 0) {
+          const movedMapping = mappingData.splice(index, 1);
+          mappingData.splice(index - 1, 0, movedMapping[0]);
+
+          // save sections mapping data
+          saveImporterSectionsMapping(originalURL, mappingData);
+
+          rowEl.parentNode.insertBefore(rowEl, rowEl.previousElementSibling);
+        }
+      }
+    });
+    const secId = createElement('h3', { id: 'sec-id' }, section.id);
+    const layout = createElement('h3', { id: 'sec-layout' }, `${numCols} x ${numRows}`);
 
     const mappingPicker = getBlockPicker(section.mapping);
     mappingPicker.dataset.sectionId = section.id;
     mappingPicker.dataset.xpath = section.xpath;
 
-    row.appendChild(mappingPicker);
-
     const deleteBtn = document.createElement('sp-button');
     deleteBtn.setAttribute('variant', 'negative');
     deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
-    row.appendChild(deleteBtn);
     deleteBtn.addEventListener('click', (e) => {
       // console.log(e);
       // console.log('delete section', section.id);
@@ -527,12 +551,16 @@ const detectSections = async (src, frame) => {
       }
     });
 
+    row.append(color, moveUpBtn, secId, layout, mappingPicker, deleteBtn);
+
     row.addEventListener('mouseenter', (e) => {
       const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
       if (target.nodeName === 'DIV') {
         const id = target.dataset.sectionId;
         const div = getElementByXpath(frame.contentDocument, target.dataset.xpath);
-        div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+        if (div) {
+          div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+        }
         selectedSectionProxy.id = id;
       }
     });
@@ -566,6 +594,7 @@ const detectSections = async (src, frame) => {
         mappingData.push(section);
         const row = getMappingRow(section, MAPPING_EDITOR_SECTIONS.children.length);
         MAPPING_EDITOR_SECTIONS.appendChild(row);
+        saveImporterSectionsMapping(originalURL, mappingData);
       }
     }
   });
