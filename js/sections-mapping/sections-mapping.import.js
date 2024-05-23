@@ -11,9 +11,15 @@ import { getElementByXpath } from '../shared/utils.js';
  */
 
 export function generateDocumentPath({ document, url }) {
-  let { pathname } = new URL(url);
-  pathname = pathname.replace('.html', '')
-  return WebImporter.FileUtils.sanitizePath(pathname);
+  let p = new URL(url).pathname;
+  if (p.endsWith('/')) {
+    p = `${p}index`;
+  }
+  p = decodeURIComponent(p)
+    .toLowerCase()
+    .replace(/\.html$/, '')
+    .replace(/[^a-z0-9/]/gm, '-');
+  return WebImporter.FileUtils.sanitizePath(p);
 }
 
 /**

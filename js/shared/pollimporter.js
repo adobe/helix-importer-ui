@@ -9,6 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import { TransformFactory } from './transformfactory.js';
+
 /* global WebImporter */
 
 const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
@@ -58,11 +60,37 @@ export default class PollImporter {
 
   async #loadProjectTransform() {
     const $this = this;
+
     const loadModule = async (projectTransformFileURL) => {
       const mod = await import(projectTransformFileURL);
       if (mod.default) {
-        $this.projectTransform = mod.default;
+        const isImportScript = Object.keys(mod.default).some((key) => key === 'transformDOM' || key === 'transform');
+        if (isImportScript) {
+          $this.projectTransform = mod.default;
+        } else {
+          // declarative transformation
+          $this.projectTransform = TransformFactory.create(mod.default);
+        }
       }
+    };
+
+    /**
+     * Create a project transform from a JSON object
+     *
+     * @param json Import configuration JSON
+     */
+    const loadJson = (json) => {
+      try {
+        const importCfg = JSON.parse(json);
+        $this.projectTransform = TransformFactory.create(importCfg);
+      } catch (err) {
+        console.error('Invalid transformation JSON');
+      }
+    };
+
+    const isJsonResponse = (response) => {
+      const contentType = response.headers.get("content-type");
+      return contentType && contentType.includes("application/json");
     };
 
     const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
@@ -73,7 +101,11 @@ export default class PollImporter {
 
       if (res.ok && body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
-        await loadModule(projectTransformFileURL);
+        if (isJsonResponse(res)) {
+          loadJson(body);
+        } else {
+          await loadModule(projectTransformFileURL);
+        }
         this.projectTransformFileURL = projectTransformFileURL;
         // eslint-disable-next-line no-console
         console.log(`Loaded importer file: ${projectTransformFileURL}`);
@@ -153,7 +185,7 @@ export default class PollImporter {
 
         results = Array.isArray(out) ? out : [out];
         results.forEach((result) => {
-          const path = result.path.substring(result.path.lastIndexOf('/')+1) === '' ? `${result.path}index` : result.path;
+          const { path } = result;
 
           result.filename = `${path}.docx`;
         });
