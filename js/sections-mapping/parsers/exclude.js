@@ -1,4 +1,3 @@
-
-export function excludeParser(el, window) {
+export default function excludeParser(el/* , window */) {
   el.remove();
 }

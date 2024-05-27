@@ -63,7 +63,7 @@ function getNSiblingsDivs(el, document, n = null) {
   return xpathGrouping[selectedXpathPattern] || null;
 }
 
-export function columnsParser(el, window) {
+export default function columnsParser(el, window) {
   const { document } = window;
 
   el.querySelectorAll('script, style').forEach((e) => e.remove() );
@@ -91,4 +91,6 @@ export function columnsParser(el, window) {
     // el.replaceWith(block);
     return block;
   }
+
+  return null;
 }
