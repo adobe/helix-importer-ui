@@ -404,10 +404,15 @@ const smartScroll = async (window, reset = false) => {
 };
 
 const detectSections = async (src, frame) => {
+  console.log('import-sm-auto-detect', config.fields['import-sm-auto-detect']);
+
   const { originalURL } = frame.dataset;
   const sections = await window.xp.detectSections(
     frame.contentDocument.body,
     frame.contentWindow.window,
+    {
+      autoDetect: config.fields['import-sm-auto-detect'],
+    },
   );
   const selectedSection = { id: null };
 
@@ -430,6 +435,16 @@ const detectSections = async (src, frame) => {
     },
   });
 
+  const DETECTED_SECTIONS_BLOCKS_MAPPING = {
+    unknown: 'defaultContent',
+    'default-content': 'defaultContent',
+    carousel: 'defaultContent',
+    hero: 'defaultContent',
+    columns: 'columns',
+    header: 'header',
+    footer: 'footer',
+  };
+
   let mappingData = [
     // {
     //   id: <sectionId>,
@@ -444,12 +459,15 @@ const detectSections = async (src, frame) => {
     blockPicker.setAttribute('id', 'block-picker');
 
     [
-      [{ label: 'Exclude', attributes: { value: 'exclude' } }],
       [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
       [
         { label: 'Hero', attributes: { value: 'hero', disabled: true } },
         { label: 'Columns', attributes: { value: 'columns' } },
         { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
+      ],
+      [
+        { label: 'Header', attributes: { value: 'header' } },
+        { label: 'Footer', attributes: { value: 'footer' } },
       ],
       [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
     ].forEach((group, idx, arr) => {
@@ -547,13 +565,40 @@ const detectSections = async (src, frame) => {
 
   // look for existing mapping data
   try {
-    const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
-    if (mapping && mapping.url === originalURL) {
-      mappingData = mapping.mapping;
-      mapping.mapping.forEach((m) => {
-        const row = getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
+    if (config.fields['import-sm-auto-detect']) {
+      mappingData = sections.predictedBoxes.map((b, idx) => ({
+        id: b.id,
+        xpath: b.xpath,
+        layout: b.layout,
+        mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
+      }));
+      localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
+        url: originalURL,
+        mapping: mappingData,
+      }));
+      sections.predictedBoxes.map((b) => ({
+        id: b.id,
+        color: 'rgba(0, 0, 255, 1)',
+        width: b.width,
+        height: b.height,
+        xpath: b.xpath,
+        layout: b.layout,
+        x: b.x,
+        y: b.y,
+        mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
+      })).forEach((section, idx) => {
+        const row = getMappingRow(section, idx + 1);
         MAPPING_EDITOR_SECTIONS.appendChild(row);
       });
+    } else {
+      const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
+      if (mapping && mapping.url === originalURL) {
+        mappingData = mapping.mapping;
+        mapping.mapping.forEach((m) => {
+          const row = getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
+          MAPPING_EDITOR_SECTIONS.appendChild(row);
+        });
+      }
     }
   } catch (e) {
     // eslint-disable-next-line no-console
@@ -870,6 +915,19 @@ const attachListeners = () => {
                     background-color: rgba(0, 0, 125, 0.1) !important;
                     cursor: pointer;
                   }
+                  .xp-overlay .xp-overlay-label {
+                    position: absolute;
+                    left: 0px;
+                    top: 0px;
+                    background-color: rgba(0, 0, 255, 0.8);
+                    color: white;
+                    padding: 10px;
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-transform: uppercase;
+                    letter-spacing: 2px;
+                  }
+            
                 `;
                 frame.contentDocument.head.appendChild(style);
 
