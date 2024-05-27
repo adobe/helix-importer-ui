@@ -1,6 +1,7 @@
 /**
  * GENERIC IMPORT SCRIPT FOR SECTIONS MAPPING DATA
  */
+/* global WebImporter */
 
 import * as parsers from './parsers/parsers.js';
 
@@ -8,7 +9,7 @@ import * as parsers from './parsers/parsers.js';
  * functions
  */
 
-export function generateDocumentPath({ document, url }) {
+export function generateDocumentPath({ url }) {
   let p = new URL(url).pathname;
   if (p.endsWith('/')) {
     p = `${p}index`;
@@ -20,7 +21,7 @@ export function generateDocumentPath({ document, url }) {
   return WebImporter.FileUtils.sanitizePath(p);
 }
 
-function getSectionsMappingData(url) {
+function getSectionsMappingData(/* url */) {
   const item = localStorage.getItem('helix-importer-sections-mapping');
 
   if (item) {
@@ -37,7 +38,14 @@ function getSectionsMappingData(url) {
 }
 
 function getElementByXpath(document, path) {
-  return document.evaluate(path, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+  return document.evaluate(
+    path,
+    document,
+    null,
+    XPathResult.FIRST_ORDERED_NODE_TYPE,
+    null,
+  )
+    .singleNodeValue;
 }
 
 /**
@@ -77,9 +85,8 @@ export default {
       if (div && /none/i.test(window.getComputedStyle(div).display.trim())) {
         div.setAttribute('data-hlx-imp-hidden-div', '');
       } else {
-        var domRect = div.getBoundingClientRect().toJSON()
-        Object.keys(domRect).forEach(p => domRect[p] = Math.round(domRect[p]));
-        if (domRect.width > 0 && domRect.height > 0) {
+        const domRect = div.getBoundingClientRect().toJSON();
+        if (Math.round(domRect.width) > 0 && Math.round(domRect.height) > 0) {
           div.setAttribute('data-hlx-imp-rect', JSON.stringify(domRect));
         }
         const bgImage = window.getComputedStyle(div).getPropertyValue('background-image');
@@ -96,23 +103,26 @@ export default {
         }
       }
     });
-    
   },
 
   transform: async ({ document, params }) => {
-
-    // // console.log(parsers?);
-    // debugger;
-
     /**
      * get sections mapping data
      */
+
     const mapping = getSectionsMappingData(params.originalURL);
     if (!mapping) {
       throw new Error('No sections mapping data found, aborting');
     }
 
+    /**
+     * init elements
+     */
+
     const main = document.querySelector('main') || document.body;
+    const headerEl = document.createElement('div');
+    const footerEl = document.createElement('div');
+    const importedElements = [];
 
     /**
      * parse sections mapping data
@@ -120,24 +130,34 @@ export default {
 
     const importedContent = document.createElement('div');
 
-    const elementsToParse = mapping.map((m) => {
-      // get dom element from xpath string
-      return getElementByXpath(document, m.xpath) || null;
-    });
+    // get dom element from xpath string
+    const elementsToParse = mapping.map((m) => getElementByXpath(document, m.xpath) || null);
 
     mapping.forEach((m, idx) => {
       // get dom element from xpath string
-      const el = elementsToParse[idx  ];
+      const el = elementsToParse[idx];
       if (el) {
         console.log('found element', m.section, el);
-        const parser = parsers[m.mapping];
-        if (parser) {
-          const block = parser(el, window);
+        if (m.mapping === 'header') {
+          const block = parsers.header(el, window);
           if (block) {
-            importedContent.appendChild(block);
+            headerEl.appendChild(block);
+          }
+        } else if (m.mapping === 'footer') {
+          const block = parsers.footer(el, window);
+          if (block) {
+            footerEl.appendChild(block);
           }
         } else {
-          console.warn('parser not found', m.mapping);
+          const parser = parsers[m.mapping];
+          if (parser) {
+            const block = parser(el, window);
+            if (block) {
+              importedContent.appendChild(block);
+            }
+          } else {
+            console.warn('parser not found', m.mapping);
+          }
         }
       } else {
         console.warn('element not found', m.section, m.xpath);
@@ -147,6 +167,16 @@ export default {
     /**
      * cleanup to remove unwanted elements
      */
+
+    // adjust anchor links (https://github.com/adobe/helix-importer/issues/348)
+    if (main.querySelector('a[href^="#"]')) {
+      const u = new URL(params.originalURL);
+      const links = main.querySelectorAll('a[href^="#"]');
+      for (let i = 0; i < links.length; i += 1) {
+        const a = links[i];
+        a.href = `${u.pathname}${a.getAttribute('href')}`;
+      }
+    }
 
     // hidden elements
     main.querySelectorAll('[data-hlx-imp-hidden-div]').forEach((el) => { el.remove(); });
@@ -159,8 +189,8 @@ export default {
 
     main.querySelectorAll('div').forEach((el) => {
       Object.keys(el.dataset).forEach((key) => delete el.dataset[key]);
-      for (let i = 0; i < el.attributes.length; i++) {
-          el.removeAttribute(el.attributes[i].name);
+      for (let i = 0; i < el.attributes.length; i += 1) {
+        el.removeAttribute(el.attributes[i].name);
       }
     });
 
@@ -171,13 +201,27 @@ export default {
     // // make every report value a string
     // Object.keys(IMPORT_REPORT).map(k => (IMPORT_REPORT[k] = '' + IMPORT_REPORT[k]));
 
-    const elements = [{
+    importedElements.push({
       element: importedContent,
       path: generateDocumentPath({ document, url: params.originalURL }),
       report: IMPORT_REPORT,
-    }];
+    });
 
-    return elements;
+    if (headerEl.children.length > 0) {
+      importedElements.push({
+        element: headerEl,
+        path: '/nav',
+      });
+    }
+
+    if (footerEl.children.length > 0) {
+      importedElements.push({
+        element: footerEl,
+        path: '/footer',
+      });
+    }
+
+    return importedElements;
   },
 
   /**
@@ -186,6 +230,6 @@ export default {
    * @param {String} url The url of the document being transformed.
    * @param {HTMLDocument} document The document
    */
-  generateDocumentPath: generateDocumentPath,
+  generateDocumentPath,
 
 };
