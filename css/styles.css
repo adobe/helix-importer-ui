@@ -1,3 +1,5 @@
+ /* stylelint-disable no-descending-specificity */
+
 *, *::before, *::after {
   box-sizing: border-box;
 }
@@ -222,7 +224,6 @@ section .local-save .option-field + sp-checkbox {
   margin-top: 0;
 }
 
-/* stylelint-disable-next-line no-descending-specificity */
 section sp-accordion sp-accordion-item sp-textfield,
 section sp-accordion sp-accordion-item sp-number-field,
 section sp-accordion sp-accordion-item sp-checkbox {
