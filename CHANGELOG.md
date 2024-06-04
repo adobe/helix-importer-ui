@@ -1,3 +1,10 @@
+## [1.51.17](https://github.com/adobe/helix-importer-ui/compare/v1.51.16...v1.51.17) (2024-06-04)
+
+
+### Bug Fixes
+
+* define process ([#366](https://github.com/adobe/helix-importer-ui/issues/366)) ([90c3107](https://github.com/adobe/helix-importer-ui/commit/90c3107f31f97a9158af308377ceba11faabf03c))
+
 ## [1.51.16](https://github.com/adobe/helix-importer-ui/compare/v1.51.15...v1.51.16) (2024-06-02)
 
 
