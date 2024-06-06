@@ -13,7 +13,7 @@
 const path = require('path');
 
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const { NormalModuleReplacementPlugin } = require('webpack');
+const { NormalModuleReplacementPlugin, DefinePlugin } = require('webpack');
 
 // helix-importer module
 const importer = {
@@ -62,6 +62,11 @@ const importer = {
     }),
     new NormalModuleReplacementPlugin(/node-fetch/, (resource) => {
       resource.request = path.resolve(__dirname, './polyfills/node-fetch-constructor-polyfill.cjs');
+    }),
+    new DefinePlugin({
+      process: {
+        env: {},
+      },
     }),
   ],
   module: {
