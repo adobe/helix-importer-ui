@@ -16,6 +16,7 @@ import { asyncForEach, getElementByXpath } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
+import * as fragmentUI from '../sections-mapping/sm.ui.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -75,6 +76,9 @@ const setupUI = () => {
   ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
 
   SPTABS.selected = 'mapping-editor';
+
+  // init the fragment UI
+  fragmentUI.init(config);
 };
 
 const loadResult = ({ md, html: outputHTML }) => {
@@ -414,26 +418,7 @@ const detectSections = async (src, frame) => {
       autoDetect: config.fields['import-sm-auto-detect'],
     },
   );
-  const selectedSection = { id: null };
-
   console.log('sections', sections);
-
-  const selectedSectionProxy = new Proxy(selectedSection, {
-    set: (target, key, value) => {
-      const oldValue = target[key];
-      console.log(`${key} set from ${selectedSection.id} to ${value}`);
-      target[key] = value;
-      const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
-      if (oldOverlayDiv) {
-        oldOverlayDiv.classList.remove('hover');
-      }
-      const overlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${value}"]`);
-      if (overlayDiv) {
-        overlayDiv.classList.add('hover');
-      }
-      return true;
-    },
-  });
 
   const DETECTED_SECTIONS_BLOCKS_MAPPING = {
     unknown: 'defaultContent',
@@ -453,116 +438,6 @@ const detectSections = async (src, frame) => {
     // },
   ];
 
-  function getBlockPicker(value = 'unset') {
-    const blockPicker = document.createElement('sp-picker');
-    blockPicker.setAttribute('label', 'Mapping ...');
-    blockPicker.setAttribute('id', 'block-picker');
-
-    [
-      [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
-      [
-        { label: 'Hero', attributes: { value: 'hero', disabled: true } },
-        { label: 'Columns', attributes: { value: 'columns' } },
-        { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
-      ],
-      [
-        { label: 'Header', attributes: { value: 'header' } },
-        { label: 'Footer', attributes: { value: 'footer' } },
-      ],
-      [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
-    ].forEach((group, idx, arr) => {
-      group.forEach((item) => {
-        const mItem = document.createElement('sp-menu-item');
-        item.attributes = item.attributes || [];
-        Object.keys(item.attributes).forEach((k) => {
-          mItem.setAttribute(k, item.attributes[k]);
-        });
-        mItem.textContent = item.label;
-        blockPicker.appendChild(mItem);
-      });
-      if (idx < arr.length - 1) {
-        blockPicker.appendChild(document.createElement('sp-menu-divider'));
-      }
-    });
-
-    blockPicker.setAttribute('value', value);
-
-    blockPicker.addEventListener('change', (e) => {
-      // update mapping data
-      const mItem = mappingData.find((m) => m.id === selectedSection.id);
-      if (mItem) {
-        mItem.mapping = e.target.value;
-      } else {
-        mappingData.push({
-          id: selectedSection.id,
-          xpath: selectedSection.xpath,
-          mapping: e.target.value,
-        });
-      }
-      // save sections mapping data
-      localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-        url: originalURL,
-        mapping: mappingData,
-      }));
-    });
-
-    return blockPicker;
-  }
-
-  function getMappingRow(section, idx = 1) {
-    const row = document.createElement('div');
-    row.dataset.idx = idx;
-    row.dataset.sectionId = section.id;
-    row.dataset.xpath = section.xpath;
-    row.classList.add('row');
-    row.innerHTML = `
-    <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
-    <h3 id="sec-id"><strong>${section.id}</strong></h3>
-    <h3 id="sec-layout">${section.layout.numCols} x ${section.layout.numRows}</h3>
-    `;
-
-    const mappingPicker = getBlockPicker(section.mapping);
-    mappingPicker.dataset.sectionId = section.id;
-    mappingPicker.dataset.xpath = section.xpath;
-
-    row.appendChild(mappingPicker);
-
-    const deleteBtn = document.createElement('sp-button');
-    deleteBtn.setAttribute('variant', 'negative');
-    deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
-    row.appendChild(deleteBtn);
-    deleteBtn.addEventListener('click', (e) => {
-      console.log(e);
-      console.log('delete section', section.id);
-      // row
-      const rowEl = e.target.closest('.row');
-      if (rowEl) {
-        const id = rowEl.dataset.sectionId;
-        mappingData = mappingData.filter((m) => m.id !== id);
-
-        // save sections mapping data
-        localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-          url: originalURL,
-          mapping: mappingData,
-        }));
-
-        rowEl.remove();
-      }
-    });
-
-    row.addEventListener('mouseenter', (e) => {
-      const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
-      if (target.nodeName === 'DIV') {
-        const id = target.dataset.sectionId;
-        const div = getElementByXpath(frame.contentDocument, target.dataset.xpath);
-        div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
-        selectedSectionProxy.id = id;
-      }
-    });
-
-    return row;
-  }
-
   // look for existing mapping data
   try {
     if (config.fields['import-sm-auto-detect']) {
@@ -572,34 +447,52 @@ const detectSections = async (src, frame) => {
         layout: b.layout,
         mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
       }));
-      localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-        url: originalURL,
-        mapping: mappingData,
-      }));
-      sections.predictedBoxes.map((b) => ({
+      // localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
+      //   url: originalURL,
+      //   mapping: mappingData,
+      // }));
+      const parsedSections = sections.predictedBoxes.map((b) => ({
         id: b.id,
         color: 'rgba(0, 0, 255, 1)',
         width: b.width,
         height: b.height,
         xpath: b.xpath,
+        childrenXpaths: (b.layout.numCols > 1 || b.layout.numRows > 1)
+          ? b.children.map((child) => ({
+            xpath: child.xpath,
+            xpathWithDetails: child.xpathWithDetails,
+          })) : null,
         layout: b.layout,
         x: b.x,
         y: b.y,
         mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
-      })).forEach((section, idx) => {
-        const row = getMappingRow(section, idx + 1);
-        MAPPING_EDITOR_SECTIONS.appendChild(row);
-      });
+      // })).forEach((section, idx) => {
+        // const row = fragmentUI.getMappingRow(section, idx + 1);
+        // if (section.mapping === 'header') {
+        //   fragmentUI.addSectionRow(row, navFrgEl);
+        // } else if (section.mapping === 'footer') {
+        //   fragmentUI.addSectionRow(row, footerFrgEl);
+        // } else {
+        //   fragmentUI.addSectionRow(row, mainFrgEl);
+        // }
+        // // MAPPING_EDITOR_SECTIONS.appendChild(row);
+      }));
+      fragmentUI.setUIFragmentsFromSections(originalURL, parsedSections);
+      fragmentUI.saveSMCache();
     } else {
-      const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
-      if (mapping && mapping.url === originalURL) {
-        mappingData = mapping.mapping;
-        mapping.mapping.forEach((m) => {
-          const row = getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
-          MAPPING_EDITOR_SECTIONS.appendChild(row);
-        });
-      }
+      // add fragments
+      fragmentUI.setUIFragmentsFromCache(originalURL);
+
+      // const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
+      // if (mapping && mapping.url === originalURL) {
+      //   mappingData = mapping.mapping;
+      //   mapping.mapping.forEach((m) => {
+      //     const row = fragmentUI.getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
+      //     MAPPING_EDITOR_SECTIONS.appendChild(row);
+      //   });
+      // }
     }
+    fragmentUI.getSMData();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(`Error loading sections mapping data for url ${originalURL}`, e);
@@ -614,8 +507,9 @@ const detectSections = async (src, frame) => {
 
       if (!mappingData.find((m) => m.id === section.id)) {
         mappingData.push(section);
-        const row = getMappingRow(section, MAPPING_EDITOR_SECTIONS.children.length);
-        MAPPING_EDITOR_SECTIONS.appendChild(row);
+        const row = fragmentUI.getMappingRow(section, MAPPING_EDITOR_SECTIONS.children.length);
+        // MAPPING_EDITOR_SECTIONS.appendChild(row);
+        fragmentUI.addSectionRow(row);
       }
     }
   });
@@ -839,6 +733,7 @@ const attachListeners = () => {
   }));
 
   DETECT_BUTTON.addEventListener('click', (async () => {
+    // init UI
     initImportStatus();
     DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
     PREVIEW_CONTAINER.classList.remove('hidden');
@@ -916,6 +811,7 @@ const attachListeners = () => {
                     cursor: pointer;
                   }
                   .xp-overlay .xp-overlay-label {
+                    display: none;
                     position: absolute;
                     left: 0px;
                     top: 0px;
@@ -927,7 +823,9 @@ const attachListeners = () => {
                     text-transform: uppercase;
                     letter-spacing: 2px;
                   }
-            
+                  .xp-overlay:hover .xp-overlay-label {
+                    display: block;
+                  }            
                 `;
                 frame.contentDocument.head.appendChild(style);
 
@@ -1012,6 +910,9 @@ const attachListeners = () => {
       }
     };
     processNext();
+
+    fragmentUI.reset();
+    fragmentUI.setImporterConfig(config);
   }));
 
   IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
