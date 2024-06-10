@@ -96,6 +96,7 @@ export function addFragmentAccordionElement(path) {
   const deleteBtnEl = el.querySelector('#delete-frg');
 
   accItemNameTextfieldEl.addEventListener('input', (e) => {
+    el.dataset.path = e.target.value;
     el.querySelector('summary').textContent = e.target.value;
   });
 
