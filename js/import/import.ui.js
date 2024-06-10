@@ -500,7 +500,11 @@ const detectSections = async (src, frame) => {
 
   frame.contentDocument.body.addEventListener('click', (e) => {
     const overlayDiv = e.target; // .closest('.xp-overlay');
-    if (overlayDiv.dataset.boxData) {
+
+    // shift + click to remove overlay
+    if (e.shiftKey) {
+      overlayDiv.remove();
+    } else if (overlayDiv.dataset.boxData) {
       const section = JSON.parse(overlayDiv.dataset.boxData);
       section.color = overlayDiv.style.borderColor;
       section.mapping = 'unset';
