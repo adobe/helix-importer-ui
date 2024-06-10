@@ -151,7 +151,7 @@ export function initUIFromData(data) {
 
 export function init(config) {
   importerConfig = config;
-  ADD_FRAGMENT_BTN.addEventListener('click', addFragmentAccordionElement);
+  ADD_FRAGMENT_BTN.addEventListener('click', () => addFragmentAccordionElement());
 }
 
 export function reset() {
