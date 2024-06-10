@@ -256,6 +256,16 @@ export function getMappingRow(section, idx = 1) {
     }
   });
 
+  row.addEventListener('mouseleave', (e) => {
+    const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
+    if (target.nodeName === 'DIV') {
+      // const id = target.dataset.sectionId;
+      // const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
+      // div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+      selectedSectionProxy.id = null;
+    }
+  });
+
   return row;
 }
 
