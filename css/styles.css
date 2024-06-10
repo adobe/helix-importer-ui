@@ -239,7 +239,7 @@ section sp-tabs sp-tab-panel > div {
 }
 
 section .page-preview {
-  height: calc(100vh - 305px);
+  height: calc(100vh - 350px);
   margin-top: 12px;
   overflow: hidden;
 }
