@@ -45,7 +45,7 @@ const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker
 
 // manual mapping elements
 const DETECT_BUTTON = document.getElementById('detect-sections-button');
-const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
+// const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
 
 const REPORT_FILENAME = 'import-report.xlsx';
 
@@ -511,7 +511,7 @@ const detectSections = async (src, frame) => {
 
       if (!mappingData.find((m) => m.id === section.id)) {
         mappingData.push(section);
-        const row = fragmentUI.getMappingRow(section, MAPPING_EDITOR_SECTIONS.children.length);
+        const row = fragmentUI.getMappingRow(section /* , MAPPING_EDITOR_SECTIONS.children.length */);
         // MAPPING_EDITOR_SECTIONS.appendChild(row);
         fragmentUI.addSectionRow(row);
       }
@@ -741,7 +741,6 @@ const attachListeners = () => {
     initImportStatus();
     DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
     PREVIEW_CONTAINER.classList.remove('hidden');
-    MAPPING_EDITOR_SECTIONS.innerHTML = '';
 
     disableProcessButtons();
     toggleLoadingButton(DETECT_BUTTON);
