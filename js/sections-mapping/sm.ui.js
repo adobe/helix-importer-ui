@@ -175,8 +175,7 @@ export function init(config) {
 
 export function initOverlayClickHandler() {
   getContentFrame().contentDocument.body.addEventListener('click', (e) => {
-    const overlayDiv = e.target; // .closest('.xp-overlay');
-
+    const overlayDiv = e.target;
     // shift + click to remove overlay
     if (e.shiftKey) {
       overlayDiv.remove();
@@ -184,7 +183,6 @@ export function initOverlayClickHandler() {
       const section = JSON.parse(overlayDiv.dataset.boxData);
       section.color = overlayDiv.style.borderColor;
       section.mapping = 'unset';
-      // const row = fragmentUI.getMappingRow(section /* , MAPPING_EDITOR_SECTIONS.children.length */);
       addSectionRow(getMappingRow(section));
     }
   });
@@ -296,9 +294,6 @@ export function getMappingRow(section, idx = 1) {
   row.addEventListener('mouseleave', (e) => {
     const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     if (target.nodeName === 'DIV') {
-      // const id = target.dataset.sectionId;
-      // const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
-      // div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
       selectedSectionProxy.id = null;
     }
   });
@@ -339,6 +334,7 @@ function getMainFragmentPath(url) {
   }
   return mainPath;
 }
+
 export function setUIFragmentsFromCache(url) {
   const cache = getSMCache();
   const autoDetect = false;
