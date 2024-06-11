@@ -21,17 +21,23 @@ export function generateDocumentPath({ url }) {
   return WebImporter.FileUtils.sanitizePath(p);
 }
 
-function getSectionsMappingData(/* url */) {
+function getSectionsMappingData(url) {
   const item = localStorage.getItem('helix-importer-sections-mapping');
 
   if (item) {
     const mData = JSON.parse(item);
-    return mData.mapping;
-    // TODO - support multiple mappings
-    // const found = mData.find((m) => m.url === url);
-    // if (found) {
-    //   return found;
-    // }
+
+    // return manual mapping first
+    let found = mData.find((m) => m.url === url && m.autoDetect === false);
+    if (found) {
+      return found.mapping;
+    }
+
+    // return auto-detected mapping
+    found = mData.find((m) => m.url === url && m.autoDetect === true);
+    if (found) {
+      return found.mapping;
+    }
   }
 
   return null;
@@ -115,84 +121,118 @@ export default {
       throw new Error('No sections mapping data found, aborting');
     }
 
+    const importedElements = mapping.map((m) => {
+      const importedEl = {
+        element: null,
+        path: m.path,
+        report: {},
+      };
+
+      // build element!
+      const el = document.createElement('div');
+
+      m.sections.forEach((s) => {
+        const sEl = getElementByXpath(document, s.xpath);
+
+        if (!sEl) {
+          console.warn('element not found', s.section, s.xpath);
+          return;
+        }
+
+        const parser = parsers[s.mapping];
+        if (parser) {
+          const block = parser(sEl.cloneNode(true), window);
+          if (block) {
+            el.appendChild(block);
+          }
+        } else {
+          console.warn('parser not found', m.mapping);
+          el.appendChild(sEl.cloneNode(true));
+        }
+      });
+
+      importedEl.element = el;
+
+      return importedEl;
+    });
     /**
      * init elements
      */
 
-    const main = document.querySelector('main') || document.body;
-    const headerEl = document.createElement('div');
-    const footerEl = document.createElement('div');
-    const importedElements = [];
+    // const main = document.querySelector('main') || document.body;
+    // const headerEl = document.createElement('div');
+    // const footerEl = document.createElement('div');
+    // const importedElements = [];
 
-    /**
-     * parse sections mapping data
-     */
+    // /**
+    //  * parse sections mapping data
+    //  */
 
-    const importedContent = document.createElement('div');
+    // const importedContent = document.createElement('div');
 
-    // get dom element from xpath string
-    const elementsToParse = mapping.map((m) => getElementByXpath(document, m.xpath) || null);
+    // // get dom element from xpath string
+    // const elementsToParse = mapping.map((m) => getElementByXpath(document, m.xpath) || null);
 
-    mapping.forEach((m, idx) => {
-      // get dom element from xpath string
-      const el = elementsToParse[idx];
-      if (el) {
-        console.log('found element', m.section, el);
-        if (m.mapping === 'header') {
-          const block = parsers.header(el, window);
-          if (block) {
-            headerEl.appendChild(block);
-          }
-        } else if (m.mapping === 'footer') {
-          const block = parsers.footer(el, window);
-          if (block) {
-            footerEl.appendChild(block);
-          }
-        } else {
-          const parser = parsers[m.mapping];
-          if (parser) {
-            const block = parser(el, window);
-            if (block) {
-              importedContent.appendChild(block);
-            }
-          } else {
-            console.warn('parser not found', m.mapping);
-          }
-        }
-      } else {
-        console.warn('element not found', m.section, m.xpath);
-      }
-    });
+    // mapping.forEach((m, idx) => {
+    //   // get dom element from xpath string
+    //   const el = elementsToParse[idx];
+    //   if (el) {
+    //     console.log('found element', m.section, el);
+    //     if (m.mapping === 'header') {
+    //       const block = parsers.header(el, window);
+    //       if (block) {
+    //         headerEl.appendChild(block);
+    //       }
+    //     } else if (m.mapping === 'footer') {
+    //       const block = parsers.footer(el, window);
+    //       if (block) {
+    //         footerEl.appendChild(block);
+    //       }
+    //     } else {
+    //       const parser = parsers[m.mapping];
+    //       if (parser) {
+    //         const block = parser(el, window);
+    //         if (block) {
+    //           importedContent.appendChild(block);
+    //         }
+    //       } else {
+    //         console.warn('parser not found', m.mapping);
+    //       }
+    //     }
+    //   } else {
+    //     console.warn('element not found', m.section, m.xpath);
+    //   }
+    // });
 
-    /**
-     * cleanup to remove unwanted elements
-     */
+    // /**
+    //  * cleanup to remove unwanted elements
+    //  */
 
-    // adjust anchor links (https://github.com/adobe/helix-importer/issues/348)
-    if (main.querySelector('a[href^="#"]')) {
-      const u = new URL(params.originalURL);
-      const links = main.querySelectorAll('a[href^="#"]');
-      for (let i = 0; i < links.length; i += 1) {
-        const a = links[i];
-        a.href = `${u.pathname}${a.getAttribute('href')}`;
-      }
-    }
+    // // adjust anchor links (https://github.com/adobe/helix-importer/issues/348)
+    // if (main.querySelector('a[href^="#"]')) {
+    //   const u = new URL(params.originalURL);
+    //   const links = main.querySelectorAll('a[href^="#"]');
+    //   for (let i = 0; i < links.length; i += 1) {
+    //     const a = links[i];
+    //     a.href = `${u.pathname}${a.getAttribute('href')}`;
+    //   }
+    // }
 
-    // hidden elements
-    main.querySelectorAll('[data-hlx-imp-hidden-div]').forEach((el) => { el.remove(); });
+    // // hidden elements
+    // main.querySelectorAll('[data-hlx-imp-hidden-div]').forEach((el) => { el.remove(); });
 
-    WebImporter.DOMUtils.remove(main, [
-      'style',
-      'source',
-      'script',
-    ]);
+    // WebImporter.DOMUtils.remove(main, [
+    //   'style',
+    //   'source',
+    //   'script',
+    // ]);
 
-    main.querySelectorAll('div').forEach((el) => {
-      Object.keys(el.dataset).forEach((key) => delete el.dataset[key]);
-      for (let i = 0; i < el.attributes.length; i += 1) {
-        el.removeAttribute(el.attributes[i].name);
-      }
-    });
+    // main.querySelectorAll('div').forEach((el) => {
+    //   Object.keys(el.dataset).forEach((key) => delete el.dataset[key]);
+    //   for (let i = 0; i < el.attributes.length; i += 1) {
+    //     el.removeAttribute(el.attributes[i].name);
+    //   }
+    // });
 
     /**
      * return + custom report
@@ -201,25 +241,25 @@ export default {
     // // make every report value a string
     // Object.keys(IMPORT_REPORT).map(k => (IMPORT_REPORT[k] = '' + IMPORT_REPORT[k]));
 
-    importedElements.push({
-      element: importedContent,
-      path: generateDocumentPath({ document, url: params.originalURL }),
-      report: IMPORT_REPORT,
-    });
+    // importedElements.push({
+    //   element: importedContent,
+    //   path: generateDocumentPath({ document, url: params.originalURL }),
+    //   report: IMPORT_REPORT,
+    // });
 
-    if (headerEl.children.length > 0) {
-      importedElements.push({
-        element: headerEl,
-        path: '/nav',
-      });
-    }
+    // if (headerEl.children.length > 0) {
+    //   importedElements.push({
+    //     element: headerEl,
+    //     path: '/nav',
+    //   });
+    // }
 
-    if (footerEl.children.length > 0) {
-      importedElements.push({
-        element: footerEl,
-        path: '/footer',
-      });
-    }
+    // if (footerEl.children.length > 0) {
+    //   importedElements.push({
+    //     element: footerEl,
+    //     path: '/footer',
+    //   });
+    // }
 
     return importedElements;
   },
