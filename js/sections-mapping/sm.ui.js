@@ -1,3 +1,4 @@
+import alert from '../shared/alert.js';
 import { getElementByXpath } from '../shared/utils.js';
 
 const ADD_FRAGMENT_BTN = document.getElementById('sm-add-fragment');
@@ -11,6 +12,9 @@ const selectedFragment = { id: null };
 const selectedFragmentProxy = new Proxy(selectedFragment, {
   set: (target, key, value) => {
     const oldValue = target[key];
+    if (selectedFragment.id === value) {
+      return true;
+    }
     console.log(`${key} set from ${selectedFragment.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = SM_FRAGMENTS_CONTAINER.querySelector(`[data-id="${oldValue}"]`);
@@ -127,6 +131,8 @@ export function addFragmentAccordionElement(path) {
     }
   });
 
+  saveSMCache();
+
   return el;
 }
 
@@ -151,11 +157,23 @@ export function getSMData() {
 
 export function addSectionRow(row, target) {
   const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
-  const found = Array.from(rows).find((r) => r.dataset.sectionId === row.dataset.sectionId);
-  if (!found) {
-    const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
-    t.querySelector('.sm-fragment-sections').appendChild(row);
-    // getSMData();
+  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+  if (t) {
+    const found = Array.from(rows).find((r) => r.dataset.sectionId === row.dataset.sectionId);
+    if (!found) {
+      const sectionContainerEl = t.querySelector('.sm-fragment-sections');
+      const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
+      if (found2) {
+        sectionContainerEl.insertBefore(row, found2);
+      } else {
+        sectionContainerEl.append(row);
+      }
+      saveSMCache();
+    } else {
+      alert.warning(`Section already added to fragment ${t.dataset.path}`);
+    }
+  } else {
+    alert.warning('Please select a fragment first');
   }
 }
 
@@ -245,6 +263,7 @@ export function getMappingRow(section, idx = 1) {
   row.dataset.idx = idx;
   row.dataset.sectionId = section.id;
   row.dataset.xpath = section.xpath;
+  row.dataset.boxY = section.y;
   row.classList.add('row');
   row.dataset.boxData = JSON.stringify(section);
   if (row.dataset.childrenXpaths) {
