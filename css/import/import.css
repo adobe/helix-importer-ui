@@ -249,7 +249,7 @@
 
       padding: 1rem;
       border-left: 25px solid var(--spectrum-global-color-gray-100);
-      border-top: 1px solid var(--spectrum-global-color-gray-100);
+      border-top: 2px solid var(--spectrum-global-color-static-transparent-white-400);
 
       & .sm-fragment-content {
         display: flex;
