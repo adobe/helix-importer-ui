@@ -77,6 +77,13 @@ const setupUI = () => {
 
   SPTABS.selected = 'mapping-editor';
 
+  const searchParams = new URLSearchParams(window.top.location.search);
+  if (searchParams.get('url')) {
+    const f = window.document.querySelector('#import-url');
+    f.value = searchParams.get('url');
+    config.fields['import-url'] = searchParams.get('url');
+  }
+
   // init the fragment UI
   fragmentUI.init(config);
 };
