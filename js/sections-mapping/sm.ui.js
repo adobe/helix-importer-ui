@@ -25,6 +25,8 @@ const selectedFragmentProxy = new Proxy(selectedFragment, {
   },
 });
 
+const getContentFrame = () => document.querySelector('.import iframe');
+
 // selected section
 const selectedSection = { id: null };
 const selectedSectionProxy = new Proxy(selectedSection, {
@@ -43,12 +45,6 @@ const selectedSectionProxy = new Proxy(selectedSection, {
     return true;
   },
 });
-
-/**
- * UI functions
- */
-
-const getContentFrame = () => document.querySelector('.import iframe');
 
 export function createAddFragmentBtn(target) {
   const el = document.createElement('sp-button');
@@ -77,13 +73,31 @@ export function addFragmentAccordionElement(path) {
   <details>
     <summary>${label}</summary>
     <div class="sm-fragment-content">
-      <div>
-        <sp-field-label>Fragment Path (ex. /index)</sp-field-label>
-        <sp-textfield class="option-field" id="import-url" placeholder="${label}">
-          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
-        </sp-textfield>
+      <div class="sm-frg-settings-wrapper">
+        <h2>Settings</h2>
+        <div class="sm-frg-settings-container">
+          <div>
+            <sp-field-label>Fragment Path (ex. /index)</sp-field-label>
+            <sp-textfield class="option-field" id="import-url" placeholder="${label}">
+              <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+            </sp-textfield>
+          </div>
+        </div>
       </div>
-      <h3>Sections</h3>
+      <div class="sm-frg-sections-title">
+        <h2>Sections</h2>   
+        <sp-action-button size="s">
+            <sp-icon-info slot="icon"></sp-icon-info>
+            <sp-tooltip self-managed placement="bottom">
+                * To add sections to this fragment:<br>
+                  1. Select the fragment by clicking the gray rectangle on the left
+                  2. click overlays in the page preview.
+                <br><br>
+                * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
+            </sp-tooltip>
+        </sp-action-button>
+      </div>
+      <sp-divider size="m"></sp-divider>
       <div class="sm-fragment-sections">
       </div>
     </div>
@@ -136,9 +150,13 @@ export function getSMData() {
 }
 
 export function addSectionRow(row, target) {
-  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
-  t.querySelector('.sm-fragment-sections').appendChild(row);
-  // getSMData();
+  const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
+  const found = Array.from(rows).find((r) => r.dataset.sectionId === row.dataset.sectionId);
+  if (!found) {
+    const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+    t.querySelector('.sm-fragment-sections').appendChild(row);
+    // getSMData();
+  }
 }
 
 export function initUIFromData(data) {
@@ -153,6 +171,23 @@ export function initUIFromData(data) {
 export function init(config) {
   importerConfig = config;
   ADD_FRAGMENT_BTN.addEventListener('click', () => addFragmentAccordionElement());
+}
+
+export function initOverlayClickHandler() {
+  getContentFrame().contentDocument.body.addEventListener('click', (e) => {
+    const overlayDiv = e.target; // .closest('.xp-overlay');
+
+    // shift + click to remove overlay
+    if (e.shiftKey) {
+      overlayDiv.remove();
+    } else if (overlayDiv.dataset.boxData) {
+      const section = JSON.parse(overlayDiv.dataset.boxData);
+      section.color = overlayDiv.style.borderColor;
+      section.mapping = 'unset';
+      // const row = fragmentUI.getMappingRow(section /* , MAPPING_EDITOR_SECTIONS.children.length */);
+      addSectionRow(getMappingRow(section));
+    }
+  });
 }
 
 export function reset() {
@@ -202,10 +237,6 @@ function getBlockPicker(value = 'unset') {
 
   blockPicker.addEventListener('change', (e) => {
     saveSMCache();
-    // localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-    //   url: getContentFrame().contentWindow.location.href,
-    //   mapping: getSMData(),
-    // }));
   });
 
   return blockPicker;
@@ -224,10 +255,11 @@ export function getMappingRow(section, idx = 1) {
   row.innerHTML = `
   <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
   <h3 id="sec-id"><strong>${section.id}</strong></h3>
-  <h3 id="sec-layout" title="Cols x Rows">${section.layout.numCols} x ${section.layout.numRows}</h3>
+  <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${section.layout.numCols} x ${section.layout.numRows}</h3>
   `;
 
-  const mappingPicker = getBlockPicker(section.mapping);
+  const pickerMapping = section.mapping === 'unset' && section.layout.numCols > 1 ? 'columns' : section.mapping;
+  const mappingPicker = getBlockPicker(pickerMapping);
   mappingPicker.dataset.sectionId = section.id;
   mappingPicker.dataset.xpath = section.xpath;
 
@@ -235,6 +267,7 @@ export function getMappingRow(section, idx = 1) {
 
   const deleteBtn = document.createElement('sp-button');
   deleteBtn.setAttribute('variant', 'negative');
+  deleteBtn.setAttribute('size', 's');
   deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
   row.appendChild(deleteBtn);
   deleteBtn.addEventListener('click', (e) => {
@@ -247,9 +280,12 @@ export function getMappingRow(section, idx = 1) {
     }
   });
 
-  row.addEventListener('mouseenter', (e) => {
-    const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
-    if (target.nodeName === 'DIV') {
+  row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
+    console.log('mouseenter', e.currentTarget, e.target);
+
+    // const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
+    const target = e.target.closest('.row');
+    if (target) {
       const id = target.dataset.sectionId;
       const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
       div.scrollIntoViewIfNeeded({ behavior: 'smooth' });

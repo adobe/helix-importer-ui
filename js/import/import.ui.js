@@ -430,27 +430,11 @@ const detectSections = async (src, frame) => {
     footer: 'footer',
   };
 
-  let mappingData = [
-    // {
-    //   id: <sectionId>,
-    //   xpath: <xpath>,
-    //   mapping: <mapping>,
-    // },
-  ];
+  fragmentUI.initOverlayClickHandler();
 
   // look for existing mapping data
   try {
     if (config.fields['import-sm-auto-detect']) {
-      mappingData = sections.predictedBoxes.map((b, idx) => ({
-        id: b.id,
-        xpath: b.xpath,
-        layout: b.layout,
-        mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
-      }));
-      // localStorage.setItem('helix-importer-sections-mapping', JSON.stringify({
-      //   url: originalURL,
-      //   mapping: mappingData,
-      // }));
       const parsedSections = sections.predictedBoxes.map((b) => ({
         id: b.id,
         color: 'rgba(0, 0, 255, 1)',
@@ -466,57 +450,18 @@ const detectSections = async (src, frame) => {
         x: b.x,
         y: b.y,
         mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
-      // })).forEach((section, idx) => {
-        // const row = fragmentUI.getMappingRow(section, idx + 1);
-        // if (section.mapping === 'header') {
-        //   fragmentUI.addSectionRow(row, navFrgEl);
-        // } else if (section.mapping === 'footer') {
-        //   fragmentUI.addSectionRow(row, footerFrgEl);
-        // } else {
-        //   fragmentUI.addSectionRow(row, mainFrgEl);
-        // }
-        // // MAPPING_EDITOR_SECTIONS.appendChild(row);
       }));
       fragmentUI.setUIFragmentsFromSections(originalURL, parsedSections);
       fragmentUI.saveSMCache();
     } else {
       // add fragments
       fragmentUI.setUIFragmentsFromCache(originalURL);
-
-      // const mapping = JSON.parse(localStorage.getItem('helix-importer-sections-mapping'));
-      // if (mapping && mapping.url === originalURL) {
-      //   mappingData = mapping.mapping;
-      //   mapping.mapping.forEach((m) => {
-      //     const row = fragmentUI.getMappingRow(m, MAPPING_EDITOR_SECTIONS.children.length);
-      //     MAPPING_EDITOR_SECTIONS.appendChild(row);
-      //   });
-      // }
     }
     fragmentUI.getSMData();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(`Error loading sections mapping data for url ${originalURL}`, e);
   }
-
-  frame.contentDocument.body.addEventListener('click', (e) => {
-    const overlayDiv = e.target; // .closest('.xp-overlay');
-
-    // shift + click to remove overlay
-    if (e.shiftKey) {
-      overlayDiv.remove();
-    } else if (overlayDiv.dataset.boxData) {
-      const section = JSON.parse(overlayDiv.dataset.boxData);
-      section.color = overlayDiv.style.borderColor;
-      section.mapping = 'unset';
-
-      if (!mappingData.find((m) => m.id === section.id)) {
-        mappingData.push(section);
-        const row = fragmentUI.getMappingRow(section /* , MAPPING_EDITOR_SECTIONS.children.length */);
-        // MAPPING_EDITOR_SECTIONS.appendChild(row);
-        fragmentUI.addSectionRow(row);
-      }
-    }
-  });
 };
 
 const attachListeners = () => {

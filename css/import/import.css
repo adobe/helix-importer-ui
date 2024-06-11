@@ -196,33 +196,46 @@
 
 /* sections mapping */
 .import #mapping-editor {
-  & h3 {
-    font-family: monospace;
+
+  margin-top: 2rem;
+
+  & h2, h3 {
+    /* font-family: monospace; */
     margin: 0;
   }
 
   & .row {
-    padding: 1rem;
+    padding: .1rem;
     display: flex;
     flex-direction: row;
-    gap: 5rem;
+    gap: 1rem;
     align-items: center;
+    justify-content: space-between;
     cursor: pointer;
 
     & #sec-id {
+      background-color: rgba(255, 255, 255, 0.04);
+      padding: .4rem;
+      border-radius: .4rem;
       min-width: 200px;
-      height: 1rem;
       border: none;
     }
 
     & #sec-color {
-      min-width: 50px;
+      width: 1rem;
       height: 1rem;
       border: none;
     }
 
     & #sec-layout {
       flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: .2rem;
+
+      & * {
+        margin-top: 2px;
+      }
     }
   }
 
@@ -236,6 +249,7 @@
 
       padding: 1rem;
       border-left: 25px solid var(--spectrum-global-color-gray-100);
+      border-top: 1px solid var(--spectrum-global-color-gray-100);
 
       & .sm-fragment-content {
         display: flex;
@@ -248,6 +262,7 @@
       }
 
       & summary {
+        font-family: monospace;
         fill: white;
         cursor: pointer;
         padding: 0.5rem;
@@ -257,6 +272,10 @@
         font-size: x-large;
         pointer-events: auto;
 
+        & h2 {
+          margin: 0;
+        }
+
         &::marker {
           color: var(--spectrum-global-color-gray-100);
           pointer-events: auto;
@@ -265,16 +284,35 @@
         & text {
           pointer-events: auto;
         }
-        }
+      }
 
-        & #delete-frg {
-          position: relative;
-          top: 5px;
-          float: inline-end;
-          /* content: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2036%2036%22%20role%3D%22img%22%20fill%3D%22red%22%20height%3D%2224%22%20width%3D%2224%22%20aria-hidden%3D%22true%22%20aria-label%3D%22%22%3E%3Cpath%20d%3D%22M31.5%206H24V4a2%202%200%200%200-2-2H12a2%202%200%200%200-2%202v2H2.5a.5.5%200%200%200-.5.5v1a.5.5%200%200%200%20.5.5h2l2.413%2025.1a1%201%200%200%200%201%20.9h18.179a1%201%200%200%200%201-.9L29.5%208h2a.5.5%200%200%200%20.5-.5v-1a.5.5%200%200%200-.5-.5ZM11.065%2029A1%201%200%200%201%2010%2028.068l-1.071-16a1%201%200%201%201%202-.134l1.071%2016A1%201%200%200%201%2011.065%2029ZM18%2028a1%201%200%200%201-2%200V12a1%201%200%200%201%202%200Zm4-22H12V4h10Zm2%2022.068a1%201%200%201%201-2-.134l1.071-16a1%201%200%201%201%202%20.134Z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E');
-          float: right;
-          pointer-events: auto; */
+      & #delete-frg {
+        position: relative;
+        top: 5px;
+        float: inline-end;
+        /* content: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2036%2036%22%20role%3D%22img%22%20fill%3D%22red%22%20height%3D%2224%22%20width%3D%2224%22%20aria-hidden%3D%22true%22%20aria-label%3D%22%22%3E%3Cpath%20d%3D%22M31.5%206H24V4a2%202%200%200%200-2-2H12a2%202%200%200%200-2%202v2H2.5a.5.5%200%200%200-.5.5v1a.5.5%200%200%200%20.5.5h2l2.413%2025.1a1%201%200%200%200%201%20.9h18.179a1%201%200%200%200%201-.9L29.5%208h2a.5.5%200%200%200%20.5-.5v-1a.5.5%200%200%200-.5-.5ZM11.065%2029A1%201%200%200%201%2010%2028.068l-1.071-16a1%201%200%201%201%202-.134l1.071%2016A1%201%200%200%201%2011.065%2029ZM18%2028a1%201%200%200%201-2%200V12a1%201%200%200%201%202%200Zm4-22H12V4h10Zm2%2022.068a1%201%200%201%201-2-.134l1.071-16a1%201%200%201%201%202%20.134Z%22%3E%3C%2Fpath%3E%3C%2Fsvg%3E');
+        float: right;
+        pointer-events: auto; */
+      }
+
+      & .sm-frg-settings-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+        margin-left: 5rem;
+        margin-right: 5rem;
+      }
+
+      & .sm-frg-sections-title {
+        display: flex;
+        gap: 1rem;
+      }
+
+        & .sm-frg-settings-container {
+          flex-grow: 1;
         }
+      }
     }
   }
 }
