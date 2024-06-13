@@ -200,7 +200,7 @@ export function initOverlayClickHandler() {
     } else if (overlayDiv.dataset.boxData) {
       const section = JSON.parse(overlayDiv.dataset.boxData);
       section.color = overlayDiv.style.borderColor;
-      section.mapping = 'unset';
+      section.mapping = 'defaultContent';
       addSectionRow(getMappingRow(section));
     }
   });
@@ -217,7 +217,7 @@ export function setImporterConfig(config) {
   importerConfig = config;
 }
 
-function getBlockPicker(value = 'unset') {
+function getBlockPicker(value = 'defaultContent') {
   const blockPicker = document.createElement('sp-picker');
   blockPicker.setAttribute('label', 'Mapping ...');
   blockPicker.setAttribute('id', 'block-picker');
@@ -225,13 +225,10 @@ function getBlockPicker(value = 'unset') {
   [
     [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
     [
-      { label: 'Hero', attributes: { value: 'hero', disabled: true } },
+      { label: 'Cards', attributes: { value: 'cards' } },
+      { label: 'Carousel', attributes: { value: 'carousel' } },
       { label: 'Columns', attributes: { value: 'columns' } },
-      { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
-    ],
-    [
-      { label: 'Header', attributes: { value: 'header' } },
-      { label: 'Footer', attributes: { value: 'footer' } },
+      { label: 'Hero', attributes: { value: 'hero' } },
     ],
     [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
   ].forEach((group, idx, arr) => {

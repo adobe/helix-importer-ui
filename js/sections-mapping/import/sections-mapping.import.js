@@ -3,6 +3,7 @@
  */
 /* global WebImporter */
 
+import { getElementByXpath } from './import.utils.js';
 import * as parsers from './parsers/parsers.js';
 
 /**
@@ -41,17 +42,6 @@ function getSectionsMappingData(url) {
   }
 
   return null;
-}
-
-function getElementByXpath(document, path) {
-  return document.evaluate(
-    path,
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null,
-  )
-    .singleNodeValue;
 }
 
 /**
@@ -96,7 +86,7 @@ export default {
           div.setAttribute('data-hlx-imp-rect', JSON.stringify(domRect));
         }
         const bgImage = window.getComputedStyle(div).getPropertyValue('background-image');
-        if (bgImage && bgImage !== 'none') {
+        if (bgImage && bgImage !== 'none' && bgImage.includes('url(')) {
           div.setAttribute('data-hlx-background-image', bgImage);
         }
         const bgColor = window.getComputedStyle(div).getPropertyValue('background-color');
@@ -141,7 +131,10 @@ export default {
 
         const parser = parsers[s.mapping];
         if (parser) {
-          const block = parser(sEl.cloneNode(true), window);
+          const block = parser(sEl.cloneNode(true), {
+            mapping: s,
+            document,
+          });
           if (block) {
             el.appendChild(block);
           }
