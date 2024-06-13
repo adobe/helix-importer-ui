@@ -45,6 +45,7 @@ const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker
 
 // manual mapping elements
 const DETECT_BUTTON = document.getElementById('detect-sections-button');
+const DEMO_TOOL_MODE_SESSION_STORAGE_KEY = 'demo-tool-aem-importer-mode';
 // const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
 
 const REPORT_FILENAME = 'import-report.xlsx';
@@ -55,6 +56,8 @@ const importStatus = {};
 
 let isSaveLocal = false;
 let dirHandle = null;
+
+const doSaveFile = () => (dirHandle || sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY));
 
 const setupUI = () => {
   ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
@@ -77,11 +80,18 @@ const setupUI = () => {
 
   SPTABS.selected = 'mapping-editor';
 
-  const searchParams = new URLSearchParams(window.top.location.search);
-  if (searchParams.get('url')) {
-    const f = window.document.querySelector('#import-url');
-    f.value = searchParams.get('url');
-    config.fields['import-url'] = searchParams.get('url');
+  // check if in demo tool context
+  if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+    const searchParams = new URLSearchParams(window.top.location.search);
+    if (searchParams.get('url')) {
+      const f = window.document.querySelector('#import-url');
+      f.value = searchParams.get('url');
+      config.fields['import-url'] = searchParams.get('url');
+    }
+
+    const saveDocxCheckboxEl = document.getElementById('import-local-docx');
+    saveDocxCheckboxEl.setAttribute('checked', true);
+    saveDocxCheckboxEl.setAttribute('disabled', '');
   }
 
   // init the fragment UI
@@ -236,6 +246,17 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
+const saveBlob = (blob, fileName) => {
+  const sanitizedFilename = fileName.replace(/^\//, '').replaceAll(/[/\\]/gm, '###');
+  const a = document.createElement('a');
+  document.body.appendChild(a);
+  const url = window.URL.createObjectURL(blob);
+  a.href = url;
+  a.download = sanitizedFilename;
+  a.click();
+  window.URL.revokeObjectURL(url);
+};
+
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
   await asyncForEach(results, async ({
@@ -246,7 +267,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       path,
     };
 
-    if (isSaveLocal && dirHandle && (docx || html || md)) {
+    if (isSaveLocal && doSaveFile() && (docx || html || md)) {
       const files = [];
       if (config.fields['import-local-docx'] && docx) {
         files.push({ type: 'docx', filename, data: docx });
@@ -259,7 +280,11 @@ const postSuccessfulStep = async (results, originalURL) => {
       files.forEach((file) => {
         try {
           const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
-          saveFile(dirHandle, filePath, file.data);
+          if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+            saveBlob(new Blob([file.data]), filePath);
+          } else if (dirHandle) {
+            saveFile(dirHandle, filePath, file.data);
+          }
           data.file = filePath;
           data.status = 'Success';
         } catch (e) {
@@ -276,7 +301,7 @@ const postSuccessfulStep = async (results, originalURL) => {
           if (res.redirected) {
             data.status = 'Redirect';
             data.redirect = res.url;
-          } else if (dirHandle) {
+          } else if (doSaveFile()) {
             const blob = await res.blob();
             await saveFile(dirHandle, path, blob);
             data.file = path;
@@ -527,10 +552,12 @@ const attachListeners = () => {
     isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
     if (isSaveLocal && !dirHandle) {
       try {
-        dirHandle = await getDirectoryHandle();
-        await dirHandle.requestPermission({
-          mode: 'readwrite',
-        });
+        if (!sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+          dirHandle = await getDirectoryHandle();
+          await dirHandle.requestPermission({
+            mode: 'readwrite',
+          });
+        }
         FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         FOLDERNAME_SPAN.classList.remove('hidden');
       } catch (e) {
@@ -592,7 +619,7 @@ const attachListeners = () => {
               }
 
               const onLoad = async () => {
-                const includeDocx = !!dirHandle && config.fields['import-local-docx'];
+                const includeDocx = !!doSaveFile() && config.fields['import-local-docx'];
 
                 // sell.amazon.com has a frame-busting script!
                 frame.contentDocument.body.setAttribute('style', 'display:block !important');
@@ -830,7 +857,7 @@ const attachListeners = () => {
               current.removeEventListener('detection-complete', processNext);
 
               current.replaceWith(frame);
-            } else if (dirHandle) {
+            } else if (doSaveFile()) {
               const blob = await res.blob();
               const u = new URL(src);
               const path = WebImporter.FileUtils.sanitizePath(u.pathname);
