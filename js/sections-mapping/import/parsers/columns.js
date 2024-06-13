@@ -14,7 +14,7 @@ export default function columnsParser(el, { mapping, document }) {
       }
 
       if (colsCtr > numCols) {
-        colsCtr = 0;
+        colsCtr = 1;
         acc.push([[cEl]]);
       } else {
         const arr = acc[acc.length - 1];
@@ -28,6 +28,10 @@ export default function columnsParser(el, { mapping, document }) {
     },
     [],
   );
+
+  while (children[children.length - 1].length < numCols) {
+    children[children.length - 1].push(['']);
+  }
 
   const block = WebImporter.DOMUtils.createTable([
     ['columns'],
