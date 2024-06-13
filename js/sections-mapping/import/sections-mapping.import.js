@@ -121,7 +121,7 @@ export default {
       // build element!
       const el = document.createElement('div');
 
-      m.sections.forEach((s) => {
+      m.sections.forEach((s, idx) => {
         const sEl = getElementByXpath(document, s.xpath);
 
         if (!sEl) {
@@ -137,6 +137,9 @@ export default {
           });
           if (block) {
             el.appendChild(block);
+            if (idx < m.sections.length - 1) {
+              el.appendChild(document.createElement('hr'));
+            }
           }
         } else {
           console.warn('parser not found', m.mapping);
