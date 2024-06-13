@@ -225,8 +225,8 @@ function getBlockPicker(value = 'unset') {
   [
     [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
     [
-      { label: 'Hero', attributes: { value: 'hero', disabled: true } },
       { label: 'Columns', attributes: { value: 'columns' } },
+      { label: 'Hero', attributes: { value: 'hero' } },
       { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
     ],
     [
