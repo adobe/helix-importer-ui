@@ -141,7 +141,10 @@ export default {
 
         const parser = parsers[s.mapping];
         if (parser) {
-          const block = parser(sEl.cloneNode(true), window);
+          const block = parser(sEl.cloneNode(true), {
+            mapping,
+            window,
+          });
           if (block) {
             el.appendChild(block);
           }

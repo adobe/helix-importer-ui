@@ -1,17 +1,17 @@
 import { getNSiblingsDivs, getXPath } from '../import.utils.js';
 
-
-export default function columnsParser(el, window) {
+/* global WebImporter */
+export default function columnsParser(el, { mapping, window }) {
   const { document } = window;
 
-  el.querySelectorAll('script, style').forEach((e) => e.remove() );
+  el.querySelectorAll('script, style').forEach((e) => e.remove());
   el.querySelectorAll('div').forEach((e) => {
-    if (!e.querySelector('img, svg, iframe') && e.textContent.replaceAll('\n','').trim().length === 0) {
+    if (!e.querySelector('img, svg, iframe') && e.textContent.replaceAll('\n', '').trim().length === 0) {
       e.remove();
     }
   });
 
-  el.querySelectorAll('div').forEach(d => {
+  el.querySelectorAll('div').forEach((d) => {
     console.log(getXPath(d, document, true));
     console.log(d.getBoundingClientRect());
     if (d.dataset.hlxImpRect) {
@@ -23,10 +23,9 @@ export default function columnsParser(el, window) {
   const columns = getNSiblingsDivs(el, document, (n) => n > 1);
   if (columns) {
     const block = WebImporter.DOMUtils.createTable([
-      [`columns`],
+      ['columns'],
       columns,
     ], document);
-    // el.replaceWith(block);
     return block;
   }
 
