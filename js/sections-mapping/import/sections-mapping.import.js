@@ -3,6 +3,7 @@
  */
 /* global WebImporter */
 
+import { getElementByXpath } from './import.utils.js';
 import * as parsers from './parsers/parsers.js';
 
 /**
@@ -41,17 +42,6 @@ function getSectionsMappingData(url) {
   }
 
   return null;
-}
-
-function getElementByXpath(document, path) {
-  return document.evaluate(
-    path,
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null,
-  )
-    .singleNodeValue;
 }
 
 /**
