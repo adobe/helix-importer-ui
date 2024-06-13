@@ -309,11 +309,9 @@
         gap: 1rem;
       }
 
-        & .sm-frg-settings-container {
-          flex-grow: 1;
-        }
+      & .sm-frg-settings-container {
+        flex-grow: 1;
       }
     }
   }
 }
-
