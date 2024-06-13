@@ -129,6 +129,18 @@ export default {
           return;
         }
 
+        // make all links absolute
+        sEl.querySelectorAll('a').forEach((a) => {
+          if (a.href) {
+            // eslint-disable-next-line no-param-reassign
+            a.href = new URL(a.href, params.originalURL).href;
+          }
+        });
+
+        WebImporter.rules.transformBackgroundImages(sEl, document);
+        WebImporter.rules.adjustImageUrls(sEl, params.originalURL, params.originalURL);
+        // WebImporter.rules.convertIcons(el, document);
+
         const parser = parsers[s.mapping];
         if (parser) {
           const block = parser(sEl.cloneNode(true), {
@@ -157,14 +169,6 @@ export default {
         }
       }
 
-      // make all links absolute
-      el.querySelectorAll('a').forEach((a) => {
-        if (a.href) {
-          // eslint-disable-next-line no-param-reassign
-          a.href = new URL(a.href, params.originalURL).href;
-        }
-      });
-
       if (m.path !== '/nav' && m.path !== '/footer') {
         WebImporter.rules.createMetadata(el, document);
       }
@@ -177,10 +181,6 @@ export default {
           }
         });
       }
-
-      WebImporter.rules.transformBackgroundImages(el, document);
-      WebImporter.rules.adjustImageUrls(el, params.originalURL, params.originalURL);
-      // WebImporter.rules.convertIcons(el, document);
 
       importedEl.element = el;
 
