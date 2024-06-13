@@ -12,7 +12,7 @@
 /* global CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
-import { asyncForEach, getElementByXpath } from '../shared/utils.js';
+import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
