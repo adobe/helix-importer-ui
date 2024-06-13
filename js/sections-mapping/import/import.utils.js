@@ -1,3 +1,4 @@
+/* global WebImporter */
 export function getXPath(elm, document, withDetails = false) {
   const allNodes = document.getElementsByTagName('*');
   let segs;
@@ -72,4 +73,139 @@ export function getElementByXpath(document, path) {
     null,
   )
     .singleNodeValue;
+}
+
+// thanks to https://stackoverflow.com/questions/49974145/how-to-convert-rgba-to-hex-color-code-using-javascript
+export function RGBAToHexA(rgba, forceRemoveAlpha = false) {
+  return "#" + rgba.replace(/^rgba?\(|\s+|\)$/g, '') // Get's rgba / rgb string values
+    .split(',') // splits them at ","
+    .filter((string, index) => !forceRemoveAlpha || index !== 3)
+    .map(string => parseFloat(string)) // Converts them to numbers
+    .map((number, index) => index === 3 ? Math.round(number * 255) : number) // Converts alpha to 255 number
+    .map(number => number.toString(16)) // Converts numbers to hex
+    .map(string => string.length === 1 ? "0" + string : string) // Adds 0 when length of one number is 1
+    .join("") // Puts the array to togehter to a string
+}
+
+export function getBGColor(el, document, recurse = true) {
+  let bgcolor = el.querySelector('div[data-hlx-imp-bgcolor]')?.getAttribute('data-hlx-imp-bgcolor');
+
+  if (bgcolor) {
+    return RGBAToHexA(bgcolor);
+  }
+  // strategy 3
+  if (!bgcolor) {
+    const bgImage = el.querySelector('[data-hlx-background-image]')?.dataset?.hlxBackgroundImage;
+    if (bgImage && bgImage.trim().startsWith('linear-gradient')) {
+      let m;
+      if ((m = /(rgb\(\d+,\s*\d+,\s*\d+\))/.exec(bgImage)) !== null) {
+        console.log('linear-gradient', m);
+        bgcolor = RGBAToHexA(m[1]);
+      }
+    }
+  }
+  return bgcolor;
+}
+
+const BG_EXTRACTION_STRATEGIES = {
+  default: 'default',
+  image: 'image',
+  color: 'color',
+};
+
+/**
+ * @param {HTMLElement} el original element
+ * @param {Document} document original page document
+ * @param {Object} options extra options for the function
+ * @returns {string}
+ */
+export function extractBackground(el, document, options = {}) {
+  const opts = {
+    ...{ strategy: 'default', defaultBackground: '' },
+    ...options,
+  };
+
+  console.log('extractBackground options:', opts);
+
+  let background = null;
+
+  // strategy 1
+  if (
+    options.strategy === BG_EXTRACTION_STRATEGIES.image
+    || options.strategy === BG_EXTRACTION_STRATEGIES.default
+  ) {
+    try {
+      const bg = document.defaultView.getComputedStyle(el).getPropertyValue('background-image');
+      if (bg !== '' && !bg.includes('none') && bg.includes('url(')) {
+        background = WebImporter.DOMUtils.getImgFromBackground(el, document);
+      }
+      if (options.strategy === BG_EXTRACTION_STRATEGIES.image && background && background.src.includes('url')) {
+        console.log('extractBackground s1: background', background.src);
+        console.log(el);
+        return background;
+      }
+    } catch (e) {
+      // nothing to do
+    }
+  }
+
+  // strategy 2
+  if (!background) {
+    if (
+      options.strategy === BG_EXTRACTION_STRATEGIES.image
+      || options.strategy === BG_EXTRACTION_STRATEGIES.default
+    ) {
+      el.querySelectorAll('div').forEach((d) => {
+        // do not extract background image of a video
+        if (!d.querySelector('video')) {
+          try {
+            const bg = document.defaultView.getComputedStyle(d).getPropertyValue('background-image');
+            if (bg !== '' && !bg.includes('none') && bg.includes('url(')) {
+              background = WebImporter.DOMUtils.getImgFromBackground(d, document);
+            }
+          } catch (e) {
+            // nothing to do
+          }
+        }
+      });
+      if (options.strategy === BG_EXTRACTION_STRATEGIES.image && background) {
+        console.log('extractBackground s2: background', background.src);
+        return background;
+      }
+    }
+  }
+
+  // strategy 3 - use Helix Importer onLoad data marker 'data-hlx-background-image'
+  if (!background) {
+    const bgImage = el.querySelector('[data-hlx-background-image]')?.dataset?.hlxBackgroundImage;
+    if (bgImage) {
+      if (bgImage.trim().startsWith('url')) {
+        const img = WebImporter.DOMUtils.getImgFromBackground(el.querySelector('[data-hlx-background-image]'), document);
+        if (img) {
+          background = img;
+          if (options.strategy === BG_EXTRACTION_STRATEGIES.image && background) {
+            console.log('extractBackground s3: background', background.src);
+            return background;
+          }
+        }
+      }
+    }
+  }
+
+  if (background) {
+    console.log('extractBackground: background', background.src);
+    try {
+      const u = new URL(background.src);
+    } catch (e) {
+      console.warn('extractBackground: invalid URL', background.src);
+      background = null;
+    }
+  }
+
+  // fallback: use default
+  if (!background) {
+    background = opts.defaultBackground;
+  }
+
+  return background;
 }
