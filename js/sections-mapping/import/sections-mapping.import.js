@@ -144,6 +144,41 @@ export default {
         }
       });
 
+      // adjust anchor links
+      if (el.querySelector('a[href^="#"]')) {
+        const u = new URL(params.originalURL);
+        const links = el.querySelectorAll('a[href^="#"]');
+        for (let i = 0; i < links.length; i += 1) {
+          const a = links[i];
+          a.href = `${u.pathname}${a.getAttribute('href')}`;
+        }
+      }
+
+      // make all links absolute
+      el.querySelectorAll('a').forEach((a) => {
+        if (a.href) {
+          // eslint-disable-next-line no-param-reassign
+          a.href = new URL(a.href, params.originalURL).href;
+        }
+      });
+
+      if (m.path !== '/nav' && m.path !== '/footer') {
+        WebImporter.rules.createMetadata(el, document);
+      }
+
+      if (m.path === '/nav') {
+        el.querySelectorAll('ol,ul').forEach((l) => {
+          if (!l.parentElement.closest('ol,ul')) {
+            l.before(document.createElement('hr'));
+            l.after(document.createElement('hr'));
+          }
+        });
+      }
+
+      WebImporter.rules.transformBackgroundImages(el, document);
+      WebImporter.rules.adjustImageUrls(el, params.originalURL, params.originalURL);
+      // WebImporter.rules.convertIcons(el, document);
+
       importedEl.element = el;
 
       return importedEl;
