@@ -86,7 +86,7 @@ export default {
           div.setAttribute('data-hlx-imp-rect', JSON.stringify(domRect));
         }
         const bgImage = window.getComputedStyle(div).getPropertyValue('background-image');
-        if (bgImage && bgImage !== 'none') {
+        if (bgImage && bgImage !== 'none' && bgImage.includes('url(')) {
           div.setAttribute('data-hlx-background-image', bgImage);
         }
         const bgColor = window.getComputedStyle(div).getPropertyValue('background-color');
