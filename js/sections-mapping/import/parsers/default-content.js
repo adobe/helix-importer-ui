@@ -1,3 +1,3 @@
-export default function defaultContentParser(el, { mapping, window }) {
+export default function defaultContentParser(el, { mapping, document }) {
   return el;
 }

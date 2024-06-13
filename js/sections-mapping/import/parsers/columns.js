@@ -1,9 +1,7 @@
 import { getNSiblingsDivs, getXPath } from '../import.utils.js';
 
 /* global WebImporter */
-export default function columnsParser(el, { mapping, window }) {
-  const { document } = window;
-
+export default function columnsParser(el, { mapping, document }) {
   el.querySelectorAll('script, style').forEach((e) => e.remove());
   el.querySelectorAll('div').forEach((e) => {
     if (!e.querySelector('img, svg, iframe') && e.textContent.replaceAll('\n', '').trim().length === 0) {

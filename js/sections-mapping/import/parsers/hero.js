@@ -1,6 +1,5 @@
 /* globals WebImporter */
-export default function heroParser(el, { mapping, window }) {
-  const { document } = window;
+export default function heroParser(el, { mapping, document }) {
   return WebImporter.DOMUtils.createTable([
     ['hero'],
     [el],
