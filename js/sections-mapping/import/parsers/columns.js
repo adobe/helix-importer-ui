@@ -1,31 +1,37 @@
-import { getNSiblingsDivs, getXPath } from '../import.utils.js';
+import { getElementByXpath } from '../import.utils.js';
 
 /* global WebImporter */
 export default function columnsParser(el, { mapping, document }) {
-  el.querySelectorAll('script, style').forEach((e) => e.remove());
-  el.querySelectorAll('div').forEach((e) => {
-    if (!e.querySelector('img, svg, iframe') && e.textContent.replaceAll('\n', '').trim().length === 0) {
-      e.remove();
-    }
-  });
+  // layout
+  const { numCols } = mapping.layout;
+  let colsCtr = 0;
+  const children = mapping.childrenXpaths.reduce(
+    (acc, c) => {
+      colsCtr += 1;
+      const cEl = getElementByXpath(document, c.xpath);
+      if (!cEl) {
+        console.warn('element not found', c.section, c.xpath);
+      }
 
-  el.querySelectorAll('div').forEach((d) => {
-    console.log(getXPath(d, document, true));
-    console.log(d.getBoundingClientRect());
-    if (d.dataset.hlxImpRect) {
-      console.log(d.dataset.hlxImpRect);
-      console.log(JSON.parse(d.dataset.hlxImpRect));
-    }
-  });
+      if (colsCtr > numCols) {
+        colsCtr = 0;
+        acc.push([[cEl]]);
+      } else {
+        const arr = acc[acc.length - 1];
+        if (!arr) {
+          acc.push([[cEl]]);
+        } else {
+          arr.push([cEl]);
+        }
+      }
+      return acc;
+    },
+    [],
+  );
 
-  const columns = getNSiblingsDivs(el, document, (n) => n > 1);
-  if (columns) {
-    const block = WebImporter.DOMUtils.createTable([
-      ['columns'],
-      columns,
-    ], document);
-    return block;
-  }
-
-  return null;
+  const block = WebImporter.DOMUtils.createTable([
+    ['columns'],
+    ...children,
+  ], document);
+  return block;
 }
