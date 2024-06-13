@@ -225,15 +225,10 @@ function getBlockPicker(value = 'unset') {
   [
     [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
     [
-      { label: 'Carousel', attributes: { value: 'carousel' } },
       { label: 'Cards', attributes: { value: 'cards' } },
+      { label: 'Carousel', attributes: { value: 'carousel' } },
       { label: 'Columns', attributes: { value: 'columns' } },
       { label: 'Hero', attributes: { value: 'hero' } },
-      { label: 'Carousel', attributes: { value: 'carousel', disabled: true } },
-    ],
-    [
-      { label: 'Header', attributes: { value: 'header' } },
-      { label: 'Footer', attributes: { value: 'footer' } },
     ],
     [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
   ].forEach((group, idx, arr) => {
