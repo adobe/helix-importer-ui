@@ -1,5 +1,10 @@
+.idea
+*.iml
 .hlx/*
 coverage/*
 logs/*
 node_modules/*
 *.map
+importer/*
+# Files generated during build:dev:
+js/dist/vendors*.js

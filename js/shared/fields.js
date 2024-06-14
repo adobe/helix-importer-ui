@@ -8,7 +8,9 @@ const attachOptionFieldsListeners = (fields, parent) => {
     field.addEventListener('change', () => {
       const value = isCheckbox(field) ? field.checked : field.value;
       fields[field.id] = value;
-      localStorage.setItem(`option-field-${field.id}`, value);
+      if (!field.dataset.locked) {
+        localStorage.setItem(`option-field-${field.id}`, value);
+      }
     });
   });
 };
@@ -18,7 +20,7 @@ const initOptionFields = (parent) => {
   const optionFields = getOptionFields(parent);
   optionFields.forEach((field) => {
     const value = localStorage.getItem(`option-field-${field.id}`);
-    if (value !== null) {
+    if (!field.dataset.locked && value !== null) {
       if (isCheckbox(field)) {
         field.checked = (value === 'true');
       } else {

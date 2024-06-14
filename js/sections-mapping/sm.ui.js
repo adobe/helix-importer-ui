@@ -73,7 +73,10 @@ export function addFragmentAccordionElement(path) {
   el.className = 'sm-fragment';
   el.setAttribute('open', '');
   el.innerHTML = `
-  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button"><sp-icon-delete dir="ltr" aria-hidden="true"></sp-icon-delete></sp-button>
+  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
+    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
+  </sp-button>
+  <details>
   <details>
     <summary>${label}</summary>
     <div class="sm-fragment-content">
@@ -90,7 +93,7 @@ export function addFragmentAccordionElement(path) {
       </div>
       <div class="sm-frg-sections-title">
         <h2>Sections</h2>   
-        <sp-action-button size="s">
+        <sp-action-button size="s" quiet>
             <sp-icon-info slot="icon"></sp-icon-info>
             <sp-tooltip self-managed placement="bottom">
                 * To add sections to this fragment:<br>
@@ -188,7 +191,7 @@ export function initUIFromData(data) {
 
 export function init(config) {
   importerConfig = config;
-  ADD_FRAGMENT_BTN.addEventListener('click', () => addFragmentAccordionElement());
+  ADD_FRAGMENT_BTN?.addEventListener('click', () => addFragmentAccordionElement());
 }
 
 export function initOverlayClickHandler() {
@@ -223,7 +226,11 @@ function getBlockPicker(value = 'defaultContent') {
   blockPicker.setAttribute('id', 'block-picker');
 
   [
-    [{ label: 'Default Content', attributes: { value: 'defaultContent' } }],
+    [
+      { label: 'Root', attributes: { value: 'root' } },
+      { label: 'Exclude', attributes: { value: 'exclude' } },
+      { label: 'Default Content', attributes: { value: 'defaultContent' } },
+    ],
     [
       { label: 'Cards', attributes: { value: 'cards' } },
       { label: 'Carousel', attributes: { value: 'carousel' } },
@@ -282,7 +289,8 @@ export function getMappingRow(section, idx = 1) {
   const deleteBtn = document.createElement('sp-button');
   deleteBtn.setAttribute('variant', 'negative');
   deleteBtn.setAttribute('size', 's');
-  deleteBtn.innerHTML = '<sp-icon-delete></sp-icon-delete>';
+  deleteBtn.setAttribute('icon-only', '');
+  deleteBtn.innerHTML = '<sp-icon-delete slot="icon"></sp-icon-delete>';
   row.appendChild(deleteBtn);
   deleteBtn.addEventListener('click', (e) => {
     console.log(e);
@@ -380,4 +388,8 @@ export function setUIFragmentsFromSections(url, sections) {
       addSectionRow(row, mainFrgEl);
     }
   });
+}
+
+export function useImportRules() {
+  return importerConfig.fields['import-sm-use-rules'];
 }

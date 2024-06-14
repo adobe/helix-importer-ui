@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Import - Manual Mapping Tool</title>
+    <title>Import - Express Mapping Tool</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="./css/import/import.css" />
 
@@ -23,22 +23,17 @@
     <script src="./js/libs/vendors/detect/detect.min.js" type="module"></script>
 
     <script src="./js/dist/helix-importer.js"></script>
-
     <script src="./js/import/import.ui.js" type="module"></script>
-
-    <script>
-        localStorage.setItem('option-field-import-file-url', 'http://localhost:3001/tools/importer/helix-importer-ui/js/sections-mapping/import/sections-mapping.import.js');
-    </script>
 </head>
 
 <body class="tool">
     <sp-theme color="dark" scale="medium">
         <main>
             <!-- IMPORT SECTION -->
-            <section class="import">
+            <section class="import import-express">
                 <div class="section-title">
-                    <h2>Import - Manual Mapping</h2>
-                    <p>Manually map page sections to existing block.</p>
+                    <h2>Import - Express</h2>
+                    <p>Express import a site using section mapping.</p>
                     <sp-divider size="l"></sp-divider>
                 </div>
                 <div class="section-cols">
@@ -53,7 +48,7 @@
                                 <sp-accordion-item label="Load Options">
                                     <div>
                                         <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
-                                        <sp-textfield class="option-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/helix-importer-ui/js/sections-mapping/import/sections-mapping.import.js" disabled></sp-textfield>
+                                        <sp-textfield class="option-field" data-locked="true" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/helix-importer-ui/js/sections-mapping/sections-mapping.import.js" disabled></sp-textfield>
 
                                         <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
                                         <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
@@ -89,6 +84,9 @@
                                     <sp-checkbox class="option-field" id="import-sm-auto-detect">
                                         Auto detect blocks
                                     </sp-checkbox>
+                                    <sp-checkbox class="option-field" id="import-sm-use-rules">
+                                        Use import rules
+                                    </sp-checkbox>
                                 </sp-accordion-item>
                             </sp-accordion>
 
@@ -108,15 +106,14 @@
                         <sp-tabs selected="mapping-editor">
                             <sp-tab label="Mapping" value="mapping-editor"></sp-tab>
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
-                            <sp-tab label="Markdown" value="import-markdown"></sp-tab>
-                            <sp-tab label="HTML" value="import-html"></sp-tab>
+                            <sp-tab label="Rules" value="import-rules"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="mapping-editor">
                                 <sp-theme color="light" scale="medium">
                                     <div id="sm-controls">
                                         <sp-button-group>
                                             <sp-button id="sm-add-fragment">Add Fragment</sp-button>
-                                            <sp-action-button size="s">
+                                            <sp-action-button size="s" quiet>
                                                 <sp-icon-info slot="icon"></sp-icon-info>
                                                 <sp-tooltip self-managed placement="bottom">
                                                     A fragment is a part of the page that you want to put in a dedicated document.
@@ -137,23 +134,16 @@
                                     <div id="import-markdown-preview"></div>
                                 </sp-theme>
                             </sp-tab-panel>
-                            <sp-tab-panel value="import-markdown">
+                            <sp-tab-panel value="import-rules">
                                 <div data-panel="source">
                                     <div class="code">
-                                        <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                                    </div>
-                                </div>
-                            </sp-tab-panel>
-                            <sp-tab-panel value="import-html">
-                                <div data-panel="source">
-                                    <div class="code">
-                                        <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                        <textarea aria-label="Transform Source" id="import-rules-source" rows="4" cols="10"></textarea>
                                     </div>
                                 </div>
                             </sp-tab-panel>
                         </sp-tabs>
                         <sp-button-group>
-                            <sp-button id="import-downloadImportReport" class="hidden">Download import report</sp-button>
+                            <sp-button id="import-downloadTransformation">Download rules</sp-button>
                         </sp-button-group>
                     </div>
                 </div>

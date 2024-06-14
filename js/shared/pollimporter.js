@@ -9,6 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import TransformFactory from './transformfactory.js';
+
 /* global WebImporter */
 
 const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
@@ -58,11 +60,41 @@ export default class PollImporter {
 
   async #loadProjectTransform() {
     const $this = this;
+
+    if (!this.config.importFileURL) {
+      return false;
+    }
+
     const loadModule = async (projectTransformFileURL) => {
       const mod = await import(projectTransformFileURL);
       if (mod.default) {
-        $this.projectTransform = mod.default;
+        const isImportScript = Object.keys(mod.default).some((key) => key === 'transformDOM' || key === 'transform');
+        if (isImportScript) {
+          $this.projectTransform = mod.default;
+        } else {
+          // declarative transformation
+          $this.projectTransform = TransformFactory.create(mod.default);
+        }
       }
+    };
+
+    /**
+     * Create a project transform from a JSON object
+     *
+     * @param json Import configuration JSON
+     */
+    const loadJson = (json) => {
+      try {
+        const importCfg = JSON.parse(json);
+        $this.projectTransform = TransformFactory.create(importCfg);
+      } catch (err) {
+        console.error('Invalid transformation JSON');
+      }
+    };
+
+    const isJsonResponse = (response) => {
+      const contentType = response.headers.get('content-type');
+      return contentType && contentType.includes('application/json');
     };
 
     const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
@@ -73,7 +105,11 @@ export default class PollImporter {
 
       if (res.ok && body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
-        await loadModule(projectTransformFileURL);
+        if (isJsonResponse(res)) {
+          loadJson(body);
+        } else {
+          await loadModule(projectTransformFileURL);
+        }
         this.projectTransformFileURL = projectTransformFileURL;
         // eslint-disable-next-line no-console
         console.log(`Loaded importer file: ${projectTransformFileURL}`);
@@ -133,11 +169,16 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params,
+      includeDocx, url, document, params, transform,
     } = this.transformation;
 
-    // eslint-disable-next-line no-console
-    console.log(`Starting transformation of ${url} with import file: ${this.projectTransformFileURL || 'none (default)'}`);
+    if (transform) {
+      // eslint-disable-next-line no-console
+      console.log(`Starting express transformation of ${url}`);
+    } else {
+      // eslint-disable-next-line no-console
+      console.log(`Starting transformation of ${url} with import file: ${this.projectTransformFileURL || 'none (default)'}`);
+    }
     try {
       let results;
 
@@ -147,7 +188,7 @@ export default class PollImporter {
         const out = await WebImporter.html2docx(
           url,
           documentClone,
-          this.projectTransform,
+          transform || this.projectTransform,
           params,
         );
 
@@ -161,7 +202,7 @@ export default class PollImporter {
         const out = await WebImporter.html2md(
           url,
           documentClone,
-          this.projectTransform,
+          transform || this.projectTransform,
           params,
         );
         results = Array.isArray(out) ? out : [out];
@@ -191,17 +232,19 @@ export default class PollImporter {
     document,
     includeDocx = false,
     params,
+    transform,
   }) {
     this.transformation = {
       url,
       document,
       includeDocx,
       params,
+      transform,
     };
   }
 
   async setImportFileURL(importFileURL) {
-    this.config.importFileURL = importFileURL;
+    this.config.importFileURL = importFileURL || '';
     await this.#loadProjectTransform();
   }
 
