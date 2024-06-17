@@ -149,7 +149,7 @@ const loadResult = ({ md, html: outputHTML }, originalURL) => {
         });
     }
   } else {
-    ui.markdownEditor.setValue('No preview available.');
+    ui.markdownEditor?.setValue('No preview available.');
     if (ui.markdownPreview) {
       ui.markdownPreview.innerHTML = 'No preview available.';
     }
@@ -321,7 +321,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       if (config.fields['import-local-docx'] && docx) {
         files.push({ type: 'docx', filename, data: docx });
       } else if (config.fields['import-local-html'] && html) {
-        files.push({ type: 'html', filename: `${path}.html`, data: `<html lang="en"><head><title>Import</title></title></head>${html}</html>` });
+        files.push({ type: 'html', filename: `${path}.html`, data: `<html lang="en"><head></head>${html}</html>` });
       } else if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
       }

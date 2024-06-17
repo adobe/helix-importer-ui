@@ -227,8 +227,6 @@ function getBlockPicker(value = 'defaultContent') {
 
   [
     [
-      { label: 'Root', attributes: { value: 'root' } },
-      { label: 'Exclude', attributes: { value: 'exclude' } },
       { label: 'Default Content', attributes: { value: 'defaultContent' } },
     ],
     [
@@ -238,6 +236,7 @@ function getBlockPicker(value = 'defaultContent') {
       { label: 'Hero', attributes: { value: 'hero' } },
     ],
     [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
+    [{ label: 'Exclude', attributes: { value: 'exclude' } }],
   ].forEach((group, idx, arr) => {
     group.forEach((item) => {
       const mItem = document.createElement('sp-menu-item');

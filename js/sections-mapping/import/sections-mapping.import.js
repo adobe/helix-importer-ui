@@ -74,7 +74,7 @@ export default {
         keyCode: 27,
       }),
     );
-    document.elementFromPoint(0, 0).click();
+    document.elementFromPoint(0, 0)?.click();
 
     // mark hidden divs + add bounding client rect data to all "visible" divs
     document.querySelectorAll('div').forEach((div) => {
