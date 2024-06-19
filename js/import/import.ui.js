@@ -12,14 +12,25 @@
 /* global CodeMirror, html_beautify, ExcelJS, WebImporter */
 import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
-import { asyncForEach } from '../shared/utils.js';
+import { asyncForEach, getSectionsMappingData } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
-import { toggleLoadingButton } from '../shared/ui.js';
+import {
+  disableProcessButtons,
+  enableProcessButtons,
+  getContentFrame,
+  toggleLoadingButton,
+  IS_FRAGMENTS,
+  IS_EXPRESS,
+  DETECT_BUTTON,
+  IMPORT_BUTTON,
+  SPTABS,
+} from '../shared/ui.js';
 import * as fragmentUI from '../sections-mapping/sm.ui.js';
 import { buildTransformationRulesFromMapping } from './import.rules.js';
 import TransformFactory from '../shared/transformfactory.js';
-import { getSectionsMappingData } from '../sections-mapping/import/sections-mapping.import.js';
+import { detectSections } from '../sections-mapping/utils.js';
+import { preparePagePreview } from '../free-mapping/preview-selectors.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -27,7 +38,6 @@ const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 
 const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
-const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 
 // const SAVEASWORD_BUTTON = document.getElementById('saveAsWord');
 const FOLDERNAME_SPAN = document.getElementById('folder-name');
@@ -36,8 +46,6 @@ const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-ht
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
 const RULES_TEXTAREA = document.getElementById('import-rules-source');
-
-const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
 const DOWNLOAD_IMPORT_REPORT_BUTTON = document.getElementById('import-downloadImportReport');
 
@@ -48,8 +56,6 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 // manual mapping elements
-const IS_EXPRESS = document.querySelector('.import-express') !== null;
-const DETECT_BUTTON = document.getElementById('detect-sections-button');
 const DEMO_TOOL_MODE_SESSION_STORAGE_KEY = 'demo-tool-aem-importer-mode';
 // const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
 const DOWNLOAD_RULES_BUTTON = document.getElementById('import-downloadRules');
@@ -103,14 +109,14 @@ const setupUI = () => {
     );
   }
 
-  if (IS_EXPRESS) {
+  if (IS_FRAGMENTS || IS_EXPRESS) {
     SPTABS.selected = 'mapping-editor';
   } else {
     SPTABS.selected = 'import-preview';
   }
 
   // check if in demo tool context
-  if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+  if (IS_FRAGMENTS && sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
     const searchParams = new URLSearchParams(window.top.location.search);
     if (searchParams.get('url')) {
       const f = window.document.querySelector('#import-url');
@@ -257,24 +263,6 @@ const initImportStatus = () => {
   importStatus.total = 0;
   importStatus.rows = [];
   importStatus.extraCols = [];
-};
-
-const disableProcessButtons = () => {
-  if (IMPORT_BUTTON) {
-    IMPORT_BUTTON.disabled = true;
-  }
-  if (DETECT_BUTTON) {
-    DETECT_BUTTON.disabled = true;
-  }
-};
-
-const enableProcessButtons = () => {
-  if (IMPORT_BUTTON) {
-    IMPORT_BUTTON.disabled = false;
-  }
-  if (DETECT_BUTTON) {
-    DETECT_BUTTON.disabled = false;
-  }
 };
 
 const getProxyURLSetup = (url, origin) => {
@@ -464,8 +452,6 @@ const createImporter = () => {
   });
 };
 
-const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
-
 /**
  * After an import or detect operation, return the UI to the waiting state.  Ensure all listeners
  * are removed and the buttons are re-enabled.
@@ -485,6 +471,10 @@ const restoreWaitingUI = (processNext, finishingImport) => {
     toggleLoadingButton(IMPORT_BUTTON);
   } else {
     toggleLoadingButton(DETECT_BUTTON);
+  }
+
+  if (IS_EXPRESS) {
+    DETECT_BUTTON.click();
   }
 };
 
@@ -507,63 +497,6 @@ const smartScroll = async (window, reset = false) => {
   }
   if (reset) {
     window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
-  }
-};
-
-const detectSections = async (src, frame) => {
-  console.log('import-sm-auto-detect', config.fields['import-sm-auto-detect']);
-
-  const { originalURL } = frame.dataset;
-  const sections = await window.xp.detectSections(
-    frame.contentDocument.body,
-    frame.contentWindow.window,
-    {
-      autoDetect: config.fields['import-sm-auto-detect'],
-    },
-  );
-  console.log('sections', sections);
-
-  const DETECTED_SECTIONS_BLOCKS_MAPPING = {
-    unknown: 'defaultContent',
-    'default-content': 'defaultContent',
-    carousel: 'defaultContent',
-    hero: 'defaultContent',
-    columns: 'columns',
-    header: 'header',
-    footer: 'footer',
-  };
-
-  fragmentUI.initOverlayClickHandler();
-
-  // look for existing mapping data
-  try {
-    if (config.fields['import-sm-auto-detect']) {
-      const parsedSections = sections.predictedBoxes.map((b) => ({
-        id: b.id,
-        color: 'rgba(0, 0, 255, 1)',
-        width: b.width,
-        height: b.height,
-        xpath: b.xpath,
-        childrenXpaths: (b.layout.numCols > 1 || b.layout.numRows > 1)
-          ? b.children.map((child) => ({
-            xpath: child.xpath,
-            xpathWithDetails: child.xpathWithDetails,
-          })) : null,
-        layout: b.layout,
-        x: b.x,
-        y: b.y,
-        mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
-      }));
-      fragmentUI.setUIFragmentsFromSections(originalURL, parsedSections);
-      fragmentUI.saveSMCache();
-    } else {
-      // add fragments
-      fragmentUI.setUIFragmentsFromCache(originalURL);
-    }
-    fragmentUI.getSMData();
-  } catch (e) {
-    // eslint-disable-next-line no-console
-    console.error(`Error loading sections mapping data for url ${originalURL}`, e);
   }
 };
 
@@ -604,6 +537,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON?.addEventListener('click', (async () => {
     initImportStatus();
+    ui.markdownPreview.innerHTML = WebImporter.md2html('Running import. Please wait...');
 
     if (IS_BULK) {
       clearResultPanel();
@@ -716,7 +650,7 @@ const attachListeners = () => {
 
                   if (onLoadSucceeded) {
                     let transform = null;
-                    if (IS_EXPRESS && fragmentUI.useImportRules()) {
+                    if ((IS_FRAGMENTS && fragmentUI.useImportRules()) || IS_EXPRESS) {
                       // auto generate transformation config
                       const mapping = getSectionsMappingData(originalURL) || [];
                       transform = TransformFactory.create(
@@ -857,36 +791,38 @@ const attachListeners = () => {
                 // sell.amazon.com has a frame-busting script!
                 frame.contentDocument.body.setAttribute('style', 'display:block !important');
 
-                const style = frame.contentDocument.createElement('style');
-                style.innerHTML = `
-                  .xp-overlay:hover {
-                    box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
-                    background-color: rgba(0, 0, 125, 0.1) !important;
-                    cursor: pointer;
-                  }
-                  .xp-overlay.hover {
-                    box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
-                    background-color: rgba(0, 0, 125, 0.1) !important;
-                    cursor: pointer;
-                  }
-                  .xp-overlay .xp-overlay-label {
-                    display: none;
-                    position: absolute;
-                    left: 0px;
-                    top: 0px;
-                    background-color: rgba(0, 0, 255, 0.8);
-                    color: white;
-                    padding: 10px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    text-transform: uppercase;
-                    letter-spacing: 2px;
-                  }
-                  .xp-overlay:hover .xp-overlay-label {
-                    display: block;
-                  }            
-                `;
-                frame.contentDocument.head.appendChild(style);
+                if (IS_FRAGMENTS) {
+                  const style = frame.contentDocument.createElement('style');
+                  style.innerHTML = `
+                    .xp-overlay:hover {
+                      box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
+                      background-color: rgba(0, 0, 125, 0.1) !important;
+                      cursor: pointer;
+                    }
+                    .xp-overlay.hover {
+                      box-shadow: inset 0 0 75px rgba(0, 0, 125, 1);
+                      background-color: rgba(0, 0, 125, 0.1) !important;
+                      cursor: pointer;
+                    }
+                    .xp-overlay .xp-overlay-label {
+                      display: none;
+                      position: absolute;
+                      left: 0px;
+                      top: 0px;
+                      background-color: rgba(0, 0, 255, 0.8);
+                      color: white;
+                      padding: 10px;
+                      font-size: 18px;
+                      font-weight: bold;
+                      text-transform: uppercase;
+                      letter-spacing: 2px;
+                    }
+                    .xp-overlay:hover .xp-overlay-label {
+                      display: block;
+                    }            
+                  `;
+                  frame.contentDocument.head.appendChild(style);
+                }
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window, true);
@@ -908,16 +844,20 @@ const attachListeners = () => {
                   });
 
                   if (onLoadSucceeded) {
-                    await detectSections(src, frame);
+                    if (IS_FRAGMENTS) {
+                      await detectSections(src, frame, config.fields['import-sm-auto-detect']);
+                    } else if (IS_EXPRESS) {
+                      await preparePagePreview(src, frame);
+                    }
                   }
                 }
 
-                const event = new Event('detection-complete');
+                const event = new Event('load-and-processing-complete');
                 frame.dispatchEvent(event);
               };
 
               frame.addEventListener('load', onLoad);
-              frame.addEventListener('detection-complete', processNext);
+              frame.addEventListener('load-and-processing-complete', processNext);
 
               frame.dataset.originalURL = url;
               frame.dataset.replacedURL = src;
@@ -931,7 +871,7 @@ const attachListeners = () => {
 
               const current = getContentFrame();
               current.removeEventListener('load', onLoad);
-              current.removeEventListener('detection-complete', processNext);
+              current.removeEventListener('load-and-processing-complete', processNext);
 
               current.replaceWith(frame);
             } else if (doSaveFile()) {
@@ -970,8 +910,10 @@ const attachListeners = () => {
     };
     processNext();
 
-    fragmentUI.reset();
-    fragmentUI.setImporterConfig(config);
+    if (IS_FRAGMENTS) {
+      fragmentUI.reset();
+      fragmentUI.setImporterConfig(config);
+    }
   }));
 
   IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {

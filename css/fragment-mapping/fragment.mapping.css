@@ -1,0 +1,114 @@
+@import url("../libs/vendors/codemirror/codemirror.css");
+@import url("../libs/vendors/codemirror/base16-dark.css");
+
+/* Fragment-mapping styles */
+.import-fragments #mapping-editor {
+  margin-top: 2rem;
+  height: calc(100vh - 232px);
+
+  & h2, h3 {
+    /* font-family: monospace; */
+    margin: 0;
+  }
+
+  & .row {
+    padding: .1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+
+    & #sec-id {
+      background-color: rgba(255 255 255 / 4%);
+      padding: .4rem;
+      border-radius: .4rem;
+      min-width: 200px;
+      border: none;
+    }
+
+    & #sec-color {
+      width: 1rem;
+      height: 1rem;
+      border: none;
+    }
+
+    & #sec-layout {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: .2rem;
+
+      & * {
+        margin-top: 2px;
+      }
+    }
+  }
+
+  & #sm-fragments-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    & .sm-fragment {
+      padding: 1rem;
+      border-left: 25px solid var(--spectrum-global-color-gray-100);
+      border-top: 2px solid var(--spectrum-global-color-static-transparent-white-400);
+
+      & .sm-fragment-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      &.selected {
+       border-left-color: blueviolet;
+      }
+
+      & summary {
+        font-family: monospace;
+        fill: white;
+        cursor: pointer;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: x-large;
+        pointer-events: auto;
+
+        & h2 {
+          margin: 0;
+        }
+
+        &::marker {
+          color: var(--spectrum-global-color-gray-100);
+          pointer-events: auto;
+        }
+
+        & text {
+          pointer-events: auto;
+        }
+      }
+
+      & #delete-frg {
+        position: relative;
+        top: 5px;
+        float: inline-end;
+      }
+
+      & .sm-frg-settings-wrapper {
+        display: flex;
+        gap: 1rem;
+        margin: 1rem 5rem;
+      }
+
+      & .sm-frg-sections-title {
+        display: flex;
+        gap: 1rem;
+      }
+
+      & .sm-frg-settings-container {
+        flex-grow: 1;
+      }
+    }
+  }
+}

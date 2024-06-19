@@ -22,7 +22,7 @@ export function generateDocumentPath({ url }) {
   return WebImporter.FileUtils.sanitizePath(p);
 }
 
-export function getSectionsMappingData(url) {
+export function getFragmentSectionsMappingData(url) {
   const item = localStorage.getItem('helix-importer-sections-mapping');
 
   if (item) {
