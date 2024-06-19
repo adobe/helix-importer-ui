@@ -17,6 +17,9 @@ import PollImporter from '../shared/pollimporter.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
 import * as fragmentUI from '../sections-mapping/sm.ui.js';
+import { buildTransformationRulesFromMapping } from './import.rules.js';
+import TransformFactory from '../shared/transformfactory.js';
+import { getSectionsMappingData } from '../sections-mapping/import/sections-mapping.import.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -32,6 +35,7 @@ const FOLDERNAME_SPAN = document.getElementById('folder-name');
 const TRANSFORMED_HTML_TEXTAREA = document.getElementById('import-transformed-html');
 const MD_SOURCE_TEXTAREA = document.getElementById('import-markdown-source');
 const MD_PREVIEW_PANEL = document.getElementById('import-markdown-preview');
+const RULES_TEXTAREA = document.getElementById('import-rules-source');
 
 const SPTABS = document.querySelector(`${PARENT_SELECTOR} sp-tabs`);
 
@@ -44,9 +48,11 @@ const BULK_URLS_LIST = document.querySelector('#import-result ul');
 const IMPORT_FILE_PICKER_CONTAINER = document.getElementById('import-file-picker-container');
 
 // manual mapping elements
+const IS_EXPRESS = document.querySelector('.import-express') !== null;
 const DETECT_BUTTON = document.getElementById('detect-sections-button');
 const DEMO_TOOL_MODE_SESSION_STORAGE_KEY = 'demo-tool-aem-importer-mode';
 // const MAPPING_EDITOR_SECTIONS = document.getElementById('mapping-editor-sections');
+const DOWNLOAD_RULES_BUTTON = document.getElementById('import-downloadRules');
 
 const REPORT_FILENAME = 'import-report.xlsx';
 
@@ -60,25 +66,48 @@ let dirHandle = null;
 const doSaveFile = () => (dirHandle || sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY));
 
 const setupUI = () => {
-  ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
-    lineNumbers: true,
-    mode: 'htmlmixed',
-    theme: 'base16-dark',
-  });
-  ui.transformedEditor.setSize('100%', '100%');
+  if (TRANSFORMED_HTML_TEXTAREA) {
+    ui.transformedEditor = CodeMirror.fromTextArea(TRANSFORMED_HTML_TEXTAREA, {
+      lineNumbers: true,
+      mode: 'htmlmixed',
+      theme: 'base16-dark',
+    });
+    ui.transformedEditor.setSize('100%', '100%');
+  }
 
-  ui.markdownEditor = CodeMirror.fromTextArea(MD_SOURCE_TEXTAREA, {
-    lineNumbers: true,
-    mode: 'markdown',
-    theme: 'base16-dark',
-  });
-  ui.markdownEditor.setSize('100%', '100%');
+  if (MD_SOURCE_TEXTAREA) {
+    ui.markdownEditor = CodeMirror.fromTextArea(MD_SOURCE_TEXTAREA, {
+      lineNumbers: true,
+      mode: 'markdown',
+      theme: 'base16-dark',
+    });
+    ui.markdownEditor.setSize('100%', '100%');
+  }
 
-  ui.markdownPreview = MD_PREVIEW_PANEL;
-  // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
-  ui.markdownPreview.innerHTML = WebImporter.md2html('Run an import to see some markdown.');
+  if (RULES_TEXTAREA) {
+    ui.jsonEditor = CodeMirror.fromTextArea(RULES_TEXTAREA, {
+      lineNumbers: false,
+      mode: 'javascript',
+      json: true,
+      readOnly: true,
+      theme: 'base16-dark',
+    });
+    ui.jsonEditor.setSize('100%', '100%');
+  }
 
-  SPTABS.selected = 'mapping-editor';
+  if (MD_PREVIEW_PANEL) {
+    ui.markdownPreview = MD_PREVIEW_PANEL;
+    // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
+    ui.markdownPreview.innerHTML = WebImporter.md2html(
+      'Run an import to see some markdown.',
+    );
+  }
+
+  if (IS_EXPRESS) {
+    SPTABS.selected = 'mapping-editor';
+  } else {
+    SPTABS.selected = 'import-preview';
+  }
 
   // check if in demo tool context
   if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
@@ -98,28 +127,38 @@ const setupUI = () => {
   fragmentUI.init(config);
 };
 
-const loadResult = ({ md, html: outputHTML }) => {
+const loadResult = ({ md, html: outputHTML }, originalURL) => {
   if (outputHTML) {
-    ui.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
+    ui.transformedEditor?.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
       indent_size: '2',
     }));
   }
 
   if (md) {
-    ui.markdownEditor.setValue(md || '');
+    ui.markdownEditor?.setValue(md || '');
+    if (ui.markdownPreview) {
+      const mdPreview = WebImporter.md2html(md);
+      // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
+      ui.markdownPreview.innerHTML = mdPreview;
 
-    const mdPreview = WebImporter.md2html(md);
-    // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
-    ui.markdownPreview.innerHTML = mdPreview;
-
-    // remove existing classes and styles
-    Array.from(ui.markdownPreview.querySelectorAll('[class], [style]')).forEach((t) => {
-      t.removeAttribute('class');
-      t.removeAttribute('style');
-    });
+      // remove existing classes and styles
+      Array.from(ui.markdownPreview.querySelectorAll('[class], [style]'))
+        .forEach((t) => {
+          t.removeAttribute('class');
+          t.removeAttribute('style');
+        });
+    }
   } else {
-    ui.markdownEditor.setValue('No preview available.');
-    ui.markdownPreview.innerHTML = 'No preview available.';
+    ui.markdownEditor?.setValue('No preview available.');
+    if (ui.markdownPreview) {
+      ui.markdownPreview.innerHTML = 'No preview available.';
+    }
+  }
+
+  if (ui.jsonEditor) {
+    const mapping = getSectionsMappingData(originalURL) || [];
+    const transform = buildTransformationRulesFromMapping(mapping);
+    ui.jsonEditor.setValue(JSON.stringify(transform, null, 2));
   }
 };
 
@@ -157,11 +196,11 @@ const updateImporterUI = (results, originalURL) => {
         if (results.length > 0) {
           picker.addEventListener('change', (e) => {
             const r = results.filter((i) => i.path === e.target.value)[0];
-            loadResult(r);
+            loadResult(r, originalURL);
           });
         }
 
-        loadResult(results[0]);
+        loadResult(results[0], originalURL);
       } else if (status === 'redirect') {
         alert.warning(`No page imported: ${results[0].from} redirects to ${results[0].to}`);
       }
@@ -221,11 +260,21 @@ const initImportStatus = () => {
 };
 
 const disableProcessButtons = () => {
-  IMPORT_BUTTON.disabled = true;
+  if (IMPORT_BUTTON) {
+    IMPORT_BUTTON.disabled = true;
+  }
+  if (DETECT_BUTTON) {
+    DETECT_BUTTON.disabled = true;
+  }
 };
 
 const enableProcessButtons = () => {
-  IMPORT_BUTTON.disabled = false;
+  if (IMPORT_BUTTON) {
+    IMPORT_BUTTON.disabled = false;
+  }
+  if (DETECT_BUTTON) {
+    DETECT_BUTTON.disabled = false;
+  }
 };
 
 const getProxyURLSetup = (url, origin) => {
@@ -272,7 +321,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       if (config.fields['import-local-docx'] && docx) {
         files.push({ type: 'docx', filename, data: docx });
       } else if (config.fields['import-local-html'] && html) {
-        files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
+        files.push({ type: 'html', filename: `${path}.html`, data: `<html lang="en"><head></head>${html}</html>` });
       } else if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
       }
@@ -417,6 +466,28 @@ const createImporter = () => {
 
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
+/**
+ * After an import or detect operation, return the UI to the waiting state.  Ensure all listeners
+ * are removed and the buttons are re-enabled.
+ * @param processNext: function to remove 'transformation-complete' listener from
+ * @param finishingImport: whether an import is finishing (or detect)
+ */
+const restoreWaitingUI = (processNext, finishingImport) => {
+  if (processNext) {
+    getContentFrame().removeEventListener('transformation-complete', processNext);
+  }
+
+  DOWNLOAD_IMPORT_REPORT_BUTTON?.classList.remove('hidden');
+  DOWNLOAD_RULES_BUTTON?.classList.remove('hidden');
+  enableProcessButtons();
+
+  if (finishingImport) {
+    toggleLoadingButton(IMPORT_BUTTON);
+  } else {
+    toggleLoadingButton(DETECT_BUTTON);
+  }
+};
+
 const sleep = (ms) => new Promise(
   (resolve) => {
     setTimeout(resolve, ms);
@@ -531,7 +602,7 @@ const attachListeners = () => {
     await postImportStep();
   });
 
-  IMPORT_BUTTON.addEventListener('click', (async () => {
+  IMPORT_BUTTON?.addEventListener('click', (async () => {
     initImportStatus();
 
     if (IS_BULK) {
@@ -541,10 +612,9 @@ const attachListeners = () => {
       } else {
         PREVIEW_CONTAINER.classList.add('hidden');
       }
-      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
+      DOWNLOAD_IMPORT_REPORT_BUTTON?.classList.remove('hidden');
     } else {
-      DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
-      PREVIEW_CONTAINER.classList.remove('hidden');
+      DOWNLOAD_IMPORT_REPORT_BUTTON?.classList.add('hidden');
     }
 
     disableProcessButtons();
@@ -561,6 +631,7 @@ const attachListeners = () => {
         FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         FOLDERNAME_SPAN.classList.remove('hidden');
       } catch (e) {
+        restoreWaitingUI(null, true);
         // eslint-disable-next-line no-console
         console.log('No directory selected');
       }
@@ -644,11 +715,20 @@ const attachListeners = () => {
                   });
 
                   if (onLoadSucceeded) {
+                    let transform = null;
+                    if (IS_EXPRESS && fragmentUI.useImportRules()) {
+                      // auto generate transformation config
+                      const mapping = getSectionsMappingData(originalURL) || [];
+                      transform = TransformFactory.create(
+                        buildTransformationRulesFromMapping(mapping),
+                      );
+                    }
                     config.importer.setTransformationInput({
                       url: replacedURL,
                       document: frame.contentDocument,
                       includeDocx,
                       params: { originalURL },
+                      transform,
                     });
                     await config.importer.transform();
                   }
@@ -705,20 +785,17 @@ const attachListeners = () => {
           processNext();
         }
       } else {
-        const frame = getContentFrame();
-        frame.removeEventListener('transformation-complete', processNext);
-        DOWNLOAD_IMPORT_REPORT_BUTTON.classList.remove('hidden');
-        enableProcessButtons();
-        toggleLoadingButton(IMPORT_BUTTON);
+        // All importing is complete - reset UI.
+        restoreWaitingUI(processNext, true);
       }
     };
     processNext();
   }));
 
-  DETECT_BUTTON.addEventListener('click', (async () => {
+  DETECT_BUTTON?.addEventListener('click', (async () => {
     // init UI
     initImportStatus();
-    DOWNLOAD_IMPORT_REPORT_BUTTON.classList.add('hidden');
+    DOWNLOAD_IMPORT_REPORT_BUTTON?.classList.add('hidden');
     PREVIEW_CONTAINER.classList.remove('hidden');
 
     disableProcessButtons();
@@ -903,7 +980,7 @@ const attachListeners = () => {
     }
   });
 
-  DOWNLOAD_IMPORT_REPORT_BUTTON.addEventListener('click', (async () => {
+  DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
     const buffer = await getReport();
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
@@ -912,12 +989,31 @@ const attachListeners = () => {
     a.click();
   }));
 
+  DOWNLOAD_RULES_BUTTON?.addEventListener('click', async () => {
+    const originalURL = config.fields['import-url'];
+
+    const importDirHandle = await getDirectoryHandle();
+    await importDirHandle.requestPermission({
+      mode: 'readwrite',
+    });
+
+    const mapping = getSectionsMappingData(originalURL) || [];
+
+    // save sections mapping data for current URL
+    await saveFile(importDirHandle, 'import_mapping.json', JSON.stringify(mapping, null, 2));
+
+    // save import json
+    const transformCfg = buildTransformationRulesFromMapping(mapping);
+    await saveFile(importDirHandle, 'import.json', JSON.stringify(transformCfg, null, 2));
+  });
+
   if (SPTABS) {
     SPTABS.addEventListener('change', () => {
       // required for code to load in editors
       setTimeout(() => {
-        ui.transformedEditor.refresh();
-        ui.markdownEditor.refresh();
+        ui.transformedEditor?.refresh();
+        ui.markdownEditor?.refresh();
+        ui.jsonEditor?.refresh();
       }, 1);
     });
   }

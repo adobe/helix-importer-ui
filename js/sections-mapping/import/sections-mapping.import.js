@@ -22,7 +22,7 @@ export function generateDocumentPath({ url }) {
   return WebImporter.FileUtils.sanitizePath(p);
 }
 
-function getSectionsMappingData(url) {
+export function getSectionsMappingData(url) {
   const item = localStorage.getItem('helix-importer-sections-mapping');
 
   if (item) {
@@ -74,7 +74,7 @@ export default {
         keyCode: 27,
       }),
     );
-    document.elementFromPoint(0, 0).click();
+    document.elementFromPoint(0, 0)?.click();
 
     // mark hidden divs + add bounding client rect data to all "visible" divs
     document.querySelectorAll('div').forEach((div) => {

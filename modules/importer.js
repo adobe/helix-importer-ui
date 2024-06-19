@@ -20,6 +20,8 @@ import {
   html2md,
   rules,
 } from '@adobe/helix-importer';
+import Transformer from './transformer.js';
+import CellUtils from './cells.js';
 
 import docxStylesXML from '../resources/styles.xml';
 
@@ -84,6 +86,8 @@ async function html2docxWrapper(url, document, transformCfg, params) {
 export { default as md2html } from './md2html.js';
 
 export {
+  Transformer,
+  CellUtils,
   Blocks,
   DOMUtils,
   Loader,
