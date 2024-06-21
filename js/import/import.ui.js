@@ -30,7 +30,7 @@ import * as fragmentUI from '../sections-mapping/sm.ui.js';
 import { buildTransformationRulesFromMapping } from './import.rules.js';
 import TransformFactory from '../shared/transformfactory.js';
 import { detectSections } from '../sections-mapping/utils.js';
-import { preparePagePreview } from '../free-mapping/preview-selectors.js';
+import { preparePagePreview } from '../express/free-mapping/preview-selectors.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -568,6 +568,7 @@ const attachListeners = () => {
         restoreWaitingUI(null, true);
         // eslint-disable-next-line no-console
         console.log('No directory selected');
+        return;
       }
     }
 

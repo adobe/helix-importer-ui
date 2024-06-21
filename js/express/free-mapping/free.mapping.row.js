@@ -19,9 +19,9 @@ import {
   createElement,
   getCurrentURL,
   getElementByXpath,
-} from '../shared/utils.js';
-import { DEFAULT_COLORS } from '../shared/color.js';
-import { getContentFrame } from '../shared/ui.js';
+} from '../../shared/utils.js';
+import { DEFAULT_COLORS } from '../../shared/color.js';
+import { getContentFrame } from '../../shared/ui.js';
 
 const FREE_MAPPING_EDITOR_SECTIONS = document.getElementById('sm-free-mappings-editor');
 const FREE_MAPPING_EDITOR_HEADER = document.getElementById('sm-free-mappings-heading');
@@ -55,6 +55,9 @@ function handleMouseOverMappingRow(e, mouseIsOver) {
   const row = e.target.closest('.row');
   const frameForEvent = getContentFrame();
   const { xpath } = handleRowData(row);
+  if (!xpath) {
+    return;
+  }
   const previewTarget = getElementByXpath(frameForEvent.contentDocument, xpath);
   if (previewTarget) {
     let mappingColor = DEFAULT_COLORS[0];
@@ -165,13 +168,16 @@ function setSelectorHelperText(row, selector, frame) {
   // Manage warnings when the selector matches more than 1 element.
   let help = row.querySelector('sp-help-text');
   if (help === null && helperText.length > 0) {
-    const selectorField = row.querySelector('.mapping-selector-group');
-    help = selectorField.parentElement.appendChild(
-      createElement('sp-help-text', { slot: 'help-text' }),
-    );
+    help = createElement('sp-help-text', { slot: 'help-text' });
+    row.querySelector('.mapping-dom-precision').parentElement.after(help);
   }
   if (help !== null) {
-    help.innerText = helperText;
+    if (helperText.length > 0) {
+      help.innerText = helperText;
+      help.classList.remove('hidden');
+    } else {
+      help.classList.add('hidden');
+    }
   }
 }
 

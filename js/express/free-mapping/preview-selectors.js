@@ -9,12 +9,6 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
-import {
-  getXPath,
-  getCurrentURL,
-} from '../shared/utils.js';
-import { DEFAULT_COLORS } from '../shared/color.js';
 import {
   CLICK_CONTAINERS,
   createMappingRow,
@@ -28,7 +22,13 @@ import {
   isDefaultMapping,
   saveFreeSelectionsMapping,
 } from './free.mapping.utils.js';
-import { SPTABS } from '../shared/ui.js';
+import { initializeMetadata } from '../customization/metadata/metadata.js';
+import { DEFAULT_COLORS } from '../../shared/color.js';
+import { SPTABS } from '../../shared/ui.js';
+import {
+  getXPath,
+  getCurrentURL,
+} from '../../shared/utils.js';
 
 const TRUST_NODE_ID = true;
 
@@ -75,7 +75,7 @@ function handleBodyMouseClick(event) {
     while (containerTarget.children.length === 1 && CLICK_CONTAINERS.includes(tagName)) {
       // eslint-disable-next-line prefer-destructuring
       containerTarget = containerTarget.children[0];
-      if (TRUST_NODE_ID && containerTarget.getAttribute('id')) {
+      if (TRUST_NODE_ID && containerTarget.getAttribute('id') && containerTarget.tagName !== 'body') {
         break;
       }
     }
@@ -178,6 +178,8 @@ const preparePagePreview = async (src, frame) => {
       const row = createMappingRow(m, FREE_MAPPING_EDITOR_SECTIONS.children.length);
       FREE_MAPPING_EDITOR_SECTIONS.appendChild(row);
     });
+
+  initializeMetadata(originalURL);
 };
 
 export {
