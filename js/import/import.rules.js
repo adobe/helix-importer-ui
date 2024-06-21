@@ -12,6 +12,7 @@
 
 /* global WebImporter */
 import xPathToCss from '../libs/vendors/xpath-to-css/xpath-to-css.js';
+import { IS_FRAGMENTS } from '../shared/ui.js';
 
 const XPATH_BODY = '/html[1]/body[1]';
 const MAPPING_CONFIG_KEYS = ['name', 'value'];
@@ -37,11 +38,11 @@ const baseTransformRules = {
  * @return {string} CSS selector string
  */
 function buildSelector(mapping, basePath) {
-  // TODO: this logic may be able to be greatly simplified
   // when mapping object provides a fully curated selector string
   if (mapping.selector) {
     return mapping.selector.replace(/^body /, '');
   }
+  // domId & domClasses should no longer exist.
   if (mapping.domId) {
     return `#${mapping.domId}`;
   }
@@ -72,6 +73,7 @@ function buildBlockCellsFromMapping(mappingList = []) {
         cellValue.push([condition, value]);
       }
       if (typeof cellValue === 'string') {
+        // eslint-disable-next-line no-console
         console.warn(`Conditional cell value [${condition}] cannot be added to an existing cell that has an absolute value`);
       }
     } else if (condition) {
@@ -86,12 +88,22 @@ function buildBlockCellsFromMapping(mappingList = []) {
 /**
  * Build a transformation rules object from a section mapping
  */
-function buildTransformationRulesFromMapping(mappingFragments = []) {
+function buildTransformationRulesFromMapping(mappingRules = []) {
   const transformRules = JSON.parse(JSON.stringify(baseTransformRules));
+  if (!Array.isArray(mappingRules) || mappingRules.length === 0) {
+    return transformRules;
+  }
+  let mapping = mappingRules;
 
-  // TODO:  add support for fragments
-  const [frag1, frag2] = mappingFragments;
-  const { sections: mapping } = frag2 || frag1;
+  if (IS_FRAGMENTS) {
+    // TODO:  add support for fragments
+    const [frag1, frag2] = mappingRules;
+    const { sections: fragmentMapping } = frag2 || frag1;
+    if (fragmentMapping) {
+      mapping = fragmentMapping;
+    }
+  }
+
   if (!mapping) {
     return transformRules;
   }

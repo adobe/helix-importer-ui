@@ -10,6 +10,13 @@
  * governing permissions and limitations under the License.
  */
 
+const IS_EXPRESS = document.querySelector('.import-express') !== null;
+const IS_FRAGMENTS = document.querySelector('.import-fragments') !== null;
+const DETECT_BUTTON = document.getElementById('detect-sections-button');
+const IMPORT_BUTTON = document.getElementById('import-doimport-button');
+const SPTABS = document.querySelector('.import sp-tabs');
+const getContentFrame = () => document.querySelector('.import iframe');
+
 const toggleLoadingButton = (button) => {
   let circle = button.querySelector('sp-progress-circle');
   if (circle) {
@@ -23,7 +30,32 @@ const toggleLoadingButton = (button) => {
   }
 };
 
+const disableProcessButtons = () => {
+  if (IMPORT_BUTTON) {
+    IMPORT_BUTTON.disabled = true;
+  }
+  if (DETECT_BUTTON) {
+    DETECT_BUTTON.disabled = true;
+  }
+};
+
+const enableProcessButtons = () => {
+  if (IMPORT_BUTTON) {
+    IMPORT_BUTTON.disabled = false;
+  }
+  if (DETECT_BUTTON) {
+    DETECT_BUTTON.disabled = false;
+  }
+};
+
 export {
-  // eslint-disable-next-line import/prefer-default-export
+  disableProcessButtons,
+  enableProcessButtons,
+  getContentFrame,
   toggleLoadingButton,
+  DETECT_BUTTON,
+  IMPORT_BUTTON,
+  IS_EXPRESS,
+  IS_FRAGMENTS,
+  SPTABS,
 };

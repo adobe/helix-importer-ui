@@ -1,4 +1,5 @@
 import alert from '../shared/alert.js';
+import { getContentFrame } from '../shared/ui.js';
 import { getElementByXpath } from '../shared/utils.js';
 
 const ADD_FRAGMENT_BTN = document.getElementById('sm-add-fragment');
@@ -28,8 +29,6 @@ const selectedFragmentProxy = new Proxy(selectedFragment, {
     return true;
   },
 });
-
-const getContentFrame = () => document.querySelector('.import iframe');
 
 // selected section
 const selectedSection = { id: null };
