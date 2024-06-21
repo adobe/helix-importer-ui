@@ -89,14 +89,13 @@ export default function parse(el, { document, params: { cells } }) {
   }
 
   // begin automatic detection
-  el.querySelectorAll('div').forEach((d) => {
-    console.log(`XPATH: ${getXPath(d, document, true)}`);
-    console.log(d.getBoundingClientRect());
-    if (d.dataset.hlxImpRect) {
-      console.log(d.dataset.hlxImpRect);
-      console.log(JSON.parse(d.dataset.hlxImpRect));
-    }
-  });
+  // el.querySelectorAll('div').forEach((d) => {
+  //   console.log(`XPATH: ${getXPath(d, document, true)}`);
+  //   if (d.dataset.hlxImpRect) {
+  //     console.log(d.dataset.hlxImpRect);
+  //     console.log(JSON.parse(d.dataset.hlxImpRect));
+  //   }
+  // });
 
   return [getNSiblingsDivs(el, document, (n) => n > 1)];
 }
