@@ -3,7 +3,7 @@
  */
 /* global WebImporter */
 
-import { getElementByXpath } from './import.utils.js';
+import { getElementByXpath } from '../../shared/utils.js';
 import * as parsers from './parsers/parsers.js';
 
 /**
@@ -48,8 +48,8 @@ export function getFragmentSectionsMappingData(url) {
  * constants
  */
 
-// init sections report
-const IMPORT_REPORT = {};
+// // init sections report
+// const IMPORT_REPORT = {};
 
 /**
  * main
@@ -106,7 +106,7 @@ export default {
      * get sections mapping data
      */
 
-    const mapping = getSectionsMappingData(params.originalURL);
+    const mapping = getFragmentSectionsMappingData(params.originalURL);
     if (!mapping) {
       throw new Error('No sections mapping data found, aborting');
     }
