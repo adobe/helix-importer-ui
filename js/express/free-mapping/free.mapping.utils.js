@@ -61,6 +61,11 @@ function buildSelector(element) {
   if (!element) {
     return '';
   }
+
+  if (element.nodeName === 'BODY') {
+    return ':scope';
+  }
+
   const id = element.getAttribute('id');
   let classes = element?.className.trim().replaceAll(' ', '.');
   while (classes.includes('..')) {
@@ -79,10 +84,6 @@ function buildSelector(element) {
   }
   if (selector.length > 0) {
     return selector;
-  }
-
-  if (element.nodeName === 'BODY') {
-    return ':scope';
   }
 
   // Last resort - use the node name, and immediate child specification.

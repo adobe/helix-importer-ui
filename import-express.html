@@ -7,7 +7,8 @@
     <title>Import - Express Mapping Tool</title>
     <link rel="stylesheet" href="./css/styles.css" />
     <link rel="stylesheet" href="./css/import/import.css" />
-    <link rel="stylesheet" href="./css/free-mapping/free.mapping.css" />
+    <link rel="stylesheet" href="./css/express/free.mapping.css" />
+    <link rel="stylesheet" href="./css/express/customization.css" />
 
     <script src="./js/shared/log.js"></script>
     <script src="./js/dist/spectrum-web-components.js"></script>
@@ -34,7 +35,7 @@
             <section class="import import-express">
                 <div class="section-title">
                     <h2>Import - Express</h2>
-                    <p>Express import allows components on a page to be mapped to blocks, ideally applying to the customers whole site.</p>
+                    <p>Express import allows components on a page to be mapped to blocks, ideally applying to the whole source site.</p>
                     <sp-divider size="l"></sp-divider>
                 </div>
                 <div class="section-cols">
@@ -98,6 +99,7 @@
                     <div class="section-col">
                         <sp-tabs id="mapping-editor-tabs" selected="mapping-editor">
                             <sp-tab label="Mapping" value="mapping-editor"></sp-tab>
+                            <sp-tab label="Customization" value="block-customization" id="customization-trigger"></sp-tab>
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Rules" value="import-rules"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
@@ -125,23 +127,43 @@
                                         <div id="sm-free-mappings-editor">
                                         </div>
                                     </div>
-<!--                                    <sp-button-group>-->
-<!--                                        <sp-button id="mapping-exclude-hidden">Exclude non-visible-->
-<!--                                            <sp-tooltip self-managed placement="bottom">-->
-<!--                                                Add a mapping to exclude any element with a display style set to none.-->
-<!--                                            </sp-tooltip>-->
-<!--                                        </sp-button>-->
-<!--                                        <sp-button id="mapping-exclude-noscript">Exclude noscript-->
-<!--                                            <sp-tooltip self-managed placement="bottom">-->
-<!--                                                Add a mapping to exclude any 'noscript' element.-->
-<!--                                            </sp-tooltip>-->
-<!--                                        </sp-button>-->
-<!--                                        <sp-button id="mapping-exclude-modals">Exclude modals-->
-<!--                                            <sp-tooltip self-managed placement="bottom">-->
-<!--                                                Add a mapping to exclude any element with a class including 'modal'.-->
-<!--                                            </sp-tooltip>-->
-<!--                                        </sp-button>-->
-<!--                                    </sp-button-group>-->
+                                </sp-theme>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="block-customization">
+                                <sp-theme color="light" scale="medium">
+                                    <div id="sm-customization-details">
+                                        <h2 class="customization-click-detection-prompt">Load preview to activate customizations</h2>
+                                        <br />
+                                        <span>To map special cases, customizations are required. The following tabs will allow mappings to be done which
+                                        are not available following the 'Mapping' technique.</span>
+                                    </div>
+                                    <sp-tabs selected="metadata-editor-view" id="customization-editor-tabs" class="hidden">
+                                        <sp-tab label="Metadata" value="metadata-editor-view" id="first-customization-tab"></sp-tab>
+                                        <sp-tab-panel value="metadata-editor-view">
+                                            <sp-theme color="light" scale="medium">
+                                                <div id="metadata-editor" class="customization-editor">
+                                                    <div class="heading">
+                                                        <h1>Metadata Mappings</h1>
+                                                        <p>Add metadata block name/value pairs and the selector that the import should match to trigger their addition to the import any page.</p>
+                                                    </div>
+                                                    <div id="metadata-editor-rows">
+                                                        <div class="row header">
+                                                            <h2>Name</h2>
+                                                            <h2>Value</h2>
+                                                            <h2>Condition</h2>
+                                                            <div class="icon-aligner"></div>
+                                                        </div>
+                                                    </div>
+                                                    <sp-button id="metadata-editor-add" variant="accent" icon-only>
+                                                        <sp-icon-add-circle slot="icon"></sp-icon-add-circle>
+                                                        <sp-tooltip self-managed>
+                                                            Add a metadata row
+                                                        </sp-tooltip>
+                                                    </sp-button>
+                                                </div>
+                                            </sp-theme>
+                                        </sp-tab-panel>
+                                    </sp-tabs>
                                 </sp-theme>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-preview">

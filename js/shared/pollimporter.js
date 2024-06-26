@@ -88,6 +88,7 @@ export default class PollImporter {
         const importCfg = JSON.parse(json);
         $this.projectTransform = TransformFactory.create(importCfg);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Invalid transformation JSON');
       }
     };
