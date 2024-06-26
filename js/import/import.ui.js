@@ -561,8 +561,8 @@ const attachListeners = () => {
           await dirHandle.requestPermission({
             mode: 'readwrite',
           });
+          FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         }
-        FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         FOLDERNAME_SPAN.classList.remove('hidden');
       } catch (e) {
         restoreWaitingUI(null, true);
