@@ -19,11 +19,6 @@
     text-align: center;
   }
 
-/* Show 'up' button, or color swatch. */
-  & .row:first-child .mapping-inputs div:has(.move-up) {
-    display: none;
-  }
-
   & .row:not(:first-child) .mapping-color {
     display: none;
     visibility: collapse;
@@ -76,6 +71,11 @@
     & .mapping-dom-variants {
       min-width: 240px;
     }
+  }
+
+  /* Show 'up' button, or color swatch. */
+  & .row:first-child .mapping-inputs div:has(.move-up) {
+    display: none;
   }
 
   & .mapping-dom-selector {
