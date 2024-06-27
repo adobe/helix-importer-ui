@@ -959,6 +959,13 @@ const init = () => {
       f.value = searchParams.get('url');
     }
 
+    if (searchParams.get('enableJs')) {
+      const enableJsEl = document.getElementById('import-enable-js');
+      if (enableJsEl) {
+        enableJsEl.setAttribute('checked', true);
+      }
+    }
+
     if (searchParams.get('saveAs')) {
       const saveAsDocxCheckboxEl = document.getElementById('import-local-docx');
       if (saveAsDocxCheckboxEl) {
