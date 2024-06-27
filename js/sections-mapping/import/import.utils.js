@@ -1,6 +1,60 @@
 /* global WebImporter */
 
-import { getXPath } from '../../shared/utils.js';
+// courtesy of https://github.com/adobecom/aem-milo-migrations/blob/main/tools/importer/parsers/utils.js
+const getXPath = (elm, document, withDetails = false) => {
+  const allNodes = document.getElementsByTagName('*');
+  let segs;
+  // eslint-disable-next-line no-param-reassign
+  for (segs = []; elm && elm.nodeType === 1; elm = elm.parentNode) {
+    if (withDetails) {
+      if (elm.hasAttribute('id')) {
+        let uniqueIdCount = 0;
+        for (let n = 0; n < allNodes.length; n += 1) {
+          if (allNodes[n].hasAttribute('id') && allNodes[n].id === elm.id) {
+            uniqueIdCount += 1;
+          }
+          if (uniqueIdCount > 1) {
+            break;
+          }
+        }
+        if (uniqueIdCount === 1) {
+          segs.unshift(`id("${elm.getAttribute('id')}")`);
+          return segs.join('/');
+        }
+
+        segs.unshift(`${elm.localName.toLowerCase()}[@id="${elm.getAttribute('id')}"]`);
+      } else if (elm.hasAttribute('class')) {
+        segs.unshift(`${elm.localName.toLowerCase()}[@class="${[...elm.classList].join(' ').trim()}"]`);
+      }
+    } else {
+      let i;
+      let sib;
+      for (i = 1, sib = elm.previousSibling; sib; sib = sib.previousSibling) {
+        if (sib.localName === elm.localName) {
+          i += 1;
+        }
+      }
+      segs.unshift(`${elm.localName.toLowerCase()}[${i}]`);
+    }
+  }
+  return segs.length ? `/${segs.join('/')}` : null;
+};
+
+export function getElementByXpath(document, path) {
+  try {
+    return document.evaluate(
+      path,
+      document,
+      null,
+      XPathResult.FIRST_ORDERED_NODE_TYPE,
+      null,
+    ).singleNodeValue;
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('Error evaluating this xpath:', path, e);
+  }
+  return undefined;
+}
 
 // courtesy of https://github.com/adobecom/aem-milo-migrations/blob/main/tools/importer/parsers/utils.js
 export function getNSiblingsDivs(el, document, n = null) {
@@ -32,17 +86,6 @@ export function getNSiblingsDivs(el, document, n = null) {
   }
 
   return xpathGrouping[selectedXpathPattern] || null;
-}
-
-export function getElementByXpath(document, path) {
-  return document.evaluate(
-    path,
-    document,
-    null,
-    XPathResult.FIRST_ORDERED_NODE_TYPE,
-    null,
-  )
-    .singleNodeValue;
 }
 
 // thanks to https://stackoverflow.com/questions/49974145/how-to-convert-rgba-to-hex-color-code-using-javascript

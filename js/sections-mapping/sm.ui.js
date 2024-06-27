@@ -76,7 +76,6 @@ export function addFragmentAccordionElement(path) {
     <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
   </sp-button>
   <details>
-  <details>
     <summary>${label}</summary>
     <div class="sm-fragment-content">
       <div class="sm-frg-settings-wrapper">
