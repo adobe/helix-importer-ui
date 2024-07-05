@@ -299,6 +299,51 @@ export function getMappingRow(section, idx = 1) {
     }
   });
 
+  function saveScreenshot(imgData) {
+    // Convert base64 string to Blob
+    const byteString = atob(imgData.split(',')[1]);
+    const mimeString = imgData.split(',')[0].split(':')[1].split(';')[0];
+    const ab = new ArrayBuffer(byteString.length);
+    const ia = new Uint8Array(ab);
+    for (let i = 0; i < byteString.length; i++) {
+      ia[i] = byteString.charCodeAt(i);
+    }
+    const blob = new Blob([ab], { type: mimeString });
+
+    // Create a download link
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'screenshot.png';
+    document.body.appendChild(link);
+
+    // Trigger the download
+    link.click();
+
+    // Clean up
+    document.body.removeChild(link);
+  }
+
+
+  const screenshotBtn = document.createElement('sp-button');
+    screenshotBtn.setAttribute('variant', 'accent');
+    screenshotBtn.setAttribute('size', 's');
+    screenshotBtn.setAttribute('icon-only', '');
+    screenshotBtn.innerHTML = '<sp-icon-camera slot="icon"></sp-icon-camera>';
+    row.appendChild(screenshotBtn);
+    screenshotBtn.addEventListener('click', (e) => {
+        const rowEl = e.target.closest('.row');
+        if (rowEl) {
+            const div = getElementByXpath(getContentFrame().contentDocument, rowEl.dataset.xpath);
+            html2canvas(div, {
+              onrendered : function(canvas) {
+                var data = canvas.toDataURL();
+                window.open(data);
+              }
+          });
+        }
+    });
+
+
   row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
     console.log('mouseenter', e.currentTarget, e.target);
 
