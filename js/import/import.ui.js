@@ -31,6 +31,7 @@ import { buildTransformationRulesFromMapping } from './import.rules.js';
 import TransformFactory from '../shared/transformfactory.js';
 import { detectSections } from '../sections-mapping/utils.js';
 import { preparePagePreview } from '../express/free-mapping/preview-selectors.js';
+import {getFragmentSectionsMappingData} from '../sections-mapping/import/sections-mapping.import.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -691,6 +692,14 @@ const attachListeners = () => {
               updateImporterUI([{ status: 'success' }], url);
               processNext();
             }
+            const saveMappingsForAssistant = async () => {
+              const sectionsMapping = getFragmentSectionsMappingData(url);
+              if (sectionsMapping) {
+                console.log('Saving sections mapping to ', dirHandle);
+                saveFile(dirHandle, 'sections-mapping.json', JSON.stringify(sectionsMapping, null, 2));
+              }
+            };
+            await saveMappingsForAssistant();
 
             SPTABS.selected = 'import-preview';
           }
