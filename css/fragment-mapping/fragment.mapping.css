@@ -4,7 +4,6 @@
 /* Fragment-mapping styles */
 .import-fragments #mapping-editor {
   margin-top: 2rem;
-  height: calc(100vh - 232px);
 
   & h2, h3 {
     /* font-family: monospace; */
@@ -54,7 +53,7 @@
     & .sm-fragment {
       padding: 1rem;
       border-left: 25px solid var(--spectrum-global-color-gray-100);
-      border-top: 2px solid var(--spectrum-global-color-static-transparent-white-400);
+      border-top: 2px solid var(--spectrum-global-color-gray-100);
 
       & .sm-fragment-content {
         display: flex;

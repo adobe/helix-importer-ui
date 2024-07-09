@@ -115,20 +115,6 @@ const setupUI = () => {
     SPTABS.selected = 'import-preview';
   }
 
-  // check if in demo tool context
-  if (IS_FRAGMENTS && sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
-    const searchParams = new URLSearchParams(window.top.location.search);
-    if (searchParams.get('url')) {
-      const f = window.document.querySelector('#import-url');
-      f.value = searchParams.get('url');
-      config.fields['import-url'] = searchParams.get('url');
-    }
-
-    const saveDocxCheckboxEl = document.getElementById('import-local-docx');
-    saveDocxCheckboxEl.setAttribute('checked', true);
-    saveDocxCheckboxEl.setAttribute('disabled', '');
-  }
-
   // init the fragment UI
   fragmentUI.init(config);
 };
@@ -561,8 +547,8 @@ const attachListeners = () => {
           await dirHandle.requestPermission({
             mode: 'readwrite',
           });
+          FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         }
-        FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
         FOLDERNAME_SPAN.classList.remove('hidden');
       } catch (e) {
         restoreWaitingUI(null, true);
@@ -964,6 +950,34 @@ const attachListeners = () => {
 
 const init = () => {
   config.origin = window.location.origin;
+
+  // check if in demo tool context
+  if (IS_FRAGMENTS && sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+    const searchParams = new URLSearchParams(window.top.location.search);
+    if (searchParams.get('url')) {
+      const f = window.document.querySelector('#import-url');
+      f.value = searchParams.get('url');
+    }
+
+    if (searchParams.get('enableJs')) {
+      const enableJsEl = document.getElementById('import-enable-js');
+      if (enableJsEl) {
+        enableJsEl.setAttribute('checked', true);
+      }
+    }
+
+    if (searchParams.get('saveAs')) {
+      const saveAsDocxCheckboxEl = document.getElementById('import-local-docx');
+      if (saveAsDocxCheckboxEl) {
+        saveAsDocxCheckboxEl.removeAttribute('checked');
+      }
+      const saveAsCheckboxEl = document.getElementById(`import-local-${searchParams.get('saveAs')}`);
+      if (saveAsCheckboxEl) {
+        saveAsCheckboxEl.setAttribute('checked', true);
+      }
+    }
+  }
+
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   createImporter();
