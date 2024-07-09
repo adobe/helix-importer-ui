@@ -31,7 +31,7 @@ import { buildTransformationRulesFromMapping } from './import.rules.js';
 import TransformFactory from '../shared/transformfactory.js';
 import { detectSections } from '../sections-mapping/utils.js';
 import { preparePagePreview } from '../express/free-mapping/preview-selectors.js';
-import {getFragmentSectionsMappingData} from '../sections-mapping/import/sections-mapping.import.js';
+import { getFragmentSectionsMappingData } from '../sections-mapping/import/sections-mapping.import.js';
 
 const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -693,10 +693,14 @@ const attachListeners = () => {
               processNext();
             }
             const saveMappingsForAssistant = async () => {
-              const sectionsMapping = getFragmentSectionsMappingData(url);
+              let sectionsMapping = getFragmentSectionsMappingData(url);
+              sectionsMapping = JSON.stringify(sectionsMapping, null, 2)
               if (sectionsMapping) {
-                console.log('Saving sections mapping to ', dirHandle);
-                saveFile(dirHandle, 'sections-mapping.json', JSON.stringify(sectionsMapping, null, 2));
+                if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
+                  await saveBlob(new Blob([sectionsMapping]), 'sections-mapping.json');
+                } else if (dirHandle) {
+                  await saveFile(dirHandle, 'sections-mapping.json', sectionsMapping);
+                }
               }
             };
             await saveMappingsForAssistant();
