@@ -182,6 +182,20 @@ export default {
         });
       }
 
+      // cleanup unwanted attributes in element and children
+      function cleanUpAttributes(el) {
+        el.removeAttribute('class');
+        el.removeAttribute('style');
+        const attrNames = el.getAttributeNames().filter((a) => a.startsWith('data-') || a.startsWith('aria-'));
+        if (attrNames.length > 0) {
+          attrNames.forEach((a) => {
+            el.removeAttribute(a);
+          });
+        }
+      }
+      cleanUpAttributes(el);
+      el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
+      
       importedEl.element = el;
 
       return importedEl;
