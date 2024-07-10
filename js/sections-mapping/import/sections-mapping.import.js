@@ -169,9 +169,10 @@ export default {
         }
       }
 
-      if (m.path !== '/nav' && m.path !== '/footer') {
-        WebImporter.rules.createMetadata(el, document);
-      }
+      // do not create metadata for now as it may break when converting to JCR.
+      // if (m.path !== '/nav' && m.path !== '/footer') {
+      //   WebImporter.rules.createMetadata(el, document);
+      // }
 
       if (m.path === '/nav') {
         el.querySelectorAll('ol,ul').forEach((l) => {
