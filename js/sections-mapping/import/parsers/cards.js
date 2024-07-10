@@ -1,4 +1,4 @@
-import { getElementByXpath } from '../import.utils.js';
+import { extractBackground, getElementByXpath } from '../import.utils.js';
 
 /* globals WebImporter */
 export default function heroParser(el, { mapping, document }) {
@@ -9,7 +9,11 @@ export default function heroParser(el, { mapping, document }) {
       return;
     }
     const imgEl = document.createElement('div');
-    imgEl.appendChild(cEl.querySelector('img'));
+
+    const bgImg = extractBackground(cEl, document, { strategy: 'image' });
+    if (bgImg) {
+      imgEl.appendChild(bgImg);
+    }
 
     return [imgEl, cEl];
   });
