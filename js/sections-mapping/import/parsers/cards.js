@@ -8,6 +8,9 @@ export default function heroParser(el, { mapping, document }) {
       console.warn('element not found', c.section, c.xpath);
       return;
     }
+
+    cEl.querySelectorAll('[data-hlx-imp-hidden-div]').forEach((d) => d.remove());
+
     const imgEl = document.createElement('div');
 
     const bgImg = extractBackground(cEl, document, { strategy: 'image' });
