@@ -9,31 +9,35 @@
     <link rel="stylesheet" href="./css/import/import.css" />
 
     <script src="./js/shared/log.js"></script>
-    <script src="./js/dist/spectrum-web-components.js"></script>
-
+    <script src="./js/dist/spectrum-web-components.js" async></script>
+    <script src="./js/libs/vendors/html2canvas/html2canvas.min.js"></script>
     <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
     <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
     <script src="./js/dist/helix-importer.js"></script>
-
     <script src="./js/import/import.ui.js" type="module"></script>
 </head>
 
-<body class="tool">
+<body class="tool loading">
     <sp-theme color="dark" scale="medium">
         <!-- MAIN CONTENT -->
         <main>
             <!-- IMPORT BULK SECTION -->
             <section class="import import-bulk">
                 <div class="section-title">
-                    <h2>Import - Bulk</h2>
-                    <p>Use your import.js to bulk import a set of pages with the Import - Bulk.</p>
-                    <sp-divider size="l"></sp-divider>
+                    <div>
+                        <h2>Bulk Import</h2>
+                        <sp-contextual-help>
+                            <h3>Bulk Import</h3>
+                            <p>Use your import script to bulk import a list of pages.</p>
+                        </sp-contextual-help>
+                    </div>
                 </div>
+                <sp-divider size="l"></sp-divider>
                 <div class="section-cols">
                     <div class="section-col">
                         <form class="import-form">
                             <sp-field-label for="import-urls" required>URLs</sp-field-label>
-                            <sp-textfield class="option-field" multiline id="import-urls">
+                            <sp-textfield class="option-field" multiline grows id="import-urls">
                                 <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
                                 <sp-help-text slot="negative-help-text">Please enter valid URLs.</sp-help-text>
                             </sp-textfield>
@@ -78,19 +82,20 @@
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
-
                             <div id="import-action-row">
                                 <sp-button-group>
                                     <sp-button id="import-doimport-button">Import</sp-button>
                                 </sp-button-group>
-                                <p id="transformation-file-default" class="hidden">NOTE: The default transformation file is being used.</p>
+                                <div id="transformation-file-default" class="hidden">
+                                    <sp-status-light size="s" variant="notice">The default transformation file is being used</sp-status-light>
+                                </div>
                             </div>
                         </form>
                         <span id="folder-name"></span>
                         <div class="page-preview hidden">
                             <sp-divider size="s"></sp-divider>
                             <h3>Page preview</h3>
-                            <iframe id="import-content-frame" frameborder="0"></iframe>
+                            <iframe id="import-content-frame"></iframe>
                         </div>
                     </div>
                     <div class="section-col">
@@ -107,6 +112,7 @@
         </main>
         <div id="alert-container"></div>
     </sp-theme>
+    <script src="./js/swc_loader.js" type="module"></script>
 </body>
 
 </html>

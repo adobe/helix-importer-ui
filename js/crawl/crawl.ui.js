@@ -14,6 +14,8 @@ import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.
 import { loadURLsFromRobots } from '../shared/sitemap.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
+import { applyDefaultTheme } from '../shared/theme.js';
+import { registerRuntime } from '../shared/runtime.js';
 
 const PARENT_SELECTOR = '.crawl';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
@@ -370,7 +372,7 @@ const attachListeners = () => {
     // eslint-disable-next-line no-alert
     try {
       crawlStatus.urls = (await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
-        log: alert.success,
+        log: alert.info,
         sitemap: config.fields['crawl-sitemap-file'],
       })).filter((url) => {
         const u = new URL(url);
@@ -391,7 +393,7 @@ const attachListeners = () => {
         crawlStatus.rows.push(row);
       });
     } catch (e) {
-      alert.error(`Error while loading sitemaps and URLs from robots.txt: ${e}`);
+      alert.error('Error while loading sitemaps and URLs from robots.txt', e);
     }
 
     CRAWL_REPORT_BUTTON.classList.remove('hidden');
@@ -405,7 +407,9 @@ const init = () => {
   config.origin = window.location.origin;
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
+  applyDefaultTheme();
   attachListeners();
+  registerRuntime();
 };
 
 init();

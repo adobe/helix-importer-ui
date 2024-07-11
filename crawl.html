@@ -9,24 +9,27 @@
     <link rel="stylesheet" href="./css/crawl/crawl.css" />
 
     <script src="./js/shared/log.js"></script>
-    <script src="./js/dist/spectrum-web-components.js"></script>
-
-    <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
-
+    <script src="./js/dist/spectrum-web-components.js" async></script>
+    <script src="./js/libs/vendors/exceljs/exceljs.min.js" async></script>
     <script src="./js/crawl/crawl.ui.js" type="module"></script>
 </head>
 
-<body class="tool">
+<body class="tool loading">
     <sp-theme color="dark" scale="medium">
         <!-- MAIN CONTENT -->
         <main>
             <!-- CRAWL SECTION -->
             <section class="crawl">
                 <div class="section-title">
-                    <h2>Crawl</h2>
-                    <p>Use the Crawl tool to find URLs on a remote website using either the robots.txt or the sitemap.</p>
-                    <sp-divider size="l"></sp-divider>
+                    <div>
+                        <h2>Crawl</h2>
+                        <sp-contextual-help>
+                            <h3>Crawl</h3>
+                            <p>Find URLs on a remote website using either the robots.txt or the sitemap.</p>
+                        </sp-contextual-help>
+                    </div>
                 </div>
+                <sp-divider size="l"></sp-divider>
                 <div class="section-cols">
                     <div class="section-col">
                         <form class="crawl-form">
@@ -89,6 +92,7 @@
         </main>
         <div id="alert-container"></div>
     </sp-theme>
+    <script src="./js/swc_loader.js" type="module"></script>
 </body>
 
 </html>

@@ -9,22 +9,26 @@
     <link rel="stylesheet" href="./css/inspect/inspect.css" />
 
     <script src="./js/shared/log.js"></script>
-    <script src="./js/dist/spectrum-web-components.js"></script>
-
+    <script src="./js/dist/spectrum-web-components.js" async></script>
     <script src="./js/inspect/inspect.ui.js" type="module"></script>
 </head>
 
-<body class="tool">
+<body class="tool loading">
     <sp-theme color="dark" scale="medium">
         <!-- MAIN CONTENT -->
         <main>
             <!-- EYEDROPPER SECTION -->
             <section class="inspect">
                 <div class="section-title">
-                    <h2>Eyedropper</h2>
-                    <p>Use the Eyedropper to capture logo, fonts, sizes and colors and generate a AEM friendly CSS.</p>
-                    <sp-divider size="l"></sp-divider>
+                    <div>
+                        <h2>Eyedropper</h2>
+                        <sp-contextual-help>
+                            <h3>Eyedropper</h3>
+                            <p>Use the Eyedropper to capture logo, fonts, sizes and colors and generate AEM friendly CSS.</p>
+                        </sp-contextual-help>
+                    </div>
                 </div>
+                <sp-divider size="l"></sp-divider>
                 <div class="section-cols">
                     <div class="section-col">
                         <form class="inspect-form">
@@ -168,7 +172,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-    
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-xl">Heading font size XL</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-xl"></sp-textfield>
@@ -176,7 +180,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-    
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-l">Heading font size L</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-l"></sp-textfield>
@@ -184,7 +188,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-    
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-m">Heading font size M</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-m"></sp-textfield>
@@ -192,7 +196,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-    
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-s">Heading font size S</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-s"></sp-textfield>
@@ -200,7 +204,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-    
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-heading-font-size-xs">Heading font size XS</sp-field-label>
                                                 <sp-textfield id="inspect-heading-font-size-xs"></sp-textfield>
@@ -217,7 +221,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-        
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-xl">Body font size XL</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-xl"></sp-textfield>
@@ -225,7 +229,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-        
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-l">Body font size L</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-l"></sp-textfield>
@@ -233,7 +237,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-        
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-m">Body font size M</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-m"></sp-textfield>
@@ -241,7 +245,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-        
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-s">Body font size S</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-s"></sp-textfield>
@@ -249,7 +253,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-        
+
                                             <div class="field-group">
                                                 <sp-field-label for="inspect-body-font-size-xs">Body font size XS</sp-field-label>
                                                 <sp-textfield id="inspect-body-font-size-xs"></sp-textfield>
@@ -257,7 +261,7 @@
                                                     <sp-icon-anchor-select></sp-icon-anchor-select>
                                                 </sp-action-button>
                                             </div>
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -273,6 +277,7 @@
         </main>
         <div id="alert-container"></div>
     </sp-theme>
+    <script src="./js/swc_loader.js" type="module"></script>
 </body>
 
 </html>
