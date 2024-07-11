@@ -10,6 +10,35 @@ import * as parsers from './parsers/parsers.js';
  * functions
  */
 
+function getImgFromBackground(element, document, originalURL) {
+  const styleAttr = element?.getAttribute('style')?.split(';');
+  if (styleAttr) {
+    styleAttr.forEach((style) => {
+      const split = style.split(':');
+      const prop = split.shift();
+      const value = split.join(':').trim();
+      if (prop === 'background-image' || prop === 'background') {
+        const sanitizedValue = value.replace(/\s/g, '').split(',').shift();
+        const elStyle = element.style;
+        elStyle.backgroundImage = sanitizedValue;
+      }
+    });
+    const url = element.style.backgroundImage;
+    if (url && url.toLowerCase() !== 'none') {
+      let src = url.replace(/url\(/gm, '').replace(/'/gm, '').replace(/"/gm, '').replace(/\)/gm, '');
+      if (src.startsWith('http://localhost')) {
+        const u = new URL(src);
+        const newU = new URL(`${u.pathname}${u.search}${u.hash}`, originalURL);
+        src = newU.toString();
+      }
+      const img = document.createElement('img');
+      img.src = src;
+      return img;
+    }
+  }
+  return null;
+}
+
 export function generateDocumentPath({ url }) {
   let p = new URL(url).pathname;
   if (p.endsWith('/')) {
@@ -131,13 +160,28 @@ export default {
 
         // make all links absolute
         sEl.querySelectorAll('a').forEach((a) => {
-          if (a.href) {
+          const href = a.getAttribute('href');
+          if (href) {
             // eslint-disable-next-line no-param-reassign
-            a.href = new URL(a.href, params.originalURL).href;
+            a.href = new URL(href, params.originalURL).href;
           }
         });
 
-        WebImporter.rules.transformBackgroundImages(sEl, document);
+        sEl.querySelectorAll('img').forEach((img) => {
+          const src = img.getAttribute('src');
+          if (!src.startsWith('./') && !src.startsWith('/') && !src.startsWith('../') && !src.startsWith('http')) {
+            const u = new URL(src, params.originalURL);
+            img.src = u.toString();
+          }
+        });
+
+        sEl.querySelectorAll('[style*="background-image: url"], [style*="background: url"]').forEach((element) => {
+          const img = getImgFromBackground(element, document, params.originalURL);
+          element.prepend(img);
+          element.style.removeProperty('background-image');
+        });
+
+        // WebImporter.rules.transformBackgroundImages(sEl, document);
         WebImporter.rules.adjustImageUrls(sEl, params.originalURL, params.originalURL);
         // WebImporter.rules.convertIcons(el, document);
 
@@ -196,7 +240,7 @@ export default {
       }
       cleanUpAttributes(el);
       el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
-      
+
       importedEl.element = el;
 
       return importedEl;
