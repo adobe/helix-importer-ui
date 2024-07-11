@@ -149,6 +149,7 @@ export function getSMData() {
       fragment.sections.push({
         ...JSON.parse(section.dataset.boxData),
         mapping: section.querySelector('sp-picker').value,
+        variant: section.querySelector('sp-textfield').value,
       });
     });
     fragments.push(fragment);
@@ -282,6 +283,18 @@ export function getMappingRow(section, idx = 1) {
   mappingPicker.dataset.xpath = section.xpath;
 
   row.appendChild(mappingPicker);
+
+  // Add a react spectrum textbox for block variant name with placeholder "variant"
+  const variantPicker = document.createElement('sp-textfield');
+  variantPicker.setAttribute('label', 'Variant');
+  variantPicker.setAttribute('id', 'variant-picker');
+  variantPicker.setAttribute('placeholder', 'variant');
+  variantPicker.setAttribute('value', '');
+  variantPicker.addEventListener('input', (e) => {
+    section.variant = e.target.value;
+    saveSMCache();
+  });
+  row.appendChild(variantPicker);
 
   const deleteBtn = document.createElement('sp-button');
   deleteBtn.setAttribute('variant', 'negative');
