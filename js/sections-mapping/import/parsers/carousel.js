@@ -9,8 +9,10 @@ export default function carouselParser(el, { mapping, document }) {
       console.log('imgEl', imgEl);
       return [imgEl, c];
     });
+    const tableHeading = mapping.variant ? 'carousel-' + mapping.variant : 'carousel';
+
     const block = WebImporter.DOMUtils.createTable([
-      ['carousel'],
+      [tableHeading],
       ...children,
     ], document);
     return block;

@@ -21,8 +21,10 @@ export default function heroParser(el, { mapping, document }) {
     return [imgEl, cEl];
   });
 
+  const tableHeading = mapping.variant ? 'cards-' + mapping.variant : 'cards';
+
   return WebImporter.DOMUtils.createTable([
-    ['cards'],
+    [tableHeading],
     ...children,
   ], document);
 }

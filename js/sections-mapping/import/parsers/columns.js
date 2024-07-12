@@ -33,8 +33,10 @@ export default function columnsParser(el, { mapping, document }) {
     children[children.length - 1].push(['']);
   }
 
+  const tableHeading = mapping.variant ? 'columns-' + mapping.variant : 'columns';
+
   const block = WebImporter.DOMUtils.createTable([
-    ['columns'],
+    [tableHeading],
     ...children,
   ], document);
   return block;

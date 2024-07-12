@@ -8,8 +8,11 @@ export default function heroParser(el, { mapping, document }) {
   if (imgEl) {
     el.prepend(imgEl);
   }
+
+  const tableHeading = mapping.variant ? 'hero-' + mapping.variant : 'hero';
+
   return WebImporter.DOMUtils.createTable([
-    ['hero'],
+    [tableHeading],
     [el],
   ], document);
 }
