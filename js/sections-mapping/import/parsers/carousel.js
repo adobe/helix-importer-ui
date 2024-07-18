@@ -10,8 +10,10 @@ export default function carouselParser(el, { mapping, document }) {
       return [imgEl, c];
     });
 
+    const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'carousel';
+
     const block = WebImporter.DOMUtils.createTable([
-      ['carousel'],
+      [tableHeading],
       ...children,
     ], document);
     return block;

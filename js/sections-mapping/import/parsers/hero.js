@@ -9,8 +9,10 @@ export default function heroParser(el, { mapping, document }) {
     el.prepend(imgEl);
   }
 
+  const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'hero';
+
   return WebImporter.DOMUtils.createTable([
-    ['hero'],
+    [tableHeading],
     [el],
   ], document);
 }
