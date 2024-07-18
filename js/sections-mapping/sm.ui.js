@@ -149,6 +149,7 @@ export function getSMData() {
       fragment.sections.push({
         ...JSON.parse(section.dataset.boxData),
         mapping: section.querySelector('sp-picker').value,
+        customBlockName: section.querySelector('sp-textfield').value,
       });
     });
     fragments.push(fragment);
@@ -282,6 +283,18 @@ export function getMappingRow(section, idx = 1) {
   mappingPicker.dataset.xpath = section.xpath;
 
   row.appendChild(mappingPicker);
+
+  // Add a react-spectrum textbox for custom block name
+  const customBlockNamePicker = document.createElement('sp-textfield');
+  customBlockNamePicker.setAttribute('label', 'Custom Block Name');
+  customBlockNamePicker.setAttribute('id', 'custom-block-name');
+  customBlockNamePicker.setAttribute('placeholder', 'Custom Block Name');
+  customBlockNamePicker.setAttribute('value', '');
+  customBlockNamePicker.addEventListener('input', (e) => {
+    section.customBlockName = e.target.value;
+    saveSMCache();
+  });
+  row.appendChild(customBlockNamePicker);
 
   const deleteBtn = document.createElement('sp-button');
   deleteBtn.setAttribute('variant', 'negative');
