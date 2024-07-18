@@ -694,7 +694,7 @@ const attachListeners = () => {
             }
             const saveMappingsForAssistant = async () => {
               let sectionsMapping = getFragmentSectionsMappingData(url);
-              sectionsMapping = JSON.stringify(sectionsMapping, null, 2)
+              sectionsMapping = JSON.stringify(sectionsMapping, null, 2);
               if (sectionsMapping) {
                 if (sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
                   await saveBlob(new Blob([sectionsMapping]), 'sections-mapping.json');
