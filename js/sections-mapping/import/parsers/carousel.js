@@ -2,6 +2,8 @@ import { extractBackground, getNSiblingsDivs } from '../import.utils.js';
 
 /* global WebImporter */
 export default function carouselParser(el, { mapping, document }) {
+  const blockName = mapping.customBlockName || 'carousel';
+
   const columns = getNSiblingsDivs(el, document, (n) => n > 2);
   if (columns) {
     const children = columns.map((c) => {
@@ -10,10 +12,8 @@ export default function carouselParser(el, { mapping, document }) {
       return [imgEl, c];
     });
 
-    const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'carousel';
-
     const block = WebImporter.DOMUtils.createTable([
-      [tableHeading],
+      [blockName],
       ...children,
     ], document);
     return block;

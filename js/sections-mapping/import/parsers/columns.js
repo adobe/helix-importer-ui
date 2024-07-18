@@ -2,6 +2,8 @@ import { getElementByXpath } from '../import.utils.js';
 
 /* global WebImporter */
 export default function columnsParser(el, { mapping, document }) {
+  const blockName = mapping.customBlockName || 'columns';
+
   // layout
   const { numCols } = mapping.layout;
   let colsCtr = 0;
@@ -33,10 +35,8 @@ export default function columnsParser(el, { mapping, document }) {
     children[children.length - 1].push(['']);
   }
 
-    const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'columns';
-
   const block = WebImporter.DOMUtils.createTable([
-    [tableHeading],
+    [blockName],
     ...children,
   ], document);
   return block;

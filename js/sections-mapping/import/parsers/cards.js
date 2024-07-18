@@ -1,7 +1,9 @@
 import { extractBackground, getElementByXpath } from '../import.utils.js';
 
 /* globals WebImporter */
-export default function heroParser(el, { mapping, document }) {
+export default function cardsParser(el, { mapping, document }) {
+  const blockName = mapping.customBlockName || 'cards';
+
   const children = mapping.childrenXpaths.map((c) => {
     const cEl = getElementByXpath(document, c.xpath);
     if (!cEl) {
@@ -21,10 +23,8 @@ export default function heroParser(el, { mapping, document }) {
     return [imgEl, cEl];
   });
 
-  const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'cards';
-
   return WebImporter.DOMUtils.createTable([
-    [tableHeading],
+    [blockName],
     ...children,
   ], document);
 }
