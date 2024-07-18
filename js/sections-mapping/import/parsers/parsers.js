@@ -9,6 +9,7 @@ import defaultContent from './default-content.js';
 import header from './header.js';
 import hero from './hero.js';
 import footer from './footer.js';
+import sectionMetadata from './section-metadata.js';
 
 export {
   carousel,
@@ -18,4 +19,5 @@ export {
   header,
   hero,
   footer,
+  sectionMetadata,
 };

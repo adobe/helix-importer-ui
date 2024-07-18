@@ -233,6 +233,7 @@ function getBlockPicker(value = 'defaultContent') {
       { label: 'Carousel', attributes: { value: 'carousel' } },
       { label: 'Columns', attributes: { value: 'columns' } },
       { label: 'Hero', attributes: { value: 'hero' } },
+      { label: 'Section Metadata', attributes: { value: 'sectionMetadata' } },
     ],
     [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
     [{ label: 'Exclude', attributes: { value: 'exclude' } }],
