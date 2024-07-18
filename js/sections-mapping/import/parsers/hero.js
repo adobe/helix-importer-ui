@@ -1,18 +1,22 @@
 import { extractBackground } from '../import.utils.js';
 
 /* globals WebImporter */
-export default function heroParser(el, { mapping, document }) {
-  const imgEl = extractBackground(el, document, { strategy: 'image' }) || null;
-  console.log('imgEl', imgEl);
+export default function heroParser(el, { mapping, document, target }) {
+  const blockName = mapping.customBlockName || 'hero';
 
-  if (imgEl) {
+  const imgEl = extractBackground(el, document, { strategy: 'image' }) || el.querySelector('img') || null;
+
+  const cells = [
+    [blockName],
+  ];
+
+  if (target === 'crosswalk') {
+    cells.push([imgEl || '']);
+  } else if (imgEl) {
     el.prepend(imgEl);
   }
 
-  const tableHeading = mapping.customBlockName ? mapping.customBlockName : 'hero';
+  cells.push([el]);
 
-  return WebImporter.DOMUtils.createTable([
-    [tableHeading],
-    [el],
-  ], document);
+  return WebImporter.DOMUtils.createTable(cells, document);
 }

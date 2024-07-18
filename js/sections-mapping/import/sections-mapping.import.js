@@ -77,6 +77,11 @@ export function getFragmentSectionsMappingData(url) {
  * constants
  */
 
+const IMPORT_TARGETS = {
+  AEM_BLOCK_COLLECTION: 'aem-block-collection',
+  CROSSWALK: 'crosswalk',
+};
+
 // // init sections report
 // const IMPORT_REPORT = {};
 
@@ -140,6 +145,9 @@ export default {
       throw new Error('No sections mapping data found, aborting');
     }
 
+    // get import target
+    const target = sessionStorage.getItem("demo-tool-aem-importer-target") || IMPORT_TARGETS.AEM_BLOCK_COLLECTION;
+
     const importedElements = mapping.map((m) => {
       const importedEl = {
         element: null,
@@ -190,6 +198,7 @@ export default {
           const block = parser(sEl.cloneNode(true), {
             mapping: s,
             document,
+            target,
           });
           if (block) {
             el.appendChild(block);
