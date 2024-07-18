@@ -472,16 +472,19 @@ const sleep = (ms) => new Promise(
 );
 
 const smartScroll = async (window, reset = false) => {
-  let scrolledOffset = 0;
-  let maxLoops = 4;
-  while (maxLoops > 0 && window.document.body.scrollHeight > scrolledOffset) {
-    const scrollTo = window.document.body.scrollHeight;
-    window.scrollTo({ left: 0, top: scrollTo, behavior: 'smooth' });
-    scrolledOffset = scrollTo;
-    maxLoops -= 1;
-    // eslint-disable-next-line no-await-in-loop
-    await sleep(250);
-  }
+  await new Promise((resolve) => {
+    let totalHeight = 0;
+    const timer = setInterval(() => {
+      const { scrollHeight } = window.document.scrollingElement;
+      const distance = Math.max(100, scrollHeight / 20);
+      totalHeight += distance;
+      window.document.scrollingElement.scrollTo({ top: totalHeight, left: 0, behavior: 'instant' });
+      if (totalHeight >= scrollHeight) {
+        clearInterval(timer);
+        resolve(true);
+      }
+    }, 50);
+  });
   if (reset) {
     window.scrollTo({ left: 0, top: 0, behavior: 'instant' });
   }
@@ -626,6 +629,8 @@ const attachListeners = () => {
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window, true);
                 }
+
+                await sleep(config.fields['import-pageload-timeout'] || 100);
 
                 if (frame.contentDocument) {
                   const { originalURL, replacedURL } = frame.dataset;
@@ -824,15 +829,13 @@ const attachListeners = () => {
                   frame.contentDocument.head.appendChild(style);
                 }
 
-                if (config.fields['import-scroll-to-bottom']) {
-                  await smartScroll(frame.contentWindow.window, true);
-                }
-
-                await sleep(config.fields['import-pageload-timeout'] || 5000);
+                await sleep(config.fields['import-pageload-timeout'] || 100);
 
                 if (config.fields['import-scroll-to-bottom']) {
                   await smartScroll(frame.contentWindow.window, true);
                 }
+
+                await sleep(1000);
 
                 if (frame.contentDocument) {
                   const { originalURL, replacedURL } = frame.dataset;
