@@ -289,7 +289,7 @@ export function getMappingRow(section, idx = 1) {
   customBlockNamePicker.setAttribute('label', 'Custom Block Name');
   customBlockNamePicker.setAttribute('id', 'custom-block-name');
   customBlockNamePicker.setAttribute('placeholder', 'Custom Block Name');
-  customBlockNamePicker.setAttribute('value', '');
+  customBlockNamePicker.setAttribute('value', section.customBlockName || '');
   customBlockNamePicker.addEventListener('input', (e) => {
     section.customBlockName = e.target.value;
     saveSMCache();
