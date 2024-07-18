@@ -149,7 +149,7 @@ export function getSMData() {
       fragment.sections.push({
         ...JSON.parse(section.dataset.boxData),
         mapping: section.querySelector('sp-picker').value,
-        variant: section.querySelector('sp-textfield').value,
+        customBlockName: section.querySelector('sp-textfield').value,
       });
     });
     fragments.push(fragment);
@@ -284,17 +284,17 @@ export function getMappingRow(section, idx = 1) {
 
   row.appendChild(mappingPicker);
 
-  // Add a react spectrum textbox for block variant name with placeholder "variant"
-  const variantPicker = document.createElement('sp-textfield');
-  variantPicker.setAttribute('label', 'Variant');
-  variantPicker.setAttribute('id', 'variant-picker');
-  variantPicker.setAttribute('placeholder', 'variant');
-  variantPicker.setAttribute('value', '');
-  variantPicker.addEventListener('input', (e) => {
-    section.variant = e.target.value;
+  // Add a react-spectrum textbox for custom block name
+  const customBlockNamePicker = document.createElement('sp-textfield');
+  customBlockNamePicker.setAttribute('label', 'Custom Block Name');
+  customBlockNamePicker.setAttribute('id', 'custom-block-name');
+  customBlockNamePicker.setAttribute('placeholder', 'Custom Block Name');
+  customBlockNamePicker.setAttribute('value', '');
+  customBlockNamePicker.addEventListener('input', (e) => {
+    section.customBlockName = e.target.value;
     saveSMCache();
   });
-  row.appendChild(variantPicker);
+  row.appendChild(customBlockNamePicker);
 
   const deleteBtn = document.createElement('sp-button');
   deleteBtn.setAttribute('variant', 'negative');
