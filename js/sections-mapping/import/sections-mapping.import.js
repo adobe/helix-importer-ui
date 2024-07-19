@@ -257,6 +257,13 @@ export default {
       cleanUpAttributes(el);
       el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
 
+      WebImporter.DOMUtils.remove(el, [
+        'style',
+        'source',
+        'script',
+        'noscript',
+      ]);
+
       importedEl.element = el;
 
       return importedEl;
