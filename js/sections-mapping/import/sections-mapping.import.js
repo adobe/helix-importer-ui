@@ -111,6 +111,12 @@ export default {
     document.elementFromPoint(0, 0)?.click();
 
     // mark hidden divs + add bounding client rect data to all "visible" divs
+    document.querySelectorAll('*').forEach((el) => {
+      if (el && /none/i.test(window.getComputedStyle(el).display.trim())) {
+        el.setAttribute('data-hlx-imp-hidden-div', '');
+      }
+    });
+
     document.querySelectorAll('div').forEach((div) => {
       if (div && /none/i.test(window.getComputedStyle(div).display.trim())) {
         div.setAttribute('data-hlx-imp-hidden-div', '');
@@ -229,18 +235,109 @@ export default {
       // }
 
       if (m.path === '/nav') {
+        const containerEl = document.createElement('div');
+
+        const brandEl = document.createElement('div');
+        const bodyWidth = m.sections[0].width;
+        const originURL = new URL(params.originalURL).origin;
+
+        const brandLogoMapping = [
+          {
+            checkFn: (e) => e.querySelector('a > img'),
+            parseFn: (e, targetEl, x) => {
+              const parentEl = e.parentElement;
+              if (x < bodyWidth / 2) {
+                targetEl.append(e);
+                parentEl.append(document.createElement('br'));
+                targetEl.append(parentEl);
+                return true;
+              }
+              return false;
+            },
+          },
+          {
+            checkFn: (e) => e.querySelector('picture + br + a, image + br + a'),
+            parseFn: (e, targetEl, x) => {
+              if (x < bodyWidth / 2) {
+                targetEl.append(e);
+                return true;
+              }
+              return false;
+            },
+          },
+          {
+            checkFn: (e) => e.querySelector('img'),
+            parseFn: (e, targetEl, x) => {
+              if (x < bodyWidth / 2) {
+                targetEl.append(e);
+                return true;
+              }
+              return false;
+            },
+          },
+          {
+            checkFn: (e) => e.querySelector(`a[href="/"], a[href="${originURL}"], a[href="${originURL}/"]`),
+            parseFn: (e, targetEl, x) => {
+              if (x < bodyWidth / 2) {
+                targetEl.append(e);
+                return true;
+              }
+              return false;
+            },
+          },
+          {
+            checkFn: (e) => {
+              // fetch favicon
+              const resp = fetch('/favicon.ico');
+              if (resp && resp.status === 200) {
+                const logoEl = document.createElement('img');
+                logoEl.src = '/favicon.ico';
+                return logoEl;
+              }
+              return null;
+            },
+            parseFn: (e, targetEl) => {
+              targetEl.append(e);
+              return true;
+            },
+          },
+        ];
+
+        brandLogoMapping.some((m) => {
+          const logoEl = m.checkFn(el);
+          if (logoEl) {
+            let x = 0;
+            try {
+              x = JSON.parse(logoEl.closest('div')?.getAttribute('data-hlx-imp-rect')).x;
+            } catch (e) {
+              console.error('error', e);
+            }
+
+            return m.parseFn(logoEl, brandEl, x);
+          }
+          return false;
+        });
+
+        const navEl = document.createElement('div');
+        const listEl = el.querySelector('ol,ul');
+        if (listEl) {
+          navEl.append(document.createElement('hr'));
+          navEl.append(listEl);
+          navEl.append(document.createElement('hr'));
+        }
+
+        const toolsEl = document.createElement('div');
+        toolsEl.append(...el.children);
+
         let hiddenEl;
-        while (hiddenEl = el.querySelector('[data-hlx-imp-hidden-div]')) {
+        while (hiddenEl = toolsEl.querySelector('[data-hlx-imp-hidden-div]')) {
           hiddenEl.remove();
         }
 
-        const navEl = el.querySelector('ol,ul');
-        if (navEl) {
-          if (!navEl.parentElement.closest('ol,ul')) {
-            navEl.before(document.createElement('hr'));
-            navEl.after(document.createElement('hr'));
-          }
-        }
+        containerEl.append(brandEl);
+        containerEl.append(navEl);
+        containerEl.append(toolsEl);
+        el.append(containerEl);
       }
 
       // cleanup unwanted attributes in element and children
