@@ -229,12 +229,18 @@ export default {
       // }
 
       if (m.path === '/nav') {
-        el.querySelectorAll('ol,ul').forEach((l) => {
-          if (!l.parentElement.closest('ol,ul')) {
-            l.before(document.createElement('hr'));
-            l.after(document.createElement('hr'));
+        let hiddenEl;
+        while (hiddenEl = el.querySelector('[data-hlx-imp-hidden-div]')) {
+          hiddenEl.remove();
+        }
+
+        const navEl = el.querySelector('ol,ul');
+        if (navEl) {
+          if (!navEl.parentElement.closest('ol,ul')) {
+            navEl.before(document.createElement('hr'));
+            navEl.after(document.createElement('hr'));
           }
-        });
+        }
       }
 
       // cleanup unwanted attributes in element and children
