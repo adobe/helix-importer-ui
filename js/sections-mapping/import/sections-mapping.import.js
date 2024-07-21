@@ -205,6 +205,8 @@ export default {
             mapping: s,
             document,
             target,
+            params,
+            allMappings: m,
           });
           if (block) {
             el.appendChild(block);
@@ -229,115 +231,7 @@ export default {
         }
       }
 
-      // do not create metadata for now as it may break when converting to JCR.
-      // if (m.path !== '/nav' && m.path !== '/footer') {
-      //   WebImporter.rules.createMetadata(el, document);
-      // }
-
-      if (m.path === '/nav') {
-        const containerEl = document.createElement('div');
-
-        const brandEl = document.createElement('div');
-        const bodyWidth = m.sections[0].width;
-        const originURL = new URL(params.originalURL).origin;
-
-        const brandLogoMapping = [
-          {
-            checkFn: (e) => e.querySelector('a > img'),
-            parseFn: (e, targetEl, x) => {
-              const parentEl = e.parentElement;
-              if (x < bodyWidth / 2) {
-                targetEl.append(e);
-                parentEl.append(document.createElement('br'));
-                targetEl.append(parentEl);
-                return true;
-              }
-              return false;
-            },
-          },
-          {
-            checkFn: (e) => e.querySelector('picture + br + a, image + br + a'),
-            parseFn: (e, targetEl, x) => {
-              if (x < bodyWidth / 2) {
-                targetEl.append(e);
-                return true;
-              }
-              return false;
-            },
-          },
-          {
-            checkFn: (e) => e.querySelector('img'),
-            parseFn: (e, targetEl, x) => {
-              if (x < bodyWidth / 2) {
-                targetEl.append(e);
-                return true;
-              }
-              return false;
-            },
-          },
-          {
-            checkFn: (e) => e.querySelector(`a[href="/"], a[href="${originURL}"], a[href="${originURL}/"]`),
-            parseFn: (e, targetEl, x) => {
-              if (x < bodyWidth / 2) {
-                targetEl.append(e);
-                return true;
-              }
-              return false;
-            },
-          },
-          {
-            checkFn: (e) => {
-              // fetch favicon
-              const resp = fetch('/favicon.ico');
-              if (resp && resp.status === 200) {
-                const logoEl = document.createElement('img');
-                logoEl.src = '/favicon.ico';
-                return logoEl;
-              }
-              return null;
-            },
-            parseFn: (e, targetEl) => {
-              targetEl.append(e);
-              return true;
-            },
-          },
-        ];
-
-        brandLogoMapping.some((m) => {
-          const logoEl = m.checkFn(el);
-          if (logoEl) {
-            let x = 0;
-            try {
-              x = JSON.parse(logoEl.closest('div')?.getAttribute('data-hlx-imp-rect')).x;
-            } catch (e) {
-              console.error('error', e);
-            }
-
-            return m.parseFn(logoEl, brandEl, x);
-          }
-          return false;
-        });
-
-        const navEl = document.createElement('div');
-        const listEl = el.querySelector('ol,ul');
-        if (listEl) {
-          navEl.append(document.createElement('hr'));
-          navEl.append(listEl);
-          navEl.append(document.createElement('hr'));
         }
-
-        const toolsEl = document.createElement('div');
-        toolsEl.append(...el.children);
-
-        let hiddenEl;
-        while (hiddenEl = toolsEl.querySelector('[data-hlx-imp-hidden-div]')) {
-          hiddenEl.remove();
-        }
-
-        containerEl.append(brandEl);
-        containerEl.append(navEl);
-        containerEl.append(toolsEl);
-        el.append(containerEl);
       }
 
       // cleanup unwanted attributes in element and children
