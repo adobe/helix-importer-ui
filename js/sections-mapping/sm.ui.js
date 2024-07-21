@@ -46,6 +46,51 @@ const selectedSectionProxy = new Proxy(selectedSection, {
   },
 });
 
+export function getSMData() {
+  const fragments = [];
+  SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
+    const fragment = {
+      id: el.dataset.id,
+      path: el.dataset.path,
+      sections: [],
+    };
+    el.querySelectorAll('.row').forEach((section) => {
+      fragment.sections.push({
+        ...JSON.parse(section.dataset.boxData),
+        mapping: section.querySelector('sp-picker').value,
+        customBlockName: section.querySelector('sp-textfield').value,
+      });
+    });
+    fragments.push(fragment);
+  });
+  return fragments;
+}
+
+export function getSMCache() {
+  return JSON.parse(localStorage.getItem(SM_LOCAL_STORAGE_KEY) || '[]');
+}
+
+export function saveSMCache() {
+  const url = importerConfig.fields['import-url'];
+  const autoDetect = importerConfig.fields['import-sm-auto-detect'];
+  const cache = getSMCache();
+  const mapping = getSMData();
+
+  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+
+  if (found) {
+    found.mapping = mapping;
+  } else {
+    cache.push({
+      url,
+      autoDetect,
+      mapping,
+    });
+  }
+
+  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
+}
+
 export function createAddFragmentBtn(target) {
   const el = document.createElement('sp-button');
   el.innerHTML = '<sp-icon-add slot="icon"></sp-icon-add>Add Fragment</sp-button>';
@@ -118,6 +163,7 @@ export function addFragmentAccordionElement(path) {
 
   deleteBtnEl.addEventListener('click', () => {
     el.remove();
+    saveSMCache();
   });
 
   el.addEventListener('click', (e) => {
@@ -132,26 +178,6 @@ export function addFragmentAccordionElement(path) {
   saveSMCache();
 
   return el;
-}
-
-export function getSMData() {
-  const fragments = [];
-  SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
-    const fragment = {
-      id: el.dataset.id,
-      path: el.dataset.path,
-      sections: [],
-    };
-    el.querySelectorAll('.row').forEach((section) => {
-      fragment.sections.push({
-        ...JSON.parse(section.dataset.boxData),
-        mapping: section.querySelector('sp-picker').value,
-        customBlockName: section.querySelector('sp-textfield').value,
-      });
-    });
-    fragments.push(fragment);
-  });
-  return fragments;
 }
 
 export function addSectionRow(row, target) {
@@ -199,7 +225,7 @@ export function initOverlayClickHandler() {
     } else if (overlayDiv.dataset.boxData) {
       const section = JSON.parse(overlayDiv.dataset.boxData);
       section.color = overlayDiv.style.borderColor;
-      section.mapping = 'defaultContent';
+      section.mapping = 'unset';
       addSectionRow(getMappingRow(section));
     }
   });
@@ -230,8 +256,8 @@ function getBlockPicker(value = 'defaultContent') {
       { label: 'Carousel', attributes: { value: 'carousel' } },
       { label: 'Columns', attributes: { value: 'columns' } },
       { label: 'Hero', attributes: { value: 'hero' } },
-      { label: 'Section Metadata', attributes: { value: 'sectionMetadata' } },
     ],
+    [{ label: 'Header Nav', attributes: { value: 'header' } }],
     [{ label: 'Snapshot', attributes: { value: 'snapshot', disabled: true } }],
     [{ label: 'Exclude', attributes: { value: 'exclude' } }],
   ].forEach((group, idx, arr) => {
@@ -275,7 +301,18 @@ export function getMappingRow(section, idx = 1) {
   <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${section.layout.numCols} x ${section.layout.numRows}</h3>
   `;
 
-  const pickerMapping = section.mapping === 'unset' && section.layout.numCols > 1 ? 'columns' : section.mapping;
+  let pickerMapping = 'defaultContent';
+  if (section.mapping === 'unset') {
+    const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+    const path = t ? t.dataset.path : '';
+    if (path === '/nav') {
+      pickerMapping = 'header';
+    } else if (section.layout.numCols > 1) {
+      pickerMapping = 'columns';
+    }
+  } else {
+    pickerMapping = section.mapping;
+  }
   const mappingPicker = getBlockPicker(pickerMapping);
   mappingPicker.dataset.sectionId = section.id;
   mappingPicker.dataset.xpath = section.xpath;
@@ -307,6 +344,7 @@ export function getMappingRow(section, idx = 1) {
     const rowEl = e.target.closest('.row');
     if (rowEl) {
       rowEl.remove();
+      saveSMCache();
     }
   });
 
@@ -331,31 +369,6 @@ export function getMappingRow(section, idx = 1) {
   });
 
   return row;
-}
-
-export function getSMCache() {
-  return JSON.parse(localStorage.getItem(SM_LOCAL_STORAGE_KEY) || '[]');
-}
-
-export function saveSMCache() {
-  const url = importerConfig.fields['import-url'];
-  const autoDetect = importerConfig.fields['import-sm-auto-detect'];
-  const cache = getSMCache();
-  const mapping = getSMData();
-
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
-
-  if (found) {
-    found.mapping = mapping;
-  } else {
-    cache.push({
-      url,
-      autoDetect,
-      mapping,
-    });
-  }
-
-  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
 function getMainFragmentPath(url) {
