@@ -13,9 +13,6 @@ const selectedFragment = { id: null };
 const selectedFragmentProxy = new Proxy(selectedFragment, {
   set: (target, key, value) => {
     const oldValue = target[key];
-    if (selectedFragment.id === value) {
-      return true;
-    }
     console.log(`${key} set from ${selectedFragment.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = SM_FRAGMENTS_CONTAINER.querySelector(`[data-id="${oldValue}"]`);
