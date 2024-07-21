@@ -231,6 +231,10 @@ export default {
         }
       }
 
+      if (target !== 'crosswalk') {
+        // do not create metadata for now as it may break when converting to JCR.
+        if (m.path !== '/nav' && m.path !== '/footer') {
+          WebImporter.rules.createMetadata(el, document);
         }
       }
 
