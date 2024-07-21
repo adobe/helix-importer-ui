@@ -20,3 +20,10 @@ async function updateVersion() {
 }
 
 updateVersion();
+
+// when in demo tool context => select import-fragment.html by default
+if (sessionStorage.getItem('demo-tool-aem-importer-mode')) {
+  document.querySelector('[value="import-fragments.html"]').selected = true;
+  const frame = document.querySelector('iframe');
+  frame.src = './import-fragments.html';
+}
