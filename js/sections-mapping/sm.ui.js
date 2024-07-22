@@ -483,6 +483,11 @@ export function addSectionAccordionElement(sectionId, target) {
     saveSMCache();
   });
 
+  const settingsSMStyleTextfieldEl = el.querySelector('#frg-section-section-metadata-style');
+  settingsSMStyleTextfieldEl.addEventListener('input', () => {
+    saveSMCache();
+  });
+
   saveSMCache();
 
   return el.dataset.id;
