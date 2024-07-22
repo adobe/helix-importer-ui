@@ -129,7 +129,7 @@ export function addFragmentAccordionElement(path) {
         <div class="sm-frg-settings-container">
           <div>
             <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
-            <sp-textfield class="option-field" id="fragment-path" placeholder="${label}">
+            <sp-textfield id="fragment-path" placeholder="${label}">
               <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
             </sp-textfield>
           </div>
@@ -151,7 +151,6 @@ export function addFragmentAccordionElement(path) {
           <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
         </sp-button>
       </div>
-      <sp-divider size="m"></sp-divider>
       <div class="sm-fragment-sections">
       </div>
     </div>
@@ -422,16 +421,6 @@ export function addSectionAccordionElement(sectionId, target) {
   <details open>
     <summary>${label}</summary>
     <div class="sm-frg-section-content">
-      <div class="sm-frg-section-settings-wrapper">
-        <h2>Settings</h2>
-        <div class="sm-frg-section-settings-container">
-          <div>
-            <sp-field-label for="frg-section-section-metadata-style" side-aligned="start">Section Metadata Style (ex. 'dark, text-center')</sp-field-label>
-            <sp-textfield id="frg-section-section-metadata-style">
-            </sp-textfield>
-          </div>
-        </div>
-      </div>
       <div class="sm-frg-sections-title">
         <h2>Blocks</h2>   
         <sp-action-button size="s" quiet>
@@ -445,8 +434,18 @@ export function addSectionAccordionElement(sectionId, target) {
             </sp-tooltip>
         </sp-action-button>
       </div>
-      <sp-divider size="m"></sp-divider>
       <div class="sm-frg-section-blocks">
+      </div>
+      <sp-divider size="m"></sp-divider>
+      <div class="sm-frg-section-settings-wrapper">
+        <h4>Settings</h4>
+        <div class="sm-frg-section-settings-container">
+          <div>
+            <sp-checkbox id="frg-section-sm-block-checkbox" size="s">Add <code>section-metadata</code> Block</sp-checkbox>
+            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" disabled>
+            </sp-textfield>
+          </div>
+        </div>
       </div>
     </div>
   </details>
@@ -465,6 +464,17 @@ export function addSectionAccordionElement(sectionId, target) {
     if (e.offsetX >= -25 && e.offsetX <= 0) {
       const evTarget = e.target || e.currentTarget;
       selectedSectionInFragment.id = evTarget.dataset.id;
+    }
+  });
+
+  el.querySelector('#frg-section-sm-block-checkbox').addEventListener('change', (e) => {
+    const cbEl = e.target;
+    if (cbEl.checked) {
+      el.querySelector('#frg-section-section-metadata-style').removeAttribute('disabled');
+    } else {
+      const tfEl = el.querySelector('#frg-section-section-metadata-style');
+      tfEl.setAttribute('disabled', '');
+      tfEl.value = '';
     }
   });
 
