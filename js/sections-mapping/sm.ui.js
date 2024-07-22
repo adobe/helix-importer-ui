@@ -291,7 +291,7 @@ export function getMappingRow(boxData, idx = 1) {
 
   let pickerMapping = 'defaultContent';
   if (boxData.mapping === 'unset') {
-    const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+    const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment:has(.sm-frg-section.selected)');
     const path = t ? t.dataset.path : '';
     if (path === '/nav') {
       pickerMapping = 'header';
