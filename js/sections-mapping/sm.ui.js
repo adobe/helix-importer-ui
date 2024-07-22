@@ -48,22 +48,23 @@ const selectedSectionProxy = new Proxy(selectedSection, {
 
 export function getSMData() {
   const fragments = [];
-  SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
-    const fragment = {
-      id: el.dataset.id,
-      path: el.dataset.path,
-      sections: [],
-    };
-    el.querySelectorAll('.row').forEach((section) => {
-      fragment.sections.push({
-        ...JSON.parse(section.dataset.boxData),
-        mapping: section.querySelector('sp-picker').value,
-        customBlockName: section.querySelector('sp-textfield').value,
-      });
-    });
-    fragments.push(fragment);
-  });
   return fragments;
+  // SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
+  //   const fragment = {
+  //     id: el.dataset.id,
+  //     path: el.dataset.path,
+  //     sections: [],
+  //   };
+  //   el.querySelectorAll('.row').forEach((section) => {
+  //     fragment.sections.push({
+  //       ...JSON.parse(section.dataset.boxData),
+  //       mapping: section.querySelector('sp-picker').value,
+  //       customBlockName: section.querySelector('sp-textfield').value,
+  //     });
+  //   });
+  //   fragments.push(fragment);
+  // });
+  // return fragments;
 }
 
 export function getSMCache() {
@@ -71,24 +72,25 @@ export function getSMCache() {
 }
 
 export function saveSMCache() {
-  const url = importerConfig.fields['import-url'];
-  const autoDetect = importerConfig.fields['import-sm-auto-detect'];
-  const cache = getSMCache();
-  const mapping = getSMData();
+  // // disable for now
+  // const url = importerConfig.fields['import-url'];
+  // const autoDetect = importerConfig.fields['import-sm-auto-detect'];
+  // const cache = getSMCache();
+  // const mapping = getSMData();
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  // const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
 
-  if (found) {
-    found.mapping = mapping;
-  } else {
-    cache.push({
-      url,
-      autoDetect,
-      mapping,
-    });
-  }
+  // if (found) {
+  //   found.mapping = mapping;
+  // } else {
+  //   cache.push({
+  //     url,
+  //     autoDetect,
+  //     mapping,
+  //   });
+  // }
 
-  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
+  // localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
 export function createAddFragmentBtn(target) {
@@ -382,17 +384,17 @@ function getMainFragmentPath(url) {
 }
 
 export function setUIFragmentsFromCache(url) {
-  const cache = getSMCache();
-  const autoDetect = false;
+  // const cache = getSMCache();
+  // const autoDetect = false;
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
-  if (found) {
-    initUIFromData(found.mapping);
-  } else {
+  // const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  // if (found) {
+  //   initUIFromData(found.mapping);
+  // } else {
     addFragmentAccordionElement('/nav');
     addFragmentAccordionElement(getMainFragmentPath(url));
     addFragmentAccordionElement('/footer');
-  }
+  // }
 }
 
 export function setUIFragmentsFromSections(url, sections) {
@@ -400,16 +402,16 @@ export function setUIFragmentsFromSections(url, sections) {
   const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
   const footerFrgEl = addFragmentAccordionElement('/footer');
 
-  sections.forEach((section, idx) => {
-    const row = getMappingRow(section, idx + 1);
-    if (section.mapping === 'header') {
-      addBlockInSection(row, navFrgEl);
-    } else if (section.mapping === 'footer') {
-      addBlockInSection(row, footerFrgEl);
-    } else {
-      addBlockInSection(row, mainFrgEl);
-    }
-  });
+  // sections.forEach((section, idx) => {
+  //   const row = getMappingRow(section, idx + 1);
+  //   if (section.mapping === 'header') {
+  //     addBlockInSection(row, navFrgEl);
+  //   } else if (section.mapping === 'footer') {
+  //     addBlockInSection(row, footerFrgEl);
+  //   } else {
+  //     addBlockInSection(row, mainFrgEl);
+  //   }
+  // });
 }
 
 export function useImportRules() {
