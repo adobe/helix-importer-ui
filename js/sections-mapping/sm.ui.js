@@ -180,11 +180,11 @@ export function addFragmentAccordionElement(path) {
   return el;
 }
 
-export function addSectionRow(row, target) {
+export function addBlockInSection(row, target) {
   const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
   const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
   if (t) {
-    const found = Array.from(rows).find((r) => r.dataset.sectionId === row.dataset.sectionId);
+    const found = Array.from(rows).find((r) => r.dataset.boxId === row.dataset.boxId);
     if (!found) {
       const sectionContainerEl = t.querySelector('.sm-fragment-sections');
       const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
@@ -206,7 +206,7 @@ export function initUIFromData(data) {
   data.forEach((fragment) => {
     const el = addFragmentAccordionElement(fragment.path);
     fragment.sections.forEach((section) => {
-      addSectionRow(getMappingRow(section), el);
+      addBlockInSection(getMappingRow(section), el);
     });
   });
 }
@@ -223,10 +223,10 @@ export function initOverlayClickHandler() {
     if (e.shiftKey) {
       overlayDiv.remove();
     } else if (overlayDiv.dataset.boxData) {
-      const section = JSON.parse(overlayDiv.dataset.boxData);
-      section.color = overlayDiv.style.borderColor;
-      section.mapping = 'unset';
-      addSectionRow(getMappingRow(section));
+      const boxData = JSON.parse(overlayDiv.dataset.boxData);
+      boxData.color = overlayDiv.style.borderColor;
+      boxData.mapping = 'unset';
+      addBlockInSection(getMappingRow(boxData));
     }
   });
 }
@@ -284,38 +284,38 @@ function getBlockPicker(value = 'defaultContent') {
   return blockPicker;
 }
 
-export function getMappingRow(section, idx = 1) {
+export function getMappingRow(boxData, idx = 1) {
   const row = document.createElement('div');
   row.dataset.idx = idx;
-  row.dataset.sectionId = section.id;
-  row.dataset.xpath = section.xpath;
-  row.dataset.boxY = section.y;
+  row.dataset.boxId = boxData.id;
+  row.dataset.xpath = boxData.xpath;
+  row.dataset.boxY = boxData.y;
   row.classList.add('row');
-  row.dataset.boxData = JSON.stringify(section);
+  row.dataset.boxData = JSON.stringify(boxData);
   if (row.dataset.childrenXpaths) {
-    row.dataset.childrenXpaths = JSON.stringify(section.childrenXpaths);
+    row.dataset.childrenXpaths = JSON.stringify(boxData.childrenXpaths);
   }
   row.innerHTML = `
-  <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
-  <h3 id="sec-id"><strong>${section.id}</strong></h3>
-  <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${section.layout.numCols} x ${section.layout.numRows}</h3>
+  <div id="sec-color" style="background-color: ${boxData.color || 'white'};"></div>
+  <h3 id="sec-id"><strong>${boxData.id}</strong></h3>
+  <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${boxData.layout.numCols} x ${boxData.layout.numRows}</h3>
   `;
 
   let pickerMapping = 'defaultContent';
-  if (section.mapping === 'unset') {
+  if (boxData.mapping === 'unset') {
     const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
     const path = t ? t.dataset.path : '';
     if (path === '/nav') {
       pickerMapping = 'header';
-    } else if (section.layout.numCols > 1) {
+    } else if (boxData.layout.numCols > 1) {
       pickerMapping = 'columns';
     }
   } else {
-    pickerMapping = section.mapping;
+    pickerMapping = boxData.mapping;
   }
   const mappingPicker = getBlockPicker(pickerMapping);
-  mappingPicker.dataset.sectionId = section.id;
-  mappingPicker.dataset.xpath = section.xpath;
+  mappingPicker.dataset.boxId = boxData.id;
+  mappingPicker.dataset.xpath = boxData.xpath;
 
   row.appendChild(mappingPicker);
 
@@ -324,9 +324,9 @@ export function getMappingRow(section, idx = 1) {
   customBlockNamePicker.setAttribute('label', 'Custom Block Name');
   customBlockNamePicker.setAttribute('id', 'custom-block-name');
   customBlockNamePicker.setAttribute('placeholder', 'Custom Block Name');
-  customBlockNamePicker.setAttribute('value', section.customBlockName || '');
+  customBlockNamePicker.setAttribute('value', boxData.customBlockName || '');
   customBlockNamePicker.addEventListener('input', (e) => {
-    section.customBlockName = e.target.value;
+    boxData.customBlockName = e.target.value;
     saveSMCache();
   });
   row.appendChild(customBlockNamePicker);
@@ -339,7 +339,7 @@ export function getMappingRow(section, idx = 1) {
   row.appendChild(deleteBtn);
   deleteBtn.addEventListener('click', (e) => {
     console.log(e);
-    console.log('delete section', section.id);
+    console.log('delete section', boxData.id);
     // row
     const rowEl = e.target.closest('.row');
     if (rowEl) {
@@ -354,7 +354,7 @@ export function getMappingRow(section, idx = 1) {
     // const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     const target = e.target.closest('.row');
     if (target) {
-      const id = target.dataset.sectionId;
+      const id = target.dataset.boxId;
       const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
       div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
       selectedSectionProxy.id = id;
@@ -402,11 +402,11 @@ export function setUIFragmentsFromSections(url, sections) {
   sections.forEach((section, idx) => {
     const row = getMappingRow(section, idx + 1);
     if (section.mapping === 'header') {
-      addSectionRow(row, navFrgEl);
+      addBlockInSection(row, navFrgEl);
     } else if (section.mapping === 'footer') {
-      addSectionRow(row, footerFrgEl);
+      addBlockInSection(row, footerFrgEl);
     } else {
-      addSectionRow(row, mainFrgEl);
+      addBlockInSection(row, mainFrgEl);
     }
   });
 }
