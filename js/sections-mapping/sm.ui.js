@@ -28,11 +28,11 @@ const selectedFragmentProxy = new Proxy(selectedFragment, {
 });
 
 // selected section
-const selectedSection = { id: null };
-const selectedSectionProxy = new Proxy(selectedSection, {
+const selectedBoxInSectionProxy = { id: null };
+const selectedBoxInSection = new Proxy(selectedBoxInSectionProxy, {
   set: (target, key, value) => {
     const oldValue = target[key];
-    console.log(`${key} set from ${selectedSection.id} to ${value}`);
+    console.log(`${key} set from ${selectedBoxInSectionProxy.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
     if (oldOverlayDiv) {
@@ -347,14 +347,14 @@ export function getMappingRow(boxData, idx = 1) {
       const id = target.dataset.boxId;
       const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
       div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
-      selectedSectionProxy.id = id;
+      selectedBoxInSection.id = id;
     }
   });
 
   row.addEventListener('mouseleave', (e) => {
     const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     if (target.nodeName === 'DIV') {
-      selectedSectionProxy.id = null;
+      selectedBoxInSection.id = null;
     }
   });
 
