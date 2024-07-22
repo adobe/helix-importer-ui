@@ -183,28 +183,6 @@ export function addFragmentAccordionElement(path) {
   return el;
 }
 
-export function addBlockInSection(row, target) {
-  const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
-  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
-  if (t) {
-    const found = Array.from(rows).find((r) => r.dataset.boxId === row.dataset.boxId);
-    if (!found) {
-      const sectionContainerEl = t.querySelector('.sm-fragment-sections');
-      const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
-      if (found2) {
-        sectionContainerEl.insertBefore(row, found2);
-      } else {
-        sectionContainerEl.append(row);
-      }
-      saveSMCache();
-    } else {
-      alert.warning(`Section already added to fragment ${t.dataset.path}`);
-    }
-  } else {
-    alert.warning('Please select a fragment first');
-  }
-}
-
 export function initUIFromData(data) {
   data.forEach((fragment) => {
     const el = addFragmentAccordionElement(fragment.path);
@@ -416,4 +394,30 @@ export function setUIFragmentsFromSections(url, sections) {
 
 export function useImportRules() {
   return importerConfig.fields['import-sm-use-rules'];
+}
+
+/**
+ * blocks ui elements
+ */
+
+export function addBlockInSection(row, target) {
+  const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
+  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+  if (t) {
+    const found = Array.from(rows).find((r) => r.dataset.boxId === row.dataset.boxId);
+    if (!found) {
+      const sectionContainerEl = t.querySelector('.sm-fragment-sections');
+      const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
+      if (found2) {
+        sectionContainerEl.insertBefore(row, found2);
+      } else {
+        sectionContainerEl.append(row);
+      }
+      saveSMCache();
+    } else {
+      alert.warning(`Section already added to fragment ${t.dataset.path}`);
+    }
+  } else {
+    alert.warning('Please select a fragment first');
+  }
 }
