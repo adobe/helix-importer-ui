@@ -98,8 +98,13 @@
             }
 
             & .sm-frg-section-settings-wrapper {
+              opacity: .25;
               display: flex;
               gap: 1rem;
+            }
+            
+            & .sm-frg-section-settings-wrapper:hover {
+              opacity: 1;
             }
       
             & .sm-frg-section-content {
