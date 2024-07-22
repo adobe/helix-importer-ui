@@ -119,7 +119,7 @@ export function addFragmentAccordionElement(path) {
   <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
     <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
   </sp-button>
-  <details>
+  <details open>
     <summary>${label}</summary>
     <div class="sm-fragment-content">
       <div class="sm-frg-settings-wrapper">
@@ -145,6 +145,9 @@ export function addFragmentAccordionElement(path) {
                 * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
             </sp-tooltip>
         </sp-action-button>
+        <sp-button id="frg-add-section" size="s" treatment="fill" role="button" icon-only>
+          <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
+        </sp-button>
       </div>
       <sp-divider size="m"></sp-divider>
       <div class="sm-fragment-sections">
@@ -156,7 +159,6 @@ export function addFragmentAccordionElement(path) {
   SM_FRAGMENTS_CONTAINER.appendChild(el);
 
   const accItemNameTextfieldEl = el.querySelector('sp-textfield');
-  const deleteBtnEl = el.querySelector('#delete-frg');
 
   accItemNameTextfieldEl.addEventListener('input', (e) => {
     el.dataset.path = e.target.value;
@@ -164,9 +166,16 @@ export function addFragmentAccordionElement(path) {
     saveSMCache();
   });
 
+  const deleteBtnEl = el.querySelector('#delete-frg');
   deleteBtnEl.addEventListener('click', () => {
     el.remove();
     saveSMCache();
+  });
+
+  const addSectionBtnEl = el.querySelector('#frg-add-section');
+  addSectionBtnEl.addEventListener('click', () => {
+    addSectionAccordionElement(el.querySelector('.sm-fragment-sections'));
+    // saveSMCache();
   });
 
   el.addEventListener('click', (e) => {
@@ -394,6 +403,82 @@ export function setUIFragmentsFromSections(url, sections) {
 
 export function useImportRules() {
   return importerConfig.fields['import-sm-use-rules'];
+}
+
+/**
+ * sections ui elements
+ */
+
+export function addSectionAccordionElement(target) {
+  const id = target.lastElementChild
+    ? parseInt(target.lastElementChild.dataset.id, 10) + 1 : 1;
+
+  const label = `section-${id.toString().padStart(2, '0')}`;
+  const elId = `sm-frg-section-${id.toString().padStart(2, '0')}`;
+
+  const el = document.createElement('div');
+  el.id = elId;
+  el.dataset.id = id;
+  el.dataset.path = label;
+  el.className = 'sm-frg-section';
+  el.setAttribute('open', '');
+  el.innerHTML = `
+  <sp-button id="delete-section" size="s" variant="negative" treatment="fill" role="button" icon-only>
+    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
+  </sp-button>
+  <details open>
+    <summary>${label}</summary>
+    <div class="sm-frg-section-content">
+      <div class="sm-frg-section-settings-wrapper">
+        <h2>Settings</h2>
+        <div class="sm-frg-section-settings-container">
+          <div>
+            <sp-field-label for="frg-section-section-metadata-style" side-aligned="start">Section Metadata Style (ex. 'dark, text-center')</sp-field-label>
+            <sp-textfield id="frg-section-section-metadata-style">
+            </sp-textfield>
+          </div>
+        </div>
+      </div>
+      <div class="sm-frg-sections-title">
+        <h2>Blocks</h2>   
+        <sp-action-button size="s" quiet>
+            <sp-icon-info slot="icon"></sp-icon-info>
+            <sp-tooltip self-managed placement="bottom">
+                * To add sections to this fragment:<br>
+                  1. Select the fragment by clicking the gray rectangle on the left
+                  2. click overlays in the page preview.
+                <br><br>
+                * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
+            </sp-tooltip>
+        </sp-action-button>
+      </div>
+      <sp-divider size="m"></sp-divider>
+      <div class="sm-frg-section-blocks">
+      </div>
+    </div>
+  </details>
+`;
+
+  target.appendChild(el);
+
+  const deleteBtnEl = el.querySelector('#delete-section');
+  deleteBtnEl.addEventListener('click', () => {
+    el.remove();
+    saveSMCache();
+  });
+
+  // el.addEventListener('click', (e) => {
+  //   // handle sm fragment selection
+  //   if (e.layerX > 0 && e.layerX < 25) {
+  //     const target = e.target || e.currentTarget;
+  //     console.log('selected item', target);
+  //     selectedFragmentProxy.id = target.dataset.id;
+  //   }
+  // });
+
+  // saveSMCache();
+
+  return el;
 }
 
 /**
