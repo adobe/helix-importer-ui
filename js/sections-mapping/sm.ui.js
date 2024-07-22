@@ -9,11 +9,13 @@ const SM_LOCAL_STORAGE_KEY = 'helix-importer-sections-mapping';
 let importerConfig = {};
 
 // selected fragment
-const selectedFragment = { id: null };
-const selectedFragmentProxy = new Proxy(selectedFragment, {
+const selectedSectionInFragmentProxy = { id: null };
+const selectedSectionInFragment = new Proxy(selectedSectionInFragmentProxy, {
   set: (target, key, value) => {
+    console.log('selectedSectionInFragment', target, key, value);
+
     const oldValue = target[key];
-    console.log(`${key} set from ${selectedFragment.id} to ${value}`);
+    console.log(`${key} set from ${selectedSectionInFragmentProxy.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = SM_FRAGMENTS_CONTAINER.querySelector(`[data-id="${oldValue}"]`);
     if (oldOverlayDiv) {
@@ -126,8 +128,8 @@ export function addFragmentAccordionElement(path) {
         <h2>Settings</h2>
         <div class="sm-frg-settings-container">
           <div>
-            <sp-field-label>Fragment Path (ex. /index)</sp-field-label>
-            <sp-textfield class="option-field" id="import-url" placeholder="${label}">
+            <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
+            <sp-textfield class="option-field" id="fragment-path" placeholder="${label}">
               <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
             </sp-textfield>
           </div>
@@ -174,7 +176,7 @@ export function addFragmentAccordionElement(path) {
 
   const addSectionBtnEl = el.querySelector('#frg-add-section');
   addSectionBtnEl.addEventListener('click', () => {
-    addSectionAccordionElement(el.querySelector('.sm-fragment-sections'));
+    addSectionAccordionElement(id, el.querySelector('.sm-fragment-sections'));
     // saveSMCache();
   });
 
@@ -183,7 +185,7 @@ export function addFragmentAccordionElement(path) {
     if (e.layerX > 0 && e.layerX < 25) {
       const target = e.target || e.currentTarget;
       console.log('selected item', target);
-      selectedFragmentProxy.id = target.dataset.id;
+      selectedSectionInFragment.id = target.dataset.id;
     }
   });
 
@@ -409,16 +411,16 @@ export function useImportRules() {
  * sections ui elements
  */
 
-export function addSectionAccordionElement(target) {
+export function addSectionAccordionElement(sectionId, target) {
   const id = target.lastElementChild
-    ? parseInt(target.lastElementChild.dataset.id, 10) + 1 : 1;
+    ? parseInt(target.lastElementChild.dataset.id.split('-')[1], 10) + 1 : 1;
 
   const label = `section-${id.toString().padStart(2, '0')}`;
-  const elId = `sm-frg-section-${id.toString().padStart(2, '0')}`;
+  const elId = `sm-frg-section-${sectionId.toString().padStart(2, '0')}-${id.toString().padStart(2, '0')}`;
 
   const el = document.createElement('div');
   el.id = elId;
-  el.dataset.id = id;
+  el.dataset.id = `${sectionId}-${id}`;
   el.dataset.path = label;
   el.className = 'sm-frg-section';
   el.setAttribute('open', '');
@@ -467,14 +469,13 @@ export function addSectionAccordionElement(target) {
     saveSMCache();
   });
 
-  // el.addEventListener('click', (e) => {
-  //   // handle sm fragment selection
-  //   if (e.layerX > 0 && e.layerX < 25) {
-  //     const target = e.target || e.currentTarget;
-  //     console.log('selected item', target);
-  //     selectedFragmentProxy.id = target.dataset.id;
-  //   }
-  // });
+  el.addEventListener('click', (e) => {
+    // handle sm section selection in fragment
+    if (e.offsetX >= -25 && e.offsetX <= 0) {
+      const evTarget = e.target || e.currentTarget;
+      selectedSectionInFragment.id = evTarget.dataset.id;
+    }
+  });
 
   // saveSMCache();
 

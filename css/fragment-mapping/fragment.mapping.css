@@ -52,8 +52,7 @@
     gap: 1rem;
 
     & .sm-fragment {
-      padding: 1rem;
-      border-left: 25px solid var(--spectrum-global-color-gray-100);
+      padding: .1rem;
       border-top: 2px solid var(--spectrum-global-color-gray-100);
 
       & .sm-fragment-content {
@@ -79,18 +78,24 @@
             font-size: medium;
             text-transform: uppercase;
           }
+          
+          & .sm-frg-section {
+            border-left: 25px solid var(--spectrum-global-color-gray-100);
 
-          & .sm-frg-section-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            padding: 1.4rem;
+            &.selected {
+              border-left-color: blueviolet;
+            }
+
+            & .sm-frg-section-content {
+              display: flex;
+              flex-direction: column;
+              gap: 1rem;
+              padding-left: 1.4rem;
+              padding-right: 1.4rem;
+              padding-bottom: 1.4rem;
+            }
           }
         }
-      }
-
-      &.selected {
-       border-left-color: blueviolet;
       }
 
       & summary {
@@ -126,7 +131,7 @@
       & .sm-frg-settings-wrapper {
         display: flex;
         gap: 1rem;
-        margin: 1rem 5rem;
+        /* margin: .2rem 2rem; */
       }
 
       & .sm-frg-sections-title {
