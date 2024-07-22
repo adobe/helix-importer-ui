@@ -502,9 +502,9 @@ export function addBlockInSection(row, target) {
       }
       saveSMCache();
     } else {
-      alert.warning(`Section already added to fragment ${t.dataset.path}`);
+      alert.warning(`Block already added to Section ${t.dataset.path}`);
     }
   } else {
-    alert.warning('Please select a fragment first');
+    alert.warning('Please select a Section first');
   }
 }
