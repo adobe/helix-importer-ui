@@ -34,7 +34,6 @@ const selectedBoxInSectionProxy = { id: null };
 const selectedBoxInSection = new Proxy(selectedBoxInSectionProxy, {
   set: (target, key, value) => {
     const oldValue = target[key];
-    console.log(`${key} set from ${selectedBoxInSectionProxy.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
     if (oldOverlayDiv) {
@@ -123,7 +122,7 @@ export function addFragmentAccordionElement(path) {
   </sp-button>
   <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
     <sp-icon-text-edit slot="icon"></sp-icon-text-edit>
-    <sp-tooltip self-managed placement="bottom">
+    <sp-tooltip self-managed placement="left">
       <div>
         <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
         <sp-textfield id="fragment-path" placeholder="${label}">
@@ -136,17 +135,7 @@ export function addFragmentAccordionElement(path) {
     <summary>${label}</summary>
     <div class="sm-fragment-content">
       <div class="sm-frg-sections-title">
-        <h2>Sections</h2>   
-        <sp-action-button size="s" quiet>
-            <sp-icon-info slot="icon"></sp-icon-info>
-            <sp-tooltip self-managed placement="bottom">
-                * To add sections to this fragment:<br>
-                  1. Select the fragment by clicking the gray rectangle on the left
-                  2. click overlays in the page preview.
-                <br><br>
-                * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
-            </sp-tooltip>
-        </sp-action-button>
+        <h2>Sections</h2>
         <sp-button id="frg-add-section" size="s" treatment="fill" role="button" icon-only>
           <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
         </sp-button>
@@ -331,8 +320,6 @@ export function getMappingRow(boxData, idx = 1) {
   });
 
   row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
-    console.log('mouseenter', e.currentTarget, e.target);
-
     // const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     const target = e.target.closest('.row');
     if (target) {
@@ -426,8 +413,8 @@ export function addSectionAccordionElement(sectionId, target) {
         <sp-action-button size="s" quiet>
             <sp-icon-info slot="icon"></sp-icon-info>
             <sp-tooltip self-managed placement="bottom">
-                * To add sections to this fragment:<br>
-                  1. Select the fragment by clicking the gray rectangle on the left
+                * To add Blocks to this Section:<br>
+                  1. Select the Section by clicking the gray rectangle on the left
                   2. click overlays in the page preview.
                 <br><br>
                 * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
@@ -502,7 +489,9 @@ export function addBlockInSection(row, target) {
       }
       saveSMCache();
     } else {
-      alert.warning(`Block already added to Section ${t.dataset.path}`);
+      const sectionEl = found.closest('.sm-frg-section');
+      const frgEl = sectionEl.closest('.sm-fragment');
+      alert.warning(`Block already added to Section [${frgEl.dataset.path}][${sectionEl.dataset.path.toUpperCase()}]`);
     }
   } else {
     alert.warning('Please select a Section first');
