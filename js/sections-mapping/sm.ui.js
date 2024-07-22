@@ -180,15 +180,6 @@ export function addFragmentAccordionElement(path) {
     // saveSMCache();
   });
 
-  el.addEventListener('click', (e) => {
-    // handle sm fragment selection
-    if (e.layerX > 0 && e.layerX < 25) {
-      const target = e.target || e.currentTarget;
-      console.log('selected item', target);
-      selectedSectionInFragment.id = target.dataset.id;
-    }
-  });
-
   saveSMCache();
 
   return el;
