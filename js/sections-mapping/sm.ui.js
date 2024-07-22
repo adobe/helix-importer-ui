@@ -489,11 +489,11 @@ export function addSectionAccordionElement(sectionId, target) {
 
 export function addBlockInSection(row, target) {
   const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
-  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-frg-section.selected');
   if (t) {
     const found = Array.from(rows).find((r) => r.dataset.boxId === row.dataset.boxId);
     if (!found) {
-      const sectionContainerEl = t.querySelector('.sm-fragment-sections');
+      const sectionContainerEl = t.querySelector('.sm-frg-section-blocks');
       const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
       if (found2) {
         sectionContainerEl.insertBefore(row, found2);
