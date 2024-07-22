@@ -49,23 +49,39 @@ const selectedBoxInSection = new Proxy(selectedBoxInSectionProxy, {
 
 export function getSMData() {
   const fragments = [];
-  return fragments;
-  // SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
-  //   const fragment = {
-  //     id: el.dataset.id,
-  //     path: el.dataset.path,
-  //     sections: [],
-  //   };
-  //   el.querySelectorAll('.row').forEach((section) => {
-  //     fragment.sections.push({
-  //       ...JSON.parse(section.dataset.boxData),
-  //       mapping: section.querySelector('sp-picker').value,
-  //       customBlockName: section.querySelector('sp-textfield').value,
-  //     });
-  //   });
-  //   fragments.push(fragment);
-  // });
   // return fragments;
+  SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
+    const fragment = {
+      id: el.dataset.id,
+      path: el.dataset.path,
+      sections: [],
+    };
+    el.querySelectorAll('.sm-fragment-sections .sm-frg-section').forEach((section) => {
+      const blocks = [];
+      const secObj = {
+        id: section.dataset.id,
+        blocks,
+        settings: {
+          'section-metadata-block': {
+            add: section.querySelector('#frg-section-sm-block-checkbox').checked,
+            style: section.querySelector('#frg-section-section-metadata-style').value,
+          },
+        },
+      };
+      section.querySelectorAll('.row').forEach((block) => {
+        secObj.blocks.push({
+          ...JSON.parse(block.dataset.boxData),
+          mapping: block.querySelector('sp-picker').value,
+          customBlockName: block.querySelector('sp-textfield').value,
+        });
+      });
+
+      fragment.sections.push(secObj);
+    });
+
+    fragments.push(fragment);
+  });
+  return fragments;
 }
 
 export function getSMCache() {
@@ -73,25 +89,25 @@ export function getSMCache() {
 }
 
 export function saveSMCache() {
-  // // disable for now
-  // const url = importerConfig.fields['import-url'];
-  // const autoDetect = importerConfig.fields['import-sm-auto-detect'];
-  // const cache = getSMCache();
-  // const mapping = getSMData();
+  // disable for now
+  const url = importerConfig.fields['import-url'];
+  const autoDetect = importerConfig.fields['import-sm-auto-detect'];
+  const cache = getSMCache();
+  const mapping = getSMData();
 
-  // const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
 
-  // if (found) {
-  //   found.mapping = mapping;
-  // } else {
-  //   cache.push({
-  //     url,
-  //     autoDetect,
-  //     mapping,
-  //   });
-  // }
+  if (found) {
+    found.mapping = mapping;
+  } else {
+    cache.push({
+      url,
+      autoDetect,
+      mapping,
+    });
+  }
 
-  // localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
+  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
 export function createAddFragmentBtn(target) {
@@ -164,8 +180,9 @@ export function addFragmentAccordionElement(path) {
 
   const addSectionBtnEl = el.querySelector('#frg-add-section');
   addSectionBtnEl.addEventListener('click', () => {
-    addSectionAccordionElement(id, el.querySelector('.sm-fragment-sections'));
-    // saveSMCache();
+    const sectionId = addSectionAccordionElement(id, el.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionId;
+    saveSMCache();
   });
 
   saveSMCache();
@@ -463,11 +480,12 @@ export function addSectionAccordionElement(sectionId, target) {
       tfEl.setAttribute('disabled', '');
       tfEl.value = '';
     }
+    saveSMCache();
   });
 
-  // saveSMCache();
+  saveSMCache();
 
-  return el;
+  return el.dataset.id;
 }
 
 /**
