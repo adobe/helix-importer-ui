@@ -159,6 +159,7 @@ export function addFragmentAccordionElement(path) {
   accItemNameTextfieldEl.addEventListener('input', (e) => {
     el.dataset.path = e.target.value;
     el.querySelector('summary').textContent = e.target.value;
+    saveSMCache();
   });
 
   deleteBtnEl.addEventListener('click', () => {
