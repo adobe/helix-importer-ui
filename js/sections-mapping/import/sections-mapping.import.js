@@ -111,6 +111,12 @@ export default {
     document.elementFromPoint(0, 0)?.click();
 
     // mark hidden divs + add bounding client rect data to all "visible" divs
+    document.querySelectorAll('*').forEach((el) => {
+      if (el && /none/i.test(window.getComputedStyle(el).display.trim())) {
+        el.setAttribute('data-hlx-imp-hidden-div', '');
+      }
+    });
+
     document.querySelectorAll('div').forEach((div) => {
       if (div && /none/i.test(window.getComputedStyle(div).display.trim())) {
         div.setAttribute('data-hlx-imp-hidden-div', '');
@@ -199,12 +205,15 @@ export default {
             mapping: s,
             document,
             target,
+            params,
+            allMappings: m,
           });
           if (block) {
             el.appendChild(block);
-            if (idx < m.sections.length - 1) {
-              el.appendChild(document.createElement('hr'));
-            }
+            // Do not add extra hr between sections
+            // if (idx < m.sections.length - 1) {
+            //   el.appendChild(document.createElement('hr'));
+            // }
           }
         } else {
           console.warn('parser not found', m.mapping);
@@ -222,18 +231,11 @@ export default {
         }
       }
 
-      // do not create metadata for now as it may break when converting to JCR.
-      // if (m.path !== '/nav' && m.path !== '/footer') {
-      //   WebImporter.rules.createMetadata(el, document);
-      // }
-
-      if (m.path === '/nav') {
-        el.querySelectorAll('ol,ul').forEach((l) => {
-          if (!l.parentElement.closest('ol,ul')) {
-            l.before(document.createElement('hr'));
-            l.after(document.createElement('hr'));
-          }
-        });
+      if (target !== 'crosswalk') {
+        // do not create metadata for now as it may break when converting to JCR.
+        if (m.path !== '/nav' && m.path !== '/footer') {
+          WebImporter.rules.createMetadata(el, document);
+        }
       }
 
       // cleanup unwanted attributes in element and children
@@ -249,6 +251,13 @@ export default {
       }
       cleanUpAttributes(el);
       el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
+
+      WebImporter.DOMUtils.remove(el, [
+        'style',
+        'source',
+        'script',
+        'noscript',
+      ]);
 
       importedEl.element = el;
 

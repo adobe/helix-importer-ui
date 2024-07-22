@@ -527,6 +527,11 @@ const attachListeners = () => {
 
   IMPORT_BUTTON?.addEventListener('click', (async () => {
     initImportStatus();
+
+    if (IS_FRAGMENTS) {
+      fragmentUI.saveSMCache();
+    }
+
     ui.markdownPreview.innerHTML = WebImporter.md2html('Running import. Please wait...');
 
     if (IS_BULK) {
