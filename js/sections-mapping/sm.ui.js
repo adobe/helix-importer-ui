@@ -180,7 +180,7 @@ export function addFragmentAccordionElement(path) {
 
   const addSectionBtnEl = el.querySelector('#frg-add-section');
   addSectionBtnEl.addEventListener('click', () => {
-    const sectionId = addSectionAccordionElement(id, el.querySelector('.sm-fragment-sections'));
+    const sectionId = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
     selectedSectionInFragment.id = sectionId;
     saveSMCache();
   });
@@ -194,7 +194,8 @@ export function initUIFromData(data) {
   data.forEach((fragment) => {
     const el = addFragmentAccordionElement(fragment.path);
     fragment.sections.forEach((section) => {
-      addBlockInSection(getMappingRow(section), el);
+      addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
+      // addBlockInSection(getMappingRow(section), el);
     });
   });
 }
@@ -367,17 +368,18 @@ function getMainFragmentPath(url) {
 }
 
 export function setUIFragmentsFromCache(url) {
-  // const cache = getSMCache();
-  // const autoDetect = false;
+  const cache = getSMCache();
+  const autoDetect = false;
 
-  // const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
-  // if (found) {
-  //   initUIFromData(found.mapping);
-  // } else {
-    addFragmentAccordionElement('/nav');
-    addFragmentAccordionElement(getMainFragmentPath(url));
-    addFragmentAccordionElement('/footer');
-  // }
+  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  if (found) {
+    initUIFromData(found.mapping);
+  } else {
+    ['/nav', getMainFragmentPath(url), '/footer'].forEach((path) => {
+      const frgEl = addFragmentAccordionElement(path);
+      addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+    });
+  }
 }
 
 export function setUIFragmentsFromSections(url, sections) {
@@ -405,7 +407,7 @@ export function useImportRules() {
  * sections ui elements
  */
 
-export function addSectionAccordionElement(sectionId, target) {
+export function addSectionAccordionElement(sectionId, settings, target) {
   const id = target.lastElementChild
     ? parseInt(target.lastElementChild.dataset.id.split('-')[1], 10) + 1 : 1;
 
@@ -445,8 +447,8 @@ export function addSectionAccordionElement(sectionId, target) {
         <h4>Settings</h4>
         <div class="sm-frg-section-settings-container">
           <div>
-            <sp-checkbox id="frg-section-sm-block-checkbox" size="s">Add <code>section-metadata</code> Block</sp-checkbox>
-            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" disabled>
+            <sp-checkbox id="frg-section-sm-block-checkbox" size="s" ${settings && settings['section-metadata-block'].add === true ? 'checked' : ''}>Add <code>section-metadata</code> Block</sp-checkbox>
+            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" value="${settings && settings['section-metadata-block'].add === true ? settings['section-metadata-block']['style'] : ''}" ${settings && settings['section-metadata-block'].add === true ? '' : 'disabled'}>
             </sp-textfield>
           </div>
         </div>
