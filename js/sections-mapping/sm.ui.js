@@ -121,20 +121,20 @@ export function addFragmentAccordionElement(path) {
   <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
     <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
   </sp-button>
+  <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
+    <sp-icon-text-edit slot="icon"></sp-icon-text-edit>
+    <sp-tooltip self-managed placement="bottom">
+      <div>
+        <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
+        <sp-textfield id="fragment-path" placeholder="${label}">
+          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+        </sp-textfield>
+      </div>
+    </sp-tooltip>
+  </sp-action-button>
   <details open>
     <summary>${label}</summary>
     <div class="sm-fragment-content">
-      <div class="sm-frg-settings-wrapper">
-        <h2>Settings</h2>
-        <div class="sm-frg-settings-container">
-          <div>
-            <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
-            <sp-textfield id="fragment-path" placeholder="${label}">
-              <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
-            </sp-textfield>
-          </div>
-        </div>
-      </div>
       <div class="sm-frg-sections-title">
         <h2>Sections</h2>   
         <sp-action-button size="s" quiet>

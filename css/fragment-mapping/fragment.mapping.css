@@ -152,19 +152,20 @@
         float: inline-end;
       }
 
-      & .sm-frg-settings-wrapper {
-        display: flex;
-        gap: 1rem;
-        /* margin: .2rem 2rem; */
+      & #sm-fragment-edit-path-btn {
+        margin-left: 5px;
+        position: relative;
+        top: 5px;
+        float: inline-end;
+
+        & sp-textfield {
+          width: 140px;
+        }
       }
 
       & .sm-frg-sections-title {
         display: flex;
         gap: 1rem;
-      }
-
-      & .sm-frg-settings-container {
-        flex-grow: 1;
       }
     }
   }
