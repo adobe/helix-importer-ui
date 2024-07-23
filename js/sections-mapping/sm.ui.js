@@ -499,7 +499,10 @@ export function setUIFragmentsFromSections(url, sections) {
 
 export function init(config) {
   importerConfig = config;
-  ADD_FRAGMENT_BTN?.addEventListener('click', () => addFragmentAccordionElement());
+  ADD_FRAGMENT_BTN?.addEventListener('click', () => {
+    const frgEl = addFragmentAccordionElement();
+    addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+  });
 }
 
 export function initOverlayClickHandler() {
