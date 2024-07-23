@@ -154,6 +154,7 @@ function getBlockPicker(value = 'defaultContent') {
 export function getMappingRow(boxData, idx = 1) {
   const row = document.createElement('div');
   row.dataset.idx = idx;
+  row.classList.add('sm-frg-sec-block');
   row.dataset.boxId = boxData.id;
   row.dataset.xpath = boxData.xpath;
   row.dataset.boxY = boxData.y;
@@ -162,6 +163,7 @@ export function getMappingRow(boxData, idx = 1) {
   if (row.dataset.childrenXpaths) {
     row.dataset.childrenXpaths = JSON.stringify(boxData.childrenXpaths);
   }
+  row.setAttribute('draggable', 'true');
   row.innerHTML = `
   <div id="sec-color" style="background-color: ${boxData.color || 'white'};"></div>
   <h3 id="sec-id"><strong>${boxData.id}</strong></h3>
@@ -205,8 +207,6 @@ export function getMappingRow(boxData, idx = 1) {
   deleteBtn.innerHTML = '<sp-icon-delete slot="icon"></sp-icon-delete>';
   row.appendChild(deleteBtn);
   deleteBtn.addEventListener('click', (e) => {
-    console.log(e);
-    console.log('delete section', boxData.id);
     // row
     const rowEl = e.target.closest('.row');
     if (rowEl) {
@@ -215,8 +215,12 @@ export function getMappingRow(boxData, idx = 1) {
     }
   });
 
+  row.addEventListener('dragstart', (event) => {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', JSON.stringify(boxData));
+  });
+
   row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
-    // const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     const target = e.target.closest('.row');
     if (target) {
       const id = target.dataset.boxId;
@@ -320,6 +324,41 @@ export function addSectionAccordionElement(sectionId, settings, target) {
       tfEl.value = '';
     }
     saveSMCache();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragenter', (event) => {
+    el.querySelector('.sm-frg-section-blocks').classList.add('dragover');
+    event.preventDefault();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragleave', (event) => {
+    if (!event.relatedTarget.classList.contains('sm-frg-section-blocks') && !event.relatedTarget.closest('.sm-frg-section-blocks') && event.target.closest('.sm-frg-section-blocks')) {
+      el.querySelector('.sm-frg-section-blocks').classList.remove('dragover');
+    }
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragover', (e) => {
+    e.dataTransfer.dropEffect = 'move';
+    e.preventDefault();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('drop', (e) => {
+    const data = e.dataTransfer.getData('text/plain');
+    const boxData = JSON.parse(data);
+    const blockToMoveEl = SM_FRAGMENTS_CONTAINER.querySelector(`.sm-frg-sec-block[data-box-id="${boxData.id}"]`);
+    if (blockToMoveEl) {
+      const newId = e.target.closest('.sm-frg-section-blocks').lastElementChild
+        ? parseInt(e.target.closest('.sm-frg-section-blocks').lastElementChild.dataset.id, 10) + 1 : 1;
+
+      blockToMoveEl.remove();
+
+      // eslint-disable-next-line no-use-before-define
+      addBlockInSection(getMappingRow(boxData, newId), e.target.closest('.sm-frg-section'));
+
+      saveSMCache();
+    }
+    e.target.closest('.sm-frg-section-blocks').classList.remove('dragover');
+    e.preventDefault();
   });
 
   const settingsSMStyleTextfieldEl = el.querySelector('#frg-section-section-metadata-style');

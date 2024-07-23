@@ -118,6 +118,16 @@
                 border-bottom: solid 1px var(--spectrum-global-color-gray-100);
               }
             }
+            
+            & .sm-frg-section-blocks {
+              padding: .5rem;
+              border: 4px solid transparent;
+            }
+            
+            & .sm-frg-section-blocks.dragover {
+              border: 4px dashed var(--spectrum-global-color-gray-600);
+              background-color: var(--spectrum-global-color-gray-200);
+            }
           }
         }
       }
