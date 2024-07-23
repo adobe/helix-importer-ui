@@ -297,21 +297,7 @@ export function addSectionAccordionElement(sectionId, settings, target) {
   </details>
 `;
 
-/*
-      <sp-divider size="m"></sp-divider>
-      <div class="sm-frg-section-settings-wrapper">
-        <h4>Settings</h4>
-        <div class="sm-frg-section-settings-container">
-          <div>
-            <sp-checkbox id="frg-section-sm-block-checkbox" size="s" ${settings && settings['section-metadata-block'].add === true ? 'checked' : ''}>Add <code>section-metadata</code> Block</sp-checkbox>
-            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" value="${settings && settings['section-metadata-block'].add === true ? settings['section-metadata-block'].style : ''}" ${settings && settings['section-metadata-block'].add === true ? '' : 'disabled'}>
-            </sp-textfield>
-          </div>
-        </div>
-      </div>
-
- */
-  target.appendChild(el);
+target.appendChild(el);
 
   const deleteBtnEl = el.querySelector('#delete-section');
   deleteBtnEl.addEventListener('click', () => {
@@ -331,23 +317,6 @@ export function addSectionAccordionElement(sectionId, settings, target) {
   settingsSMStyleTextfieldEl.addEventListener('input', (e) => {
     saveSMCache();
   });
-
-  // const settingsSMStyleTextfieldEl = el.querySelector('#frg-section-section-metadata-style');
-  // settingsSMStyleTextfieldEl.addEventListener('input', () => {
-  //   saveSMCache();
-  // });
-
-  // el.querySelector('#frg-section-sm-block-checkbox').addEventListener('change', (e) => {
-  //   const cbEl = e.target;
-  //   if (cbEl.checked) {
-  //     el.querySelector('#frg-section-section-metadata-style').removeAttribute('disabled');
-  //   } else {
-  //     const tfEl = el.querySelector('#frg-section-section-metadata-style');
-  //     tfEl.setAttribute('disabled', '');
-  //     tfEl.value = '';
-  //   }
-  //   saveSMCache();
-  // });
 
   el.querySelector('.sm-frg-section-blocks').addEventListener('dragenter', (event) => {
     el.querySelector('.sm-frg-section-blocks').classList.add('dragover');
