@@ -373,15 +373,6 @@ function getMainFragmentPath(url) {
   return mainPath;
 }
 
-export function createAddFragmentBtn(target) {
-  const el = document.createElement('sp-button');
-  el.innerHTML = '<sp-icon-add slot="icon"></sp-icon-add>Add Fragment</sp-button>';
-  el.addEventListener('click', () => {
-    // getFragmentAccordionElement(target);
-  });
-  target.appendChild(el);
-}
-
 export function addFragmentAccordionElement(path) {
   const id = SM_FRAGMENTS_CONTAINER.lastElementChild
     ? parseInt(SM_FRAGMENTS_CONTAINER.lastElementChild.dataset.id, 10) + 1 : 1;
