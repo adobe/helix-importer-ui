@@ -59,6 +59,50 @@
         background-color: var(--spectrum-global-color-gray-75);
       }
 
+      & #sm-fragment-edit-path-btn {
+        margin-left: 5px;
+        position: relative;
+        top: .4rem;
+        right: .4rem;
+        float: inline-end;
+
+        & sp-textfield {
+          width: 140px;
+        }
+      }
+
+      & details {
+        margin: .4rem;
+
+        & summary {
+          font-family: monospace;
+          fill: white;
+          cursor: pointer;
+          padding: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-size: x-large;
+          pointer-events: auto;
+  
+          & h2 {
+            margin: 0;
+          }
+  
+          &::marker {
+            color: var(--spectrum-global-color-gray-100);
+            pointer-events: auto;
+          }
+  
+          & text {
+            pointer-events: auto;
+          }
+        }  
+      }
+
+      & .sm-frg-sections-title {
+        display: flex;
+        gap: 1rem;
+      }
+
       & .sm-fragment-content {
         display: flex;
         flex-direction: column;
@@ -146,56 +190,12 @@
         }
       }
 
-      & details {
-        margin: .4rem;
-
-        & summary {
-          font-family: monospace;
-          fill: white;
-          cursor: pointer;
-          padding: 0.5rem;
-          margin-bottom: 0.5rem;
-          font-size: x-large;
-          pointer-events: auto;
-  
-          & h2 {
-            margin: 0;
-          }
-  
-          &::marker {
-            color: var(--spectrum-global-color-gray-100);
-            pointer-events: auto;
-          }
-  
-          & text {
-            pointer-events: auto;
-          }
-        }  
-      }
-
       & #delete-frg {
         margin-left: 5px;
         position: relative;
         top: .4rem;
         right: .4rem;
         float: inline-end;
-      }
-
-      & #sm-fragment-edit-path-btn {
-        margin-left: 5px;
-        position: relative;
-        top: .4rem;
-        right: .4rem;
-        float: inline-end;
-
-        & sp-textfield {
-          width: 140px;
-        }
-      }
-
-      & .sm-frg-sections-title {
-        display: flex;
-        gap: 1rem;
       }
     }
   }
