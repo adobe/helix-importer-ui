@@ -81,8 +81,21 @@
           & #delete-section {
             margin-left: 5px;
             position: relative;
-            top: 5px;
+            top: 1rem;
+            right: 1rem;
             float: inline-end;
+          }
+    
+          & #sm-frg-section-edit-style-btn {
+            margin-left: 5px;
+            position: relative;
+            top: 1rem;
+            right: 1rem;
+            float: inline-end;
+    
+            & sp-textfield {
+              width: 140px;
+            }
           }
     
           & summary {
@@ -91,6 +104,7 @@
           }
           
           & .sm-frg-section {
+            margin: .4rem;
             border-left: 25px solid var(--spectrum-global-color-gray-100);
 
             &.selected {
@@ -132,40 +146,46 @@
         }
       }
 
-      & summary {
-        font-family: monospace;
-        fill: white;
-        cursor: pointer;
-        padding: 0.5rem;
-        margin-bottom: 0.5rem;
-        font-size: x-large;
-        pointer-events: auto;
+      & details {
+        margin: .4rem;
 
-        & h2 {
-          margin: 0;
-        }
-
-        &::marker {
-          color: var(--spectrum-global-color-gray-100);
+        & summary {
+          font-family: monospace;
+          fill: white;
+          cursor: pointer;
+          padding: 0.5rem;
+          margin-bottom: 0.5rem;
+          font-size: x-large;
           pointer-events: auto;
-        }
-
-        & text {
-          pointer-events: auto;
-        }
+  
+          & h2 {
+            margin: 0;
+          }
+  
+          &::marker {
+            color: var(--spectrum-global-color-gray-100);
+            pointer-events: auto;
+          }
+  
+          & text {
+            pointer-events: auto;
+          }
+        }  
       }
 
       & #delete-frg {
         margin-left: 5px;
         position: relative;
-        top: 5px;
+        top: .4rem;
+        right: .4rem;
         float: inline-end;
       }
 
       & #sm-fragment-edit-path-btn {
         margin-left: 5px;
         position: relative;
-        top: 5px;
+        top: .4rem;
+        right: .4rem;
         float: inline-end;
 
         & sp-textfield {

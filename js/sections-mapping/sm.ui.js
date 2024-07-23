@@ -61,13 +61,12 @@ export function getSMData() {
       const secObj = {
         id: section.dataset.id,
         blocks,
-        settings: {
-          'section-metadata-block': {
-            add: section.querySelector('#frg-section-sm-block-checkbox').checked,
-            style: section.querySelector('#frg-section-section-metadata-style').value,
-          },
-        },
+        settings: {},
       };
+      const smStyleEl = section.querySelector('#section-metadata-style');
+      if (smStyleEl && smStyleEl.value !== '') {
+        secObj.settings['section-metadata-style'] = smStyleEl.value;
+      }
       section.querySelectorAll('.row').forEach((block) => {
         secObj.blocks.push({
           ...JSON.parse(block.dataset.boxData),
@@ -265,6 +264,17 @@ export function addSectionAccordionElement(sectionId, settings, target) {
   <sp-button id="delete-section" size="s" variant="negative" treatment="fill" role="button" icon-only>
     <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
   </sp-button>
+    <sp-action-button id="sm-frg-section-edit-style-btn" size="s" quiet>
+    <sp-icon-gears-edit slot="icon"></sp-icon-gears-edit>
+    <sp-tooltip self-managed placement="left">
+      <div>
+        <sp-field-label for="section-metadata-style" side-aligned="start">Section Metadata Style property</sp-field-label>
+        <sp-textfield id="section-metadata-style" placeholder="(ex. 'dark, center)" value="${settings && settings['section-metadata-block'] ? settings['section-metadata-block'] : ''}">
+          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+        </sp-textfield>
+      </div>
+    </sp-tooltip>
+  </sp-action-button>
   <details open>
     <summary>${label}</summary>
     <div class="sm-frg-section-content">
@@ -283,6 +293,11 @@ export function addSectionAccordionElement(sectionId, settings, target) {
       </div>
       <div class="sm-frg-section-blocks">
       </div>
+    </div>
+  </details>
+`;
+
+/*
       <sp-divider size="m"></sp-divider>
       <div class="sm-frg-section-settings-wrapper">
         <h4>Settings</h4>
@@ -294,10 +309,8 @@ export function addSectionAccordionElement(sectionId, settings, target) {
           </div>
         </div>
       </div>
-    </div>
-  </details>
-`;
 
+ */
   target.appendChild(el);
 
   const deleteBtnEl = el.querySelector('#delete-section');
@@ -314,17 +327,27 @@ export function addSectionAccordionElement(sectionId, settings, target) {
     }
   });
 
-  el.querySelector('#frg-section-sm-block-checkbox').addEventListener('change', (e) => {
-    const cbEl = e.target;
-    if (cbEl.checked) {
-      el.querySelector('#frg-section-section-metadata-style').removeAttribute('disabled');
-    } else {
-      const tfEl = el.querySelector('#frg-section-section-metadata-style');
-      tfEl.setAttribute('disabled', '');
-      tfEl.value = '';
-    }
+  const settingsSMStyleTextfieldEl = el.querySelector('#section-metadata-style');
+  settingsSMStyleTextfieldEl.addEventListener('input', (e) => {
     saveSMCache();
   });
+
+  // const settingsSMStyleTextfieldEl = el.querySelector('#frg-section-section-metadata-style');
+  // settingsSMStyleTextfieldEl.addEventListener('input', () => {
+  //   saveSMCache();
+  // });
+
+  // el.querySelector('#frg-section-sm-block-checkbox').addEventListener('change', (e) => {
+  //   const cbEl = e.target;
+  //   if (cbEl.checked) {
+  //     el.querySelector('#frg-section-section-metadata-style').removeAttribute('disabled');
+  //   } else {
+  //     const tfEl = el.querySelector('#frg-section-section-metadata-style');
+  //     tfEl.setAttribute('disabled', '');
+  //     tfEl.value = '';
+  //   }
+  //   saveSMCache();
+  // });
 
   el.querySelector('.sm-frg-section-blocks').addEventListener('dragenter', (event) => {
     el.querySelector('.sm-frg-section-blocks').classList.add('dragover');
@@ -359,11 +382,6 @@ export function addSectionAccordionElement(sectionId, settings, target) {
     }
     e.target.closest('.sm-frg-section-blocks').classList.remove('dragover');
     e.preventDefault();
-  });
-
-  const settingsSMStyleTextfieldEl = el.querySelector('#frg-section-section-metadata-style');
-  settingsSMStyleTextfieldEl.addEventListener('input', () => {
-    saveSMCache();
   });
 
   saveSMCache();
@@ -430,7 +448,7 @@ export function addFragmentAccordionElement(path) {
     <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
   </sp-button>
   <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
-    <sp-icon-text-edit slot="icon"></sp-icon-text-edit>
+    <sp-icon-gears-edit slot="icon"></sp-icon-gears-edit>
     <sp-tooltip self-managed placement="left">
       <div>
         <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
