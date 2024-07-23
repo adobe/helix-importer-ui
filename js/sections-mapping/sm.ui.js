@@ -93,19 +93,20 @@ export function saveSMCache() {
   const cache = getSMCache();
   const mapping = getSMData();
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  if (mapping.length > 0) {
+    const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
 
-  if (found) {
-    found.mapping = mapping;
-  } else {
-    cache.push({
-      url,
-      autoDetect,
-      mapping,
-    });
+    if (found) {
+      found.mapping = mapping;
+    } else {
+      cache.push({
+        url,
+        autoDetect,
+        mapping,
+      });
+    }
+    localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
   }
-
-  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
 function getBlockPicker(value = 'defaultContent') {
