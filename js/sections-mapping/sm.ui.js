@@ -269,7 +269,7 @@ export function addSectionAccordionElement(sectionId, settings, target) {
     <sp-tooltip self-managed placement="left">
       <div>
         <sp-field-label for="section-metadata-style" side-aligned="start">Section Metadata Style property</sp-field-label>
-        <sp-textfield id="section-metadata-style" placeholder="(ex. 'dark, center)" value="${settings && settings['section-metadata-block'] ? settings['section-metadata-block'] : ''}">
+        <sp-textfield id="section-metadata-style" placeholder="(ex. 'dark, center)" value="${settings && settings['section-metadata-style'] ? settings['section-metadata-style'] : ''}">
           <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
         </sp-textfield>
       </div>
