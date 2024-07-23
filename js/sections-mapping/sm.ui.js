@@ -110,127 +110,6 @@ export function saveSMCache() {
   localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
 }
 
-export function createAddFragmentBtn(target) {
-  const el = document.createElement('sp-button');
-  el.innerHTML = '<sp-icon-add slot="icon"></sp-icon-add>Add Fragment</sp-button>';
-  el.addEventListener('click', () => {
-    // getFragmentAccordionElement(target);
-  });
-  target.appendChild(el);
-}
-
-export function addFragmentAccordionElement(path) {
-  const id = SM_FRAGMENTS_CONTAINER.lastElementChild
-    ? parseInt(SM_FRAGMENTS_CONTAINER.lastElementChild.dataset.id, 10) + 1 : 1;
-
-  const label = path || `/new-fragment-${id.toString().padStart(2, '0')}`;
-  const elId = `sm-frg-${id.toString().padStart(2, '0')}`;
-
-  const el = document.createElement('div');
-  el.id = elId;
-  el.dataset.id = id;
-  el.dataset.path = label;
-  el.className = 'sm-fragment';
-  el.setAttribute('open', '');
-  el.innerHTML = `
-  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
-    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
-  </sp-button>
-  <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
-    <sp-icon-text-edit slot="icon"></sp-icon-text-edit>
-    <sp-tooltip self-managed placement="left">
-      <div>
-        <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
-        <sp-textfield id="fragment-path" placeholder="${label}">
-          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
-        </sp-textfield>
-      </div>
-    </sp-tooltip>
-  </sp-action-button>
-  <details open>
-    <summary>${label}</summary>
-    <div class="sm-fragment-content">
-      <div class="sm-frg-sections-title">
-        <h2>Sections</h2>
-        <sp-button id="frg-add-section" size="s" treatment="fill" role="button" icon-only>
-          <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
-        </sp-button>
-      </div>
-      <div class="sm-fragment-sections">
-      </div>
-    </div>
-  </details>
-`;
-
-  SM_FRAGMENTS_CONTAINER.appendChild(el);
-
-  const accItemNameTextfieldEl = el.querySelector('sp-textfield');
-
-  accItemNameTextfieldEl.addEventListener('input', (e) => {
-    el.dataset.path = e.target.value;
-    el.querySelector('summary').textContent = e.target.value;
-    saveSMCache();
-  });
-
-  const deleteBtnEl = el.querySelector('#delete-frg');
-  deleteBtnEl.addEventListener('click', () => {
-    el.remove();
-    saveSMCache();
-  });
-
-  const addSectionBtnEl = el.querySelector('#frg-add-section');
-  addSectionBtnEl.addEventListener('click', () => {
-    const sectionId = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
-    selectedSectionInFragment.id = sectionId;
-    saveSMCache();
-  });
-
-  saveSMCache();
-
-  return el;
-}
-
-export function initUIFromData(data) {
-  data.forEach((fragment) => {
-    const el = addFragmentAccordionElement(fragment.path);
-    fragment.sections.forEach((section) => {
-      addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
-      // addBlockInSection(getMappingRow(section), el);
-    });
-  });
-}
-
-export function init(config) {
-  importerConfig = config;
-  ADD_FRAGMENT_BTN?.addEventListener('click', () => addFragmentAccordionElement());
-}
-
-export function initOverlayClickHandler() {
-  getContentFrame().contentDocument.body.addEventListener('click', (e) => {
-    const overlayDiv = e.target;
-    // shift + click to remove overlay
-    if (e.shiftKey) {
-      overlayDiv.remove();
-    } else if (overlayDiv.dataset.boxData) {
-      const boxData = JSON.parse(overlayDiv.dataset.boxData);
-      boxData.color = overlayDiv.style.borderColor;
-      boxData.mapping = 'unset';
-      addBlockInSection(getMappingRow(boxData));
-    }
-  });
-}
-
-export function reset() {
-  SM_FRAGMENTS_CONTAINER.innerHTML = '';
-  SM_FRAGMENTS_CONTAINER.childNodes.forEach((el) => {
-    el.remove();
-  });
-}
-
-export function setImporterConfig(config) {
-  importerConfig = config;
-}
-
 function getBlockPicker(value = 'defaultContent') {
   const blockPicker = document.createElement('sp-picker');
   blockPicker.setAttribute('label', 'Mapping ...');
@@ -266,7 +145,7 @@ function getBlockPicker(value = 'defaultContent') {
 
   blockPicker.setAttribute('value', value);
 
-  blockPicker.addEventListener('change', (e) => {
+  blockPicker.addEventListener('change', () => {
     saveSMCache();
   });
 
@@ -358,47 +237,6 @@ export function getMappingRow(boxData, idx = 1) {
   return row;
 }
 
-function getMainFragmentPath(url) {
-  const u = new URL(url);
-  let mainPath = u.pathname.replace(/\.[^/.]+$/, '');
-  if (mainPath === '/') {
-    mainPath = '/index';
-  }
-  return mainPath;
-}
-
-export function setUIFragmentsFromCache(url) {
-  const cache = getSMCache();
-  const autoDetect = false;
-
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
-  if (found) {
-    initUIFromData(found.mapping);
-  } else {
-    ['/nav', getMainFragmentPath(url), '/footer'].forEach((path) => {
-      const frgEl = addFragmentAccordionElement(path);
-      addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
-    });
-  }
-}
-
-export function setUIFragmentsFromSections(url, sections) {
-  const navFrgEl = addFragmentAccordionElement('/nav');
-  const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
-  const footerFrgEl = addFragmentAccordionElement('/footer');
-
-  // sections.forEach((section, idx) => {
-  //   const row = getMappingRow(section, idx + 1);
-  //   if (section.mapping === 'header') {
-  //     addBlockInSection(row, navFrgEl);
-  //   } else if (section.mapping === 'footer') {
-  //     addBlockInSection(row, footerFrgEl);
-  //   } else {
-  //     addBlockInSection(row, mainFrgEl);
-  //   }
-  // });
-}
-
 export function useImportRules() {
   return importerConfig.fields['import-sm-use-rules'];
 }
@@ -448,7 +286,7 @@ export function addSectionAccordionElement(sectionId, settings, target) {
         <div class="sm-frg-section-settings-container">
           <div>
             <sp-checkbox id="frg-section-sm-block-checkbox" size="s" ${settings && settings['section-metadata-block'].add === true ? 'checked' : ''}>Add <code>section-metadata</code> Block</sp-checkbox>
-            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" value="${settings && settings['section-metadata-block'].add === true ? settings['section-metadata-block']['style'] : ''}" ${settings && settings['section-metadata-block'].add === true ? '' : 'disabled'}>
+            <sp-textfield id="frg-section-section-metadata-style" size="s" placeholder="style property (ex. 'dark, center)" value="${settings && settings['section-metadata-block'].add === true ? settings['section-metadata-block'].style : ''}" ${settings && settings['section-metadata-block'].add === true ? '' : 'disabled'}>
             </sp-textfield>
           </div>
         </div>
@@ -521,4 +359,174 @@ export function addBlockInSection(row, target) {
   } else {
     alert.warning('Please select a Section first');
   }
+}
+
+/**
+ * fragments ui elements
+ */
+
+function getMainFragmentPath(url) {
+  const u = new URL(url);
+  let mainPath = u.pathname.replace(/\.[^/.]+$/, '');
+  if (mainPath === '/') {
+    mainPath = '/index';
+  }
+  return mainPath;
+}
+
+export function createAddFragmentBtn(target) {
+  const el = document.createElement('sp-button');
+  el.innerHTML = '<sp-icon-add slot="icon"></sp-icon-add>Add Fragment</sp-button>';
+  el.addEventListener('click', () => {
+    // getFragmentAccordionElement(target);
+  });
+  target.appendChild(el);
+}
+
+export function addFragmentAccordionElement(path) {
+  const id = SM_FRAGMENTS_CONTAINER.lastElementChild
+    ? parseInt(SM_FRAGMENTS_CONTAINER.lastElementChild.dataset.id, 10) + 1 : 1;
+
+  const label = path || `/new-fragment-${id.toString().padStart(2, '0')}`;
+  const elId = `sm-frg-${id.toString().padStart(2, '0')}`;
+
+  const el = document.createElement('div');
+  el.id = elId;
+  el.dataset.id = id;
+  el.dataset.path = label;
+  el.className = 'sm-fragment';
+  el.setAttribute('open', '');
+  el.innerHTML = `
+  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
+    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
+  </sp-button>
+  <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
+    <sp-icon-text-edit slot="icon"></sp-icon-text-edit>
+    <sp-tooltip self-managed placement="left">
+      <div>
+        <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
+        <sp-textfield id="fragment-path" placeholder="${label}">
+          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+        </sp-textfield>
+      </div>
+    </sp-tooltip>
+  </sp-action-button>
+  <details open>
+    <summary>${label}</summary>
+    <div class="sm-fragment-content">
+      <div class="sm-frg-sections-title">
+        <h2>Sections</h2>
+        <sp-button id="frg-add-section" size="s" treatment="fill" role="button" icon-only>
+          <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
+        </sp-button>
+      </div>
+      <div class="sm-fragment-sections">
+      </div>
+    </div>
+  </details>
+`;
+
+  SM_FRAGMENTS_CONTAINER.appendChild(el);
+
+  const accItemNameTextfieldEl = el.querySelector('sp-textfield');
+
+  accItemNameTextfieldEl.addEventListener('input', (e) => {
+    el.dataset.path = e.target.value;
+    el.querySelector('summary').textContent = e.target.value;
+    saveSMCache();
+  });
+
+  const deleteBtnEl = el.querySelector('#delete-frg');
+  deleteBtnEl.addEventListener('click', () => {
+    el.remove();
+    saveSMCache();
+  });
+
+  const addSectionBtnEl = el.querySelector('#frg-add-section');
+  addSectionBtnEl.addEventListener('click', () => {
+    const sectionId = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionId;
+    saveSMCache();
+  });
+
+  saveSMCache();
+
+  return el;
+}
+
+export function initUIFromData(data) {
+  data.forEach((fragment) => {
+    const el = addFragmentAccordionElement(fragment.path);
+    fragment.sections.forEach((section) => {
+      addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
+      // addBlockInSection(getMappingRow(section), el);
+    });
+  });
+}
+
+export function setUIFragmentsFromCache(url) {
+  const cache = getSMCache();
+  const autoDetect = false;
+
+  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  if (found) {
+    initUIFromData(found.mapping);
+  } else {
+    ['/nav', getMainFragmentPath(url), '/footer'].forEach((path) => {
+      const frgEl = addFragmentAccordionElement(path);
+      addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+    });
+  }
+}
+
+// export function setUIFragmentsFromSections(url, sections) {
+//   const navFrgEl = addFragmentAccordionElement('/nav');
+//   const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
+//   const footerFrgEl = addFragmentAccordionElement('/footer');
+
+//   // sections.forEach((section, idx) => {
+//   //   const row = getMappingRow(section, idx + 1);
+//   //   if (section.mapping === 'header') {
+//   //     addBlockInSection(row, navFrgEl);
+//   //   } else if (section.mapping === 'footer') {
+//   //     addBlockInSection(row, footerFrgEl);
+//   //   } else {
+//   //     addBlockInSection(row, mainFrgEl);
+//   //   }
+//   // });
+// }
+
+/**
+ * common ui elements
+ */
+
+export function init(config) {
+  importerConfig = config;
+  ADD_FRAGMENT_BTN?.addEventListener('click', () => addFragmentAccordionElement());
+}
+
+export function initOverlayClickHandler() {
+  getContentFrame().contentDocument.body.addEventListener('click', (e) => {
+    const overlayDiv = e.target;
+    // shift + click to remove overlay
+    if (e.shiftKey) {
+      overlayDiv.remove();
+    } else if (overlayDiv.dataset.boxData) {
+      const boxData = JSON.parse(overlayDiv.dataset.boxData);
+      boxData.color = overlayDiv.style.borderColor;
+      boxData.mapping = 'unset';
+      addBlockInSection(getMappingRow(boxData));
+    }
+  });
+}
+
+export function reset() {
+  SM_FRAGMENTS_CONTAINER.innerHTML = '';
+  SM_FRAGMENTS_CONTAINER.childNodes.forEach((el) => {
+    el.remove();
+  });
+}
+
+export function setImporterConfig(config) {
+  importerConfig = config;
 }

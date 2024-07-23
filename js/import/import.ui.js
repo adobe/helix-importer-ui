@@ -29,7 +29,7 @@ import {
 import * as fragmentUI from '../sections-mapping/sm.ui.js';
 import { buildTransformationRulesFromMapping } from './import.rules.js';
 import TransformFactory from '../shared/transformfactory.js';
-import { detectSections } from '../sections-mapping/utils.js';
+import detectSections from '../sections-mapping/utils.js';
 import { preparePagePreview } from '../express/free-mapping/preview-selectors.js';
 import { getFragmentSectionsMappingData } from '../sections-mapping/import/sections-mapping.import.js';
 
