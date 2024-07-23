@@ -558,7 +558,8 @@ export function init(config) {
   importerConfig = config;
   ADD_FRAGMENT_BTN?.addEventListener('click', () => {
     const frgEl = addFragmentAccordionElement();
-    addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+    const sectionEl = addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionEl.dataset.id;
   });
 }
 
