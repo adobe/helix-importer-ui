@@ -89,7 +89,6 @@ export function getSMCache() {
 }
 
 export function saveSMCache() {
-  // disable for now
   const url = importerConfig.fields['import-url'];
   const autoDetect = importerConfig.fields['import-sm-auto-detect'];
   const cache = getSMCache();
@@ -330,7 +329,7 @@ export function addSectionAccordionElement(sectionId, settings, target) {
 
   saveSMCache();
 
-  return el.dataset.id;
+  return el;
 }
 
 /**
@@ -444,8 +443,8 @@ export function addFragmentAccordionElement(path) {
 
   const addSectionBtnEl = el.querySelector('#frg-add-section');
   addSectionBtnEl.addEventListener('click', () => {
-    const sectionId = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
-    selectedSectionInFragment.id = sectionId;
+    const sectionEl = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionEl.dataset.id;
     saveSMCache();
   });
 
@@ -458,17 +457,19 @@ export function initUIFromData(data) {
   data.forEach((fragment) => {
     const el = addFragmentAccordionElement(fragment.path);
     fragment.sections.forEach((section) => {
-      addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
-      // addBlockInSection(getMappingRow(section), el);
+      const frgSecEl = addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
+      section.blocks.forEach((block, idx) => {
+        const row = getMappingRow(block, idx + 1);
+        addBlockInSection(row, frgSecEl);
+      });
     });
   });
 }
 
 export function setUIFragmentsFromCache(url) {
   const cache = getSMCache();
-  const autoDetect = false;
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  const found = cache.find((item) => item.url === url && item.autoDetect === false);
   if (found) {
     initUIFromData(found.mapping);
   } else {
@@ -479,22 +480,27 @@ export function setUIFragmentsFromCache(url) {
   }
 }
 
-// export function setUIFragmentsFromSections(url, sections) {
-//   const navFrgEl = addFragmentAccordionElement('/nav');
-//   const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
-//   const footerFrgEl = addFragmentAccordionElement('/footer');
+export function setUIFragmentsFromSections(url, sections) {
+  const navFrgEl = addFragmentAccordionElement('/nav');
+  const navFrgSecEl = addSectionAccordionElement(navFrgEl.dataset.id, null, navFrgEl.querySelector('.sm-fragment-sections'));
+  const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
+  const mainFrgSecEl = addSectionAccordionElement(mainFrgEl.dataset.id, null, mainFrgEl.querySelector('.sm-fragment-sections'));
+  const footerFrgEl = addFragmentAccordionElement('/footer');
+  const footerFrgSecEl = addSectionAccordionElement(footerFrgEl.dataset.id, null, footerFrgEl.querySelector('.sm-fragment-sections'));
 
-//   // sections.forEach((section, idx) => {
-//   //   const row = getMappingRow(section, idx + 1);
-//   //   if (section.mapping === 'header') {
-//   //     addBlockInSection(row, navFrgEl);
-//   //   } else if (section.mapping === 'footer') {
-//   //     addBlockInSection(row, footerFrgEl);
-//   //   } else {
-//   //     addBlockInSection(row, mainFrgEl);
-//   //   }
-//   // });
-// }
+  sections.forEach((section, idx) => {
+    const row = getMappingRow(section, idx + 1);
+    if (section.mapping === 'header') {
+      addBlockInSection(row, navFrgSecEl);
+    } else if (section.mapping === 'footer') {
+      addBlockInSection(row, footerFrgSecEl);
+    } else {
+      addBlockInSection(row, mainFrgSecEl);
+    }
+  });
+
+  saveSMCache();
+}
 
 /**
  * common ui elements
