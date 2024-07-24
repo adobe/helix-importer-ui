@@ -9,21 +9,21 @@ export default function headerParser(el, { document, params, allMappings }) {
     {
       checkFn: (e) => e.querySelector('a > img'),
       parseFn: (e, targetEl, x) => {
-        const parentEl = e.parentElement;
         if (bodyWidth && x < bodyWidth / 2) {
           targetEl.append(e);
-          parentEl.append(document.createElement('br'));
-          targetEl.append(parentEl);
           return true;
         }
         return false;
       },
     },
     {
-      checkFn: (e) => e.querySelector('picture + br + a, image + br + a'),
+      checkFn: (e) => e.querySelector('picture + br + a, img + br + a'),
       parseFn: (e, targetEl, x) => {
         if (bodyWidth && x < bodyWidth / 2) {
-          targetEl.append(e);
+          const imgEl = e.closest('picture, img');
+          if (imgEl) {
+            targetEl.append(imgEl);
+          }
           return true;
         }
         return false;
