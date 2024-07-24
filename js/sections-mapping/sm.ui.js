@@ -493,7 +493,10 @@ export function setUIFragmentsFromCache(url) {
   } else {
     ['/nav', getMainFragmentPath(url), '/footer'].forEach((path) => {
       const frgEl = addFragmentAccordionElement(path);
-      addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+      const sectionEl = addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+      if (path === '/nav') {
+        selectedSectionInFragment.id = sectionEl.dataset.id;
+      }
     });
   }
 }
