@@ -9,11 +9,13 @@ const SM_LOCAL_STORAGE_KEY = 'helix-importer-sections-mapping';
 let importerConfig = {};
 
 // selected fragment
-const selectedFragment = { id: null };
-const selectedFragmentProxy = new Proxy(selectedFragment, {
+const selectedSectionInFragmentProxy = { id: null };
+const selectedSectionInFragment = new Proxy(selectedSectionInFragmentProxy, {
   set: (target, key, value) => {
+    console.log('selectedSectionInFragment', target, key, value);
+
     const oldValue = target[key];
-    console.log(`${key} set from ${selectedFragment.id} to ${value}`);
+    console.log(`${key} set from ${selectedSectionInFragmentProxy.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = SM_FRAGMENTS_CONTAINER.querySelector(`[data-id="${oldValue}"]`);
     if (oldOverlayDiv) {
@@ -28,11 +30,10 @@ const selectedFragmentProxy = new Proxy(selectedFragment, {
 });
 
 // selected section
-const selectedSection = { id: null };
-const selectedSectionProxy = new Proxy(selectedSection, {
+const selectedBoxInSectionProxy = { id: null };
+const selectedBoxInSection = new Proxy(selectedBoxInSectionProxy, {
   set: (target, key, value) => {
     const oldValue = target[key];
-    console.log(`${key} set from ${selectedSection.id} to ${value}`);
     target[key] = value;
     const oldOverlayDiv = getContentFrame().contentDocument.querySelector(`.xp-overlay[data-box-id="${oldValue}"]`);
     if (oldOverlayDiv) {
@@ -48,19 +49,35 @@ const selectedSectionProxy = new Proxy(selectedSection, {
 
 export function getSMData() {
   const fragments = [];
+  // return fragments;
   SM_FRAGMENTS_CONTAINER.querySelectorAll('.sm-fragment').forEach((el) => {
     const fragment = {
       id: el.dataset.id,
       path: el.dataset.path,
       sections: [],
     };
-    el.querySelectorAll('.row').forEach((section) => {
-      fragment.sections.push({
-        ...JSON.parse(section.dataset.boxData),
-        mapping: section.querySelector('sp-picker').value,
-        customBlockName: section.querySelector('sp-textfield').value,
+    el.querySelectorAll('.sm-fragment-sections .sm-frg-section').forEach((section) => {
+      const blocks = [];
+      const secObj = {
+        id: section.dataset.id,
+        blocks,
+        settings: {},
+      };
+      const smStyleEl = section.querySelector('#section-metadata-style');
+      if (smStyleEl && smStyleEl.value !== '') {
+        secObj.settings['section-metadata-style'] = smStyleEl.value;
+      }
+      section.querySelectorAll('.row').forEach((block) => {
+        secObj.blocks.push({
+          ...JSON.parse(block.dataset.boxData),
+          mapping: block.querySelector('sp-picker').value,
+          customBlockName: block.querySelector('sp-textfield').value,
+        });
       });
+
+      fragment.sections.push(secObj);
     });
+
     fragments.push(fragment);
   });
   return fragments;
@@ -76,170 +93,20 @@ export function saveSMCache() {
   const cache = getSMCache();
   const mapping = getSMData();
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  if (mapping.length > 0) {
+    const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
 
-  if (found) {
-    found.mapping = mapping;
-  } else {
-    cache.push({
-      url,
-      autoDetect,
-      mapping,
-    });
-  }
-
-  localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
-}
-
-export function createAddFragmentBtn(target) {
-  const el = document.createElement('sp-button');
-  el.innerHTML = '<sp-icon-add slot="icon"></sp-icon-add>Add Fragment</sp-button>';
-  el.addEventListener('click', () => {
-    // getFragmentAccordionElement(target);
-  });
-  target.appendChild(el);
-}
-
-export function addFragmentAccordionElement(path) {
-  const id = SM_FRAGMENTS_CONTAINER.lastElementChild
-    ? parseInt(SM_FRAGMENTS_CONTAINER.lastElementChild.dataset.id, 10) + 1 : 1;
-
-  const label = path || `/new-fragment-${id.toString().padStart(2, '0')}`;
-  const elId = `sm-frg-${id.toString().padStart(2, '0')}`;
-
-  const el = document.createElement('div');
-  el.id = elId;
-  el.dataset.id = id;
-  el.dataset.path = label;
-  el.className = 'sm-fragment';
-  el.setAttribute('open', '');
-  el.innerHTML = `
-  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
-    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
-  </sp-button>
-  <details>
-    <summary>${label}</summary>
-    <div class="sm-fragment-content">
-      <div class="sm-frg-settings-wrapper">
-        <h2>Settings</h2>
-        <div class="sm-frg-settings-container">
-          <div>
-            <sp-field-label>Fragment Path (ex. /index)</sp-field-label>
-            <sp-textfield class="option-field" id="import-url" placeholder="${label}">
-              <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
-            </sp-textfield>
-          </div>
-        </div>
-      </div>
-      <div class="sm-frg-sections-title">
-        <h2>Sections</h2>   
-        <sp-action-button size="s" quiet>
-            <sp-icon-info slot="icon"></sp-icon-info>
-            <sp-tooltip self-managed placement="bottom">
-                * To add sections to this fragment:<br>
-                  1. Select the fragment by clicking the gray rectangle on the left
-                  2. click overlays in the page preview.
-                <br><br>
-                * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
-            </sp-tooltip>
-        </sp-action-button>
-      </div>
-      <sp-divider size="m"></sp-divider>
-      <div class="sm-fragment-sections">
-      </div>
-    </div>
-  </details>
-`;
-
-  SM_FRAGMENTS_CONTAINER.appendChild(el);
-
-  const accItemNameTextfieldEl = el.querySelector('sp-textfield');
-  const deleteBtnEl = el.querySelector('#delete-frg');
-
-  accItemNameTextfieldEl.addEventListener('input', (e) => {
-    el.dataset.path = e.target.value;
-    el.querySelector('summary').textContent = e.target.value;
-  });
-
-  deleteBtnEl.addEventListener('click', () => {
-    el.remove();
-    saveSMCache();
-  });
-
-  el.addEventListener('click', (e) => {
-    // handle sm fragment selection
-    if (e.layerX > 0 && e.layerX < 25) {
-      const target = e.target || e.currentTarget;
-      console.log('selected item', target);
-      selectedFragmentProxy.id = target.dataset.id;
-    }
-  });
-
-  saveSMCache();
-
-  return el;
-}
-
-export function addSectionRow(row, target) {
-  const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
-  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
-  if (t) {
-    const found = Array.from(rows).find((r) => r.dataset.sectionId === row.dataset.sectionId);
-    if (!found) {
-      const sectionContainerEl = t.querySelector('.sm-fragment-sections');
-      const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
-      if (found2) {
-        sectionContainerEl.insertBefore(row, found2);
-      } else {
-        sectionContainerEl.append(row);
-      }
-      saveSMCache();
+    if (found) {
+      found.mapping = mapping;
     } else {
-      alert.warning(`Section already added to fragment ${t.dataset.path}`);
+      cache.push({
+        url,
+        autoDetect,
+        mapping,
+      });
     }
-  } else {
-    alert.warning('Please select a fragment first');
+    localStorage.setItem(SM_LOCAL_STORAGE_KEY, JSON.stringify(cache));
   }
-}
-
-export function initUIFromData(data) {
-  data.forEach((fragment) => {
-    const el = addFragmentAccordionElement(fragment.path);
-    fragment.sections.forEach((section) => {
-      addSectionRow(getMappingRow(section), el);
-    });
-  });
-}
-
-export function init(config) {
-  importerConfig = config;
-  ADD_FRAGMENT_BTN?.addEventListener('click', () => addFragmentAccordionElement());
-}
-
-export function initOverlayClickHandler() {
-  getContentFrame().contentDocument.body.addEventListener('click', (e) => {
-    const overlayDiv = e.target;
-    // shift + click to remove overlay
-    if (e.shiftKey) {
-      overlayDiv.remove();
-    } else if (overlayDiv.dataset.boxData) {
-      const section = JSON.parse(overlayDiv.dataset.boxData);
-      section.color = overlayDiv.style.borderColor;
-      section.mapping = 'unset';
-      addSectionRow(getMappingRow(section));
-    }
-  });
-}
-
-export function reset() {
-  SM_FRAGMENTS_CONTAINER.innerHTML = '';
-  SM_FRAGMENTS_CONTAINER.childNodes.forEach((el) => {
-    el.remove();
-  });
-}
-
-export function setImporterConfig(config) {
-  importerConfig = config;
 }
 
 function getBlockPicker(value = 'defaultContent') {
@@ -277,45 +144,47 @@ function getBlockPicker(value = 'defaultContent') {
 
   blockPicker.setAttribute('value', value);
 
-  blockPicker.addEventListener('change', (e) => {
+  blockPicker.addEventListener('change', () => {
     saveSMCache();
   });
 
   return blockPicker;
 }
 
-export function getMappingRow(section, idx = 1) {
+export function getMappingRow(boxData, idx = 1) {
   const row = document.createElement('div');
   row.dataset.idx = idx;
-  row.dataset.sectionId = section.id;
-  row.dataset.xpath = section.xpath;
-  row.dataset.boxY = section.y;
+  row.classList.add('sm-frg-sec-block');
+  row.dataset.boxId = boxData.id;
+  row.dataset.xpath = boxData.xpath;
+  row.dataset.boxY = boxData.y;
   row.classList.add('row');
-  row.dataset.boxData = JSON.stringify(section);
+  row.dataset.boxData = JSON.stringify(boxData);
   if (row.dataset.childrenXpaths) {
-    row.dataset.childrenXpaths = JSON.stringify(section.childrenXpaths);
+    row.dataset.childrenXpaths = JSON.stringify(boxData.childrenXpaths);
   }
+  row.setAttribute('draggable', 'true');
   row.innerHTML = `
-  <div id="sec-color" style="background-color: ${section.color || 'white'};"></div>
-  <h3 id="sec-id"><strong>${section.id}</strong></h3>
-  <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${section.layout.numCols} x ${section.layout.numRows}</h3>
+  <div id="sec-color" style="background-color: ${boxData.color || 'white'};"></div>
+  <h3 id="sec-id"><strong>${boxData.id}</strong></h3>
+  <h3 id="sec-layout" title="Cols x Rows"><sp-icon-view-grid size="xxs"></sp-icon-view-grid> ${boxData.layout.numCols} x ${boxData.layout.numRows}</h3>
   `;
 
   let pickerMapping = 'defaultContent';
-  if (section.mapping === 'unset') {
-    const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment.selected');
+  if (boxData.mapping === 'unset') {
+    const t = SM_FRAGMENTS_CONTAINER.querySelector('.sm-fragment:has(.sm-frg-section.selected)');
     const path = t ? t.dataset.path : '';
     if (path === '/nav') {
       pickerMapping = 'header';
-    } else if (section.layout.numCols > 1) {
+    } else if (boxData.layout.numCols > 1) {
       pickerMapping = 'columns';
     }
   } else {
-    pickerMapping = section.mapping;
+    pickerMapping = boxData.mapping;
   }
   const mappingPicker = getBlockPicker(pickerMapping);
-  mappingPicker.dataset.sectionId = section.id;
-  mappingPicker.dataset.xpath = section.xpath;
+  mappingPicker.dataset.boxId = boxData.id;
+  mappingPicker.dataset.xpath = boxData.xpath;
 
   row.appendChild(mappingPicker);
 
@@ -324,9 +193,9 @@ export function getMappingRow(section, idx = 1) {
   customBlockNamePicker.setAttribute('label', 'Custom Block Name');
   customBlockNamePicker.setAttribute('id', 'custom-block-name');
   customBlockNamePicker.setAttribute('placeholder', 'Custom Block Name');
-  customBlockNamePicker.setAttribute('value', section.customBlockName || '');
+  customBlockNamePicker.setAttribute('value', boxData.customBlockName || '');
   customBlockNamePicker.addEventListener('input', (e) => {
-    section.customBlockName = e.target.value;
+    boxData.customBlockName = e.target.value;
     saveSMCache();
   });
   row.appendChild(customBlockNamePicker);
@@ -338,8 +207,6 @@ export function getMappingRow(section, idx = 1) {
   deleteBtn.innerHTML = '<sp-icon-delete slot="icon"></sp-icon-delete>';
   row.appendChild(deleteBtn);
   deleteBtn.addEventListener('click', (e) => {
-    console.log(e);
-    console.log('delete section', section.id);
     // row
     const rowEl = e.target.closest('.row');
     if (rowEl) {
@@ -348,28 +215,181 @@ export function getMappingRow(section, idx = 1) {
     }
   });
 
-  row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
-    console.log('mouseenter', e.currentTarget, e.target);
+  row.addEventListener('dragstart', (event) => {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', JSON.stringify(boxData));
+  });
 
-    // const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
+  row.querySelector('#sec-id').addEventListener('mouseenter', (e) => {
     const target = e.target.closest('.row');
     if (target) {
-      const id = target.dataset.sectionId;
+      const id = target.dataset.boxId;
       const div = getElementByXpath(getContentFrame().contentDocument, target.dataset.xpath);
       div.scrollIntoViewIfNeeded({ behavior: 'smooth' });
-      selectedSectionProxy.id = id;
+      selectedBoxInSection.id = id;
     }
   });
 
   row.addEventListener('mouseleave', (e) => {
     const target = e.target.nodeName === 'DIV' ? e.target : e.target.closest('.row');
     if (target.nodeName === 'DIV') {
-      selectedSectionProxy.id = null;
+      selectedBoxInSection.id = null;
     }
   });
 
   return row;
 }
+
+export function useImportRules() {
+  return importerConfig.fields['import-sm-use-rules'];
+}
+
+/**
+ * sections ui elements
+ */
+
+export function addSectionAccordionElement(sectionId, settings, target) {
+  const id = target.lastElementChild
+    ? parseInt(target.lastElementChild.dataset.id.split('-')[1], 10) + 1 : 1;
+
+  const label = `section-${id.toString().padStart(2, '0')}`;
+  const elId = `sm-frg-section-${sectionId.toString().padStart(2, '0')}-${id.toString().padStart(2, '0')}`;
+
+  const el = document.createElement('div');
+  el.id = elId;
+  el.dataset.id = `${sectionId}-${id}`;
+  el.dataset.path = label;
+  el.className = 'sm-frg-section';
+  el.setAttribute('open', '');
+  el.innerHTML = `
+  <sp-button id="delete-section" size="s" variant="negative" treatment="fill" role="button" icon-only>
+    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
+  </sp-button>
+    <sp-action-button id="sm-frg-section-edit-style-btn" size="s" quiet>
+    <sp-icon-gears-edit slot="icon"></sp-icon-gears-edit>
+    <sp-tooltip self-managed placement="left">
+      <div>
+        <sp-field-label for="section-metadata-style" side-aligned="start">Section Metadata Style property</sp-field-label>
+        <sp-textfield id="section-metadata-style" placeholder="(ex. 'dark, center)" value="${settings && settings['section-metadata-style'] ? settings['section-metadata-style'] : ''}">
+          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+        </sp-textfield>
+      </div>
+    </sp-tooltip>
+  </sp-action-button>
+  <details open>
+    <summary>${label}</summary>
+    <div class="sm-frg-section-content">
+      <div class="sm-frg-sections-title">
+        <h2>Blocks</h2>   
+        <sp-action-button size="s" quiet>
+            <sp-icon-info slot="icon"></sp-icon-info>
+            <sp-tooltip self-managed placement="bottom">
+                * To add Blocks to this Section:<br>
+                  1. Select the Section by clicking the gray rectangle on the left
+                  2. click overlays in the page preview.
+                <br><br>
+                * If an overlay is blocking access to other ones, "shift + click" on it to remove it.
+            </sp-tooltip>
+        </sp-action-button>
+      </div>
+      <div class="sm-frg-section-blocks">
+      </div>
+    </div>
+  </details>
+`;
+
+target.appendChild(el);
+
+  const deleteBtnEl = el.querySelector('#delete-section');
+  deleteBtnEl.addEventListener('click', () => {
+    el.remove();
+    saveSMCache();
+  });
+
+  el.addEventListener('click', (e) => {
+    // handle sm section selection in fragment
+    if (e.offsetX >= -25 && e.offsetX <= 0) {
+      const evTarget = e.target || e.currentTarget;
+      selectedSectionInFragment.id = evTarget.dataset.id;
+    }
+  });
+
+  const settingsSMStyleTextfieldEl = el.querySelector('#section-metadata-style');
+  settingsSMStyleTextfieldEl.addEventListener('input', (e) => {
+    saveSMCache();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragenter', (event) => {
+    el.querySelector('.sm-frg-section-blocks').classList.add('dragover');
+    event.preventDefault();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragleave', (event) => {
+    if (!event.relatedTarget.classList.contains('sm-frg-section-blocks') && !event.relatedTarget.closest('.sm-frg-section-blocks') && event.target.closest('.sm-frg-section-blocks')) {
+      el.querySelector('.sm-frg-section-blocks').classList.remove('dragover');
+    }
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('dragover', (e) => {
+    e.dataTransfer.dropEffect = 'move';
+    e.preventDefault();
+  });
+
+  el.querySelector('.sm-frg-section-blocks').addEventListener('drop', (e) => {
+    const data = e.dataTransfer.getData('text/plain');
+    const boxData = JSON.parse(data);
+    const blockToMoveEl = SM_FRAGMENTS_CONTAINER.querySelector(`.sm-frg-sec-block[data-box-id="${boxData.id}"]`);
+    if (blockToMoveEl) {
+      const newId = e.target.closest('.sm-frg-section-blocks').lastElementChild
+        ? parseInt(e.target.closest('.sm-frg-section-blocks').lastElementChild.dataset.id, 10) + 1 : 1;
+
+      blockToMoveEl.remove();
+
+      // eslint-disable-next-line no-use-before-define
+      addBlockInSection(getMappingRow(boxData, newId), e.target.closest('.sm-frg-section'));
+
+      saveSMCache();
+    }
+    e.target.closest('.sm-frg-section-blocks').classList.remove('dragover');
+    e.preventDefault();
+  });
+
+  saveSMCache();
+
+  return el;
+}
+
+/**
+ * blocks ui elements
+ */
+
+export function addBlockInSection(row, target) {
+  const rows = SM_FRAGMENTS_CONTAINER.querySelectorAll('.row');
+  const t = target || SM_FRAGMENTS_CONTAINER.querySelector('.sm-frg-section.selected');
+  if (t) {
+    const found = Array.from(rows).find((r) => r.dataset.boxId === row.dataset.boxId);
+    if (!found) {
+      const sectionContainerEl = t.querySelector('.sm-frg-section-blocks');
+      const found2 = Array.from(sectionContainerEl.querySelectorAll('.row')).find((r) => parseInt(r.dataset.boxY, 10) > parseInt(row.dataset.boxY, 10));
+      if (found2) {
+        sectionContainerEl.insertBefore(row, found2);
+      } else {
+        sectionContainerEl.append(row);
+      }
+      saveSMCache();
+    } else {
+      const sectionEl = found.closest('.sm-frg-section');
+      const frgEl = sectionEl.closest('.sm-fragment');
+      alert.warning(`Block already added to Section [${frgEl.dataset.path}][${sectionEl.dataset.path.toUpperCase()}]`);
+    }
+  } else {
+    alert.warning('Please select a Section first');
+  }
+}
+
+/**
+ * fragments ui elements
+ */
 
 function getMainFragmentPath(url) {
   const u = new URL(url);
@@ -380,37 +400,164 @@ function getMainFragmentPath(url) {
   return mainPath;
 }
 
+export function addFragmentAccordionElement(path) {
+  const id = SM_FRAGMENTS_CONTAINER.lastElementChild
+    ? parseInt(SM_FRAGMENTS_CONTAINER.lastElementChild.dataset.id, 10) + 1 : 1;
+
+  const label = path || `/new-fragment-${id.toString().padStart(2, '0')}`;
+  const elId = `sm-frg-${id.toString().padStart(2, '0')}`;
+
+  const el = document.createElement('div');
+  el.id = elId;
+  el.dataset.id = id;
+  el.dataset.path = label;
+  el.className = 'sm-fragment';
+  el.setAttribute('open', '');
+  el.innerHTML = `
+  <sp-button id="delete-frg" size="s" variant="negative" treatment="fill" role="button" icon-only>
+    <sp-icon-delete slot="icon" dir="ltr" aria-hidden="true"></sp-icon-delete>
+  </sp-button>
+  <sp-action-button id="sm-fragment-edit-path-btn" size="s" quiet>
+    <sp-icon-gears-edit slot="icon"></sp-icon-gears-edit>
+    <sp-tooltip self-managed placement="left">
+      <div>
+        <sp-field-label for="fragment-path" side-aligned="start">Fragment Path (ex. /index)</sp-field-label>
+        <sp-textfield id="fragment-path" placeholder="${label}">
+          <sp-help-text slot="negative-help-text">Please enter a name.</sp-help-text>
+        </sp-textfield>
+      </div>
+    </sp-tooltip>
+  </sp-action-button>
+  <details open>
+    <summary>${label}</summary>
+    <div class="sm-fragment-content">
+      <div class="sm-frg-sections-title">
+        <h2>Sections</h2>
+        <sp-button id="frg-add-section" size="s" treatment="fill" role="button" icon-only>
+          <sp-icon-add-circle slot="icon" dir="ltr" aria-hidden="true"></sp-icon-add-circle>
+        </sp-button>
+      </div>
+      <div class="sm-fragment-sections">
+      </div>
+    </div>
+  </details>
+`;
+
+  SM_FRAGMENTS_CONTAINER.appendChild(el);
+
+  const accItemNameTextfieldEl = el.querySelector('sp-textfield');
+
+  accItemNameTextfieldEl.addEventListener('input', (e) => {
+    el.dataset.path = e.target.value;
+    el.querySelector('summary').textContent = e.target.value;
+    saveSMCache();
+  });
+
+  const deleteBtnEl = el.querySelector('#delete-frg');
+  deleteBtnEl.addEventListener('click', () => {
+    el.remove();
+    saveSMCache();
+  });
+
+  const addSectionBtnEl = el.querySelector('#frg-add-section');
+  addSectionBtnEl.addEventListener('click', () => {
+    const sectionEl = addSectionAccordionElement(id, null, el.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionEl.dataset.id;
+    saveSMCache();
+  });
+
+  saveSMCache();
+
+  return el;
+}
+
+export function initUIFromData(data) {
+  data.forEach((fragment) => {
+    const el = addFragmentAccordionElement(fragment.path);
+    fragment.sections.forEach((section) => {
+      const frgSecEl = addSectionAccordionElement(el.dataset.id, section.settings, el.querySelector('.sm-fragment-sections'));
+      section.blocks.forEach((block, idx) => {
+        const row = getMappingRow(block, idx + 1);
+        addBlockInSection(row, frgSecEl);
+      });
+    });
+  });
+}
+
 export function setUIFragmentsFromCache(url) {
   const cache = getSMCache();
-  const autoDetect = false;
 
-  const found = cache.find((item) => item.url === url && item.autoDetect === autoDetect);
+  const found = cache.find((item) => item.url === url && item.autoDetect === false);
   if (found) {
     initUIFromData(found.mapping);
   } else {
-    addFragmentAccordionElement('/nav');
-    addFragmentAccordionElement(getMainFragmentPath(url));
-    addFragmentAccordionElement('/footer');
+    ['/nav', getMainFragmentPath(url), '/footer'].forEach((path) => {
+      const frgEl = addFragmentAccordionElement(path);
+      const sectionEl = addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+      if (path === '/nav') {
+        selectedSectionInFragment.id = sectionEl.dataset.id;
+      }
+    });
   }
 }
 
 export function setUIFragmentsFromSections(url, sections) {
   const navFrgEl = addFragmentAccordionElement('/nav');
+  const navFrgSecEl = addSectionAccordionElement(navFrgEl.dataset.id, null, navFrgEl.querySelector('.sm-fragment-sections'));
   const mainFrgEl = addFragmentAccordionElement(getMainFragmentPath(url));
+  const mainFrgSecEl = addSectionAccordionElement(mainFrgEl.dataset.id, null, mainFrgEl.querySelector('.sm-fragment-sections'));
   const footerFrgEl = addFragmentAccordionElement('/footer');
+  const footerFrgSecEl = addSectionAccordionElement(footerFrgEl.dataset.id, null, footerFrgEl.querySelector('.sm-fragment-sections'));
 
   sections.forEach((section, idx) => {
     const row = getMappingRow(section, idx + 1);
     if (section.mapping === 'header') {
-      addSectionRow(row, navFrgEl);
+      addBlockInSection(row, navFrgSecEl);
     } else if (section.mapping === 'footer') {
-      addSectionRow(row, footerFrgEl);
+      addBlockInSection(row, footerFrgSecEl);
     } else {
-      addSectionRow(row, mainFrgEl);
+      addBlockInSection(row, mainFrgSecEl);
+    }
+  });
+
+  saveSMCache();
+}
+
+/**
+ * common ui elements
+ */
+
+export function init(config) {
+  importerConfig = config;
+  ADD_FRAGMENT_BTN?.addEventListener('click', () => {
+    const frgEl = addFragmentAccordionElement();
+    const sectionEl = addSectionAccordionElement(frgEl.dataset.id, null, frgEl.querySelector('.sm-fragment-sections'));
+    selectedSectionInFragment.id = sectionEl.dataset.id;
+  });
+}
+
+export function initOverlayClickHandler() {
+  getContentFrame().contentDocument.body.addEventListener('click', (e) => {
+    const overlayDiv = e.target;
+    // shift + click to remove overlay
+    if (e.shiftKey) {
+      overlayDiv.remove();
+    } else if (overlayDiv.dataset.boxData) {
+      const boxData = JSON.parse(overlayDiv.dataset.boxData);
+      boxData.color = overlayDiv.style.borderColor;
+      boxData.mapping = 'unset';
+      addBlockInSection(getMappingRow(boxData));
     }
   });
 }
 
-export function useImportRules() {
-  return importerConfig.fields['import-sm-use-rules'];
+export function reset() {
+  SM_FRAGMENTS_CONTAINER.innerHTML = '';
+  SM_FRAGMENTS_CONTAINER.childNodes.forEach((el) => {
+    el.remove();
+  });
+}
+
+export function setImporterConfig(config) {
+  importerConfig = config;
 }

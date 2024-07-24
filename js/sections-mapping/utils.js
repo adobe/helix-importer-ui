@@ -1,6 +1,6 @@
 import * as fragmentUI from './sm.ui.js';
 
-const detectSections = async (src, frame, autoDetect) => {
+export default async function detectSections(src, frame, autoDetect) {
   console.log('import-sm-auto-detect', autoDetect);
 
   const { originalURL } = frame.dataset;
@@ -43,18 +43,12 @@ const detectSections = async (src, frame, autoDetect) => {
         mapping: DETECTED_SECTIONS_BLOCKS_MAPPING[b.prediction.sectionType] || 'unset',
       }));
       fragmentUI.setUIFragmentsFromSections(originalURL, parsedSections);
-      fragmentUI.saveSMCache();
     } else {
       // add fragments
       fragmentUI.setUIFragmentsFromCache(originalURL);
     }
-    fragmentUI.getSMData();
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(`Error loading sections mapping data for url ${originalURL}`, e);
   }
-};
-
-export {
-  detectSections,
 }

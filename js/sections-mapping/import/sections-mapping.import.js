@@ -152,7 +152,7 @@ export default {
     }
 
     // get import target
-    const target = sessionStorage.getItem("demo-tool-aem-importer-target") || IMPORT_TARGETS.AEM_BLOCK_COLLECTION;
+    const target = sessionStorage.getItem('demo-tool-aem-importer-target') || IMPORT_TARGETS.AEM_BLOCK_COLLECTION;
 
     const importedElements = mapping.map((m) => {
       const importedEl = {
@@ -165,59 +165,69 @@ export default {
       const el = document.createElement('div');
 
       m.sections.forEach((s, idx) => {
-        const sEl = getElementByXpath(document, s.xpath);
+        s.blocks.forEach((b) => {
+          const bEl = getElementByXpath(document, b.xpath);
 
-        if (!sEl) {
-          console.warn('element not found', s.section, s.xpath);
-          return;
+          if (!bEl) {
+            console.warn('element not found', b.section, b.xpath);
+            return;
+          }
+
+          // make all links absolute
+          bEl.querySelectorAll('a').forEach((a) => {
+            const href = a.getAttribute('href');
+            if (href) {
+              // eslint-disable-next-line no-param-reassign
+              a.href = new URL(href, params.originalURL).href;
+            }
+          });
+
+          bEl.querySelectorAll('img').forEach((img) => {
+            const src = img.getAttribute('src');
+            if (!src.startsWith('./') && !src.startsWith('/') && !src.startsWith('../') && !src.startsWith('http')) {
+              const u = new URL(src, params.originalURL);
+              img.src = u.toString();
+            }
+          });
+
+          bEl.querySelectorAll('[style*="background-image: url"], [style*="background: url"]').forEach((element) => {
+            const img = getImgFromBackground(element, document, params.originalURL);
+            element.prepend(img);
+            element.style.removeProperty('background-image');
+          });
+
+          // WebImporter.rules.transformBackgroundImages(sEl, document);
+          WebImporter.rules.adjustImageUrls(bEl, params.originalURL, params.originalURL);
+          // WebImporter.rules.convertIcons(el, document);
+
+          const parser = parsers[b.mapping];
+          if (parser) {
+            const block = parser(bEl.cloneNode(true), {
+              mapping: b,
+              document,
+              target,
+              params,
+              allMappings: m,
+            });
+            if (block) {
+              el.appendChild(block);
+            }
+          } else {
+            console.warn('parser not found', m.mapping);
+            el.appendChild(bEl.cloneNode(true));
+          }
+        });
+
+        if (s.settings && s.settings['section-metadata-style']) {
+          const smBlock = WebImporter.DOMUtils.createTable([
+            ['section-metadata'],
+            ['style', s.settings['section-metadata-style']],
+          ], document);
+          el.appendChild(smBlock);
         }
 
-        // make all links absolute
-        sEl.querySelectorAll('a').forEach((a) => {
-          const href = a.getAttribute('href');
-          if (href) {
-            // eslint-disable-next-line no-param-reassign
-            a.href = new URL(href, params.originalURL).href;
-          }
-        });
-
-        sEl.querySelectorAll('img').forEach((img) => {
-          const src = img.getAttribute('src');
-          if (!src.startsWith('./') && !src.startsWith('/') && !src.startsWith('../') && !src.startsWith('http')) {
-            const u = new URL(src, params.originalURL);
-            img.src = u.toString();
-          }
-        });
-
-        sEl.querySelectorAll('[style*="background-image: url"], [style*="background: url"]').forEach((element) => {
-          const img = getImgFromBackground(element, document, params.originalURL);
-          element.prepend(img);
-          element.style.removeProperty('background-image');
-        });
-
-        // WebImporter.rules.transformBackgroundImages(sEl, document);
-        WebImporter.rules.adjustImageUrls(sEl, params.originalURL, params.originalURL);
-        // WebImporter.rules.convertIcons(el, document);
-
-        const parser = parsers[s.mapping];
-        if (parser) {
-          const block = parser(sEl.cloneNode(true), {
-            mapping: s,
-            document,
-            target,
-            params,
-            allMappings: m,
-          });
-          if (block) {
-            el.appendChild(block);
-            // Do not add extra hr between sections
-            // if (idx < m.sections.length - 1) {
-            //   el.appendChild(document.createElement('hr'));
-            // }
-          }
-        } else {
-          console.warn('parser not found', m.mapping);
-          el.appendChild(sEl.cloneNode(true));
+        if (idx < m.sections.length - 1) {
+          el.appendChild(document.createElement('hr'));
         }
       });
 
@@ -239,13 +249,13 @@ export default {
       }
 
       // cleanup unwanted attributes in element and children
-      function cleanUpAttributes(el) {
-        el.removeAttribute('class');
-        el.removeAttribute('style');
-        const attrNames = el.getAttributeNames().filter((a) => a.startsWith('data-') || a.startsWith('aria-'));
+      function cleanUpAttributes(e) {
+        e.removeAttribute('class');
+        e.removeAttribute('style');
+        const attrNames = e.getAttributeNames().filter((a) => a.startsWith('data-') || a.startsWith('aria-'));
         if (attrNames.length > 0) {
           attrNames.forEach((a) => {
-            el.removeAttribute(a);
+            e.removeAttribute(a);
           });
         }
       }

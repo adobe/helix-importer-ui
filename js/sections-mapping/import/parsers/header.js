@@ -2,28 +2,28 @@ export default function headerParser(el, { document, params, allMappings }) {
   const containerEl = document.createElement('div');
 
   const brandEl = document.createElement('div');
-  const bodyWidth = allMappings.sections[0].width;
+  const bodyWidth = allMappings.sections[0]?.blocks[0]?.width;
   const originURL = new URL(params.originalURL).origin;
 
   const brandLogoMapping = [
     {
       checkFn: (e) => e.querySelector('a > img'),
       parseFn: (e, targetEl, x) => {
-        const parentEl = e.parentElement;
-        if (x < bodyWidth / 2) {
+        if (bodyWidth && x < bodyWidth / 2) {
           targetEl.append(e);
-          parentEl.append(document.createElement('br'));
-          targetEl.append(parentEl);
           return true;
         }
         return false;
       },
     },
     {
-      checkFn: (e) => e.querySelector('picture + br + a, image + br + a'),
+      checkFn: (e) => e.querySelector('picture + br + a, img + br + a'),
       parseFn: (e, targetEl, x) => {
-        if (x < bodyWidth / 2) {
-          targetEl.append(e);
+        if (bodyWidth && x < bodyWidth / 2) {
+          const imgEl = e.closest('picture, img');
+          if (imgEl) {
+            targetEl.append(imgEl);
+          }
           return true;
         }
         return false;
@@ -32,7 +32,7 @@ export default function headerParser(el, { document, params, allMappings }) {
     {
       checkFn: (e) => e.querySelector('img'),
       parseFn: (e, targetEl, x) => {
-        if (x < bodyWidth / 2) {
+        if (bodyWidth && x < bodyWidth / 2) {
           targetEl.append(e);
           return true;
         }
@@ -42,7 +42,7 @@ export default function headerParser(el, { document, params, allMappings }) {
     {
       checkFn: (e) => e.querySelector(`a[href="/"], a[href="${originURL}"], a[href="${originURL}/"]`),
       parseFn: (e, targetEl, x) => {
-        if (x < bodyWidth / 2) {
+        if (bodyWidth && x < bodyWidth / 2) {
           targetEl.append(e);
           return true;
         }

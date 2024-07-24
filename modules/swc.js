@@ -48,3 +48,5 @@ import '@spectrum-web-components/icons-workflow/icons/sp-icon-link-out.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-add-circle.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-info.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-view-grid.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-document-fragment.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-gears-edit.js';
