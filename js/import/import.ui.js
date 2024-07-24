@@ -969,15 +969,33 @@ const attachListeners = () => {
   }
 };
 
-const init = () => {
+const init = async () => {
   config.origin = window.location.origin;
 
   // check if in demo tool context
   if (IS_FRAGMENTS && sessionStorage.getItem(DEMO_TOOL_MODE_SESSION_STORAGE_KEY)) {
     const searchParams = new URLSearchParams(window.top.location.search);
-    if (searchParams.get('url')) {
+    const url = searchParams.get('url');
+    if (url) {
       const f = window.document.querySelector('#import-url');
-      f.value = searchParams.get('url');
+      f.value = url;
+
+      // try to load existing sections mapping json data
+      try {
+        const resp = await fetch('/tools/importer/sections-mapping.json');
+        if (resp.ok) {
+          const data = await resp.json();
+          const sectionsMapping = {
+            url,
+            autoDetect: false,
+            mapping: data,
+          };
+          localStorage.setItem(fragmentUI.SM_LOCAL_STORAGE_KEY, JSON.stringify([sectionsMapping]));
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warning('no sections mapping json data available.', e);
+      }
     }
 
     if (searchParams.get('enableJs')) {
@@ -1007,4 +1025,4 @@ const init = () => {
   attachListeners();
 };
 
-init();
+await init();

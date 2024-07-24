@@ -4,7 +4,7 @@ import { getElementByXpath } from '../shared/utils.js';
 
 const ADD_FRAGMENT_BTN = document.getElementById('sm-add-fragment');
 const SM_FRAGMENTS_CONTAINER = document.getElementById('sm-fragments-container');
-const SM_LOCAL_STORAGE_KEY = 'helix-importer-sections-mapping';
+export const SM_LOCAL_STORAGE_KEY = 'helix-importer-sections-mapping';
 
 let importerConfig = {};
 
