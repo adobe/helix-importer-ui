@@ -180,6 +180,10 @@ export default {
               // eslint-disable-next-line no-param-reassign
               a.href = new URL(href, params.originalURL).href;
             }
+            // remove empty links
+            if (!href && a.textContent.trim().length === 0) {
+              a.remove();
+            }
           });
 
           bEl.querySelectorAll('img').forEach((img) => {
