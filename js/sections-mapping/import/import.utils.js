@@ -133,6 +133,10 @@ const BG_EXTRACTION_STRATEGIES = {
  * @returns {string}
  */
 export function extractBackground(el, document, options = {}) {
+  if (!el) {
+    return null;
+  }
+
   const opts = {
     ...{ strategy: 'default', defaultBackground: '' },
     ...options,
