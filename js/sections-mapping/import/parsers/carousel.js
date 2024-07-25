@@ -6,10 +6,15 @@ export default function carouselParser(el, { mapping, document }) {
 
   const columns = getNSiblingsDivs(el, document, (n) => n > 2);
   if (columns) {
-    const children = columns.map((c) => {
-      const imgEl = extractBackground(c, document, { strategy: 'image' }) || c.querySelector('img') || null;
-      console.log('imgEl', imgEl);
-      return [imgEl, c];
+    const children = [];
+    columns.forEach((c) => {
+      const content = c.nodeName === 'LI' ? document.createElement('div').append(...c.children) : c;
+
+      const imgEl = extractBackground(content, document, { strategy: 'image' }) || content.querySelector('img') || '';
+
+      if (content.textContent.replaceAll('\n', '').trim().length > 0) {
+        children.push([imgEl, content]);
+      }
     });
 
     const block = WebImporter.DOMUtils.createTable([
