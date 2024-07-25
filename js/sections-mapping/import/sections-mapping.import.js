@@ -186,6 +186,13 @@ export default {
             }
           });
 
+          // crosswalk does not support images inside links
+          if (target === IMPORT_TARGETS.CROSSWALK) {
+            bEl.querySelectorAll('a > img').forEach((i) => {
+              i.parentElement.before(i);
+            });
+          }
+
           bEl.querySelectorAll('img').forEach((img) => {
             const src = img.getAttribute('src');
             if (!src.startsWith('./') && !src.startsWith('/') && !src.startsWith('../') && !src.startsWith('http')) {
