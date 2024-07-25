@@ -175,7 +175,6 @@ export default {
 
           // make all links absolute
           bEl.querySelectorAll('a').forEach((a) => {
-            a.removeAttribute('title');
             const href = a.getAttribute('href');
             if (href) {
               // eslint-disable-next-line no-param-reassign
