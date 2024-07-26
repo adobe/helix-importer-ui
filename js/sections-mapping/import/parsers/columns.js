@@ -15,15 +15,21 @@ export default function columnsParser(el, { mapping, document }) {
         console.warn('element not found', c.section, c.xpath);
       }
 
+      let content = cEl;
+      if (cEl.nodeName === 'LI') {
+        content = document.createElement('div');
+        content.append(...cEl.children);
+      }
+
       if (colsCtr > numCols) {
         colsCtr = 1;
-        acc.push([[cEl]]);
+        acc.push([[content]]);
       } else {
         const arr = acc[acc.length - 1];
         if (!arr) {
-          acc.push([[cEl]]);
+          acc.push([[content]]);
         } else {
-          arr.push([cEl]);
+          arr.push([content]);
         }
       }
       return acc;

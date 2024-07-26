@@ -180,7 +180,18 @@ export default {
               // eslint-disable-next-line no-param-reassign
               a.href = new URL(href, params.originalURL).href;
             }
+            // remove empty links
+            if (!href && a.textContent.trim().length === 0) {
+              a.remove();
+            }
           });
+
+          // crosswalk does not support images inside links
+          if (target === IMPORT_TARGETS.CROSSWALK) {
+            bEl.querySelectorAll('a > img').forEach((i) => {
+              i.parentElement.before(i);
+            });
+          }
 
           bEl.querySelectorAll('img').forEach((img) => {
             const src = img.getAttribute('src');
