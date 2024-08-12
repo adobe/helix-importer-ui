@@ -164,6 +164,7 @@ export default {
       // build element!
       const el = document.createElement('div');
 
+      // import content for sections mapping data
       m.sections.forEach((s, idx) => {
         s.blocks.forEach((b) => {
           const bEl = getElementByXpath(document, b.xpath);
@@ -207,10 +208,6 @@ export default {
             element.style.removeProperty('background-image');
           });
 
-          // WebImporter.rules.transformBackgroundImages(sEl, document);
-          WebImporter.rules.adjustImageUrls(bEl, params.originalURL, params.originalURL);
-          // WebImporter.rules.convertIcons(el, document);
-
           const parser = parsers[b.mapping];
           if (parser) {
             const block = parser(bEl.cloneNode(true), {
@@ -242,6 +239,13 @@ export default {
         }
       });
 
+      // do not create metadata for now for crosswalk as it may break when converting to JCR.
+      if (target !== 'crosswalk') {
+        if (m.path !== '/nav' && m.path !== '/footer') {
+          WebImporter.rules.createMetadata(el, document);
+        }
+      }
+
       // adjust anchor links
       if (el.querySelector('a[href^="#"]')) {
         const u = new URL(params.originalURL);
@@ -249,13 +253,6 @@ export default {
         for (let i = 0; i < links.length; i += 1) {
           const a = links[i];
           a.href = `${u.pathname}${a.getAttribute('href')}`;
-        }
-      }
-
-      if (target !== 'crosswalk') {
-        // do not create metadata for now as it may break when converting to JCR.
-        if (m.path !== '/nav' && m.path !== '/footer') {
-          WebImporter.rules.createMetadata(el, document);
         }
       }
 
@@ -272,6 +269,9 @@ export default {
       }
       cleanUpAttributes(el);
       el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
+
+      // default helix-importer rules
+      WebImporter.rules.adjustImageUrls(el, params.originalURL, params.originalURL);
 
       WebImporter.DOMUtils.remove(el, [
         'style',
