@@ -82,7 +82,39 @@ export default function headerParser(el, { document, params, allMappings }) {
     return false;
   });
 
+  // get navigation content
   const navEl = document.createElement('div');
+  const menuEl = [...el.querySelectorAll('ol,ul')].filter((f) => f.parentElement.closest('ol,ul') === null).reduce(
+    (acc, listEl) => {
+      const items = [...listEl.querySelectorAll('li')].filter((liEl) => {
+        liEl.querySelectorAll('script', 'style', '[data-hlx-imp-hidden-div]').forEach((e) => e.remove());
+        return liEl.textContent.replaceAll('\n', '').trim().length > 0;
+      });
+
+      let x = null;
+      try {
+        x = JSON.parse(listEl.closest('div')?.getAttribute('data-hlx-imp-rect')).x;
+      } catch (e) {
+        console.error('error', e);
+      }
+
+      console.log('items', items.length, acc?.children.length, x, bodyWidth, listEl);
+
+      if (
+        items.length > 1
+        && (!acc || items.length > acc.children.length)
+        && (!bodyWidth || (x && x < bodyWidth / 2))
+      ) {
+        return listEl;
+      }
+      return acc;
+    },
+    null,
+  );
+  if (menuEl) {
+    navEl.append(menuEl);
+  }
+
   const listEl = el.querySelector('ol,ul');
   if (listEl) {
     navEl.append(document.createElement('hr'));
