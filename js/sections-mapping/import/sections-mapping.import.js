@@ -164,6 +164,7 @@ export default {
       // build element!
       const el = document.createElement('div');
 
+      // import content for sections mapping data
       m.sections.forEach((s, idx) => {
         s.blocks.forEach((b) => {
           const bEl = getElementByXpath(document, b.xpath);
@@ -207,10 +208,6 @@ export default {
             element.style.removeProperty('background-image');
           });
 
-          // WebImporter.rules.transformBackgroundImages(sEl, document);
-          WebImporter.rules.adjustImageUrls(bEl, params.originalURL, params.originalURL);
-          // WebImporter.rules.convertIcons(el, document);
-
           const parser = parsers[b.mapping];
           if (parser) {
             const block = parser(bEl.cloneNode(true), {
@@ -242,6 +239,13 @@ export default {
         }
       });
 
+      // do not create metadata for now for crosswalk as it may break when converting to JCR.
+      if (target !== 'crosswalk') {
+        if (m.path !== '/nav' && m.path !== '/footer') {
+          WebImporter.rules.createMetadata(el, document);
+        }
+      }
+
       // adjust anchor links
       if (el.querySelector('a[href^="#"]')) {
         const u = new URL(params.originalURL);
@@ -249,13 +253,6 @@ export default {
         for (let i = 0; i < links.length; i += 1) {
           const a = links[i];
           a.href = `${u.pathname}${a.getAttribute('href')}`;
-        }
-      }
-
-      if (target !== 'crosswalk') {
-        // do not create metadata for now as it may break when converting to JCR.
-        if (m.path !== '/nav' && m.path !== '/footer') {
-          WebImporter.rules.createMetadata(el, document);
         }
       }
 
@@ -273,6 +270,9 @@ export default {
       cleanUpAttributes(el);
       el.querySelectorAll('*').forEach((e) => cleanUpAttributes(e));
 
+      // default helix-importer rules
+      WebImporter.rules.adjustImageUrls(el, params.originalURL, params.originalURL);
+
       WebImporter.DOMUtils.remove(el, [
         'style',
         'source',
@@ -284,111 +284,6 @@ export default {
 
       return importedEl;
     });
-    /**
-     * init elements
-     */
-
-    // const main = document.querySelector('main') || document.body;
-    // const headerEl = document.createElement('div');
-    // const footerEl = document.createElement('div');
-    // const importedElements = [];
-
-    // /**
-    //  * parse sections mapping data
-    //  */
-
-    // const importedContent = document.createElement('div');
-
-    // // get dom element from xpath string
-    // const elementsToParse = mapping.map((m) => getElementByXpath(document, m.xpath) || null);
-
-    // mapping.forEach((m, idx) => {
-    //   // get dom element from xpath string
-    //   const el = elementsToParse[idx];
-    //   if (el) {
-    //     console.log('found element', m.section, el);
-    //     if (m.mapping === 'header') {
-    //       const block = parsers.header(el, window);
-    //       if (block) {
-    //         headerEl.appendChild(block);
-    //       }
-    //     } else if (m.mapping === 'footer') {
-    //       const block = parsers.footer(el, window);
-    //       if (block) {
-    //         footerEl.appendChild(block);
-    //       }
-    //     } else {
-    //       const parser = parsers[m.mapping];
-    //       if (parser) {
-    //         const block = parser(el, window);
-    //         if (block) {
-    //           importedContent.appendChild(block);
-    //         }
-    //       } else {
-    //         console.warn('parser not found', m.mapping);
-    //       }
-    //     }
-    //   } else {
-    //     console.warn('element not found', m.section, m.xpath);
-    //   }
-    // });
-
-    // /**
-    //  * cleanup to remove unwanted elements
-    //  */
-
-    // // adjust anchor links (https://github.com/adobe/helix-importer/issues/348)
-    // if (main.querySelector('a[href^="#"]')) {
-    //   const u = new URL(params.originalURL);
-    //   const links = main.querySelectorAll('a[href^="#"]');
-    //   for (let i = 0; i < links.length; i += 1) {
-    //     const a = links[i];
-    //     a.href = `${u.pathname}${a.getAttribute('href')}`;
-    //   }
-    // }
-
-    // // hidden elements
-    // main.querySelectorAll('[data-hlx-imp-hidden-div]').forEach((el) => { el.remove(); });
-
-    // WebImporter.DOMUtils.remove(main, [
-    //   'style',
-    //   'source',
-    //   'script',
-    // ]);
-
-    // main.querySelectorAll('div').forEach((el) => {
-    //   Object.keys(el.dataset).forEach((key) => delete el.dataset[key]);
-    //   for (let i = 0; i < el.attributes.length; i += 1) {
-    //     el.removeAttribute(el.attributes[i].name);
-    //   }
-    // });
-
-    /**
-     * return + custom report
-     */
-
-    // // make every report value a string
-    // Object.keys(IMPORT_REPORT).map(k => (IMPORT_REPORT[k] = '' + IMPORT_REPORT[k]));
-
-    // importedElements.push({
-    //   element: importedContent,
-    //   path: generateDocumentPath({ document, url: params.originalURL }),
-    //   report: IMPORT_REPORT,
-    // });
-
-    // if (headerEl.children.length > 0) {
-    //   importedElements.push({
-    //     element: headerEl,
-    //     path: '/nav',
-    //   });
-    // }
-
-    // if (footerEl.children.length > 0) {
-    //   importedElements.push({
-    //     element: footerEl,
-    //     path: '/footer',
-    //   });
-    // }
 
     return importedElements;
   },
