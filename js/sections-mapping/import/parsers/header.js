@@ -7,7 +7,7 @@ export default function headerParser(el, { document, params, allMappings }) {
 
   const brandLogoMapping = [
     {
-      checkFn: (e) => e.querySelector('a > img'),
+      checkFn: (e) => e.querySelector('a > picture, a > img'),
       parseFn: (e, targetEl, x) => {
         if (bodyWidth && x < bodyWidth / 2) {
           targetEl.append(e);
@@ -67,6 +67,7 @@ export default function headerParser(el, { document, params, allMappings }) {
     },
   ];
 
+  // get brand logo
   brandLogoMapping.some((m) => {
     const logoEl = m.checkFn(el);
     if (logoEl) {
@@ -117,9 +118,7 @@ export default function headerParser(el, { document, params, allMappings }) {
 
   const listEl = el.querySelector('ol,ul');
   if (listEl) {
-    navEl.append(document.createElement('hr'));
     navEl.append(listEl);
-    navEl.append(document.createElement('hr'));
   }
 
   const toolsEl = document.createElement('div');
@@ -131,7 +130,9 @@ export default function headerParser(el, { document, params, allMappings }) {
   }
 
   containerEl.append(brandEl);
+  containerEl.append(document.createElement('hr'));
   containerEl.append(navEl);
+  containerEl.append(document.createElement('hr'));
   containerEl.append(toolsEl);
 
   return containerEl;
