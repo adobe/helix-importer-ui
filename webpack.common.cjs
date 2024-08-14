@@ -66,6 +66,9 @@ const importer = {
     new DefinePlugin({
       process: {
         env: {},
+        browser: {
+          version: '0',
+        },
       },
     }),
   ],
