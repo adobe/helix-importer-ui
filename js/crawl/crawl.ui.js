@@ -123,6 +123,26 @@ const getProxyURLSetup = (url, origin) => {
   };
 };
 
+/**
+ * Test whether the given path matches the provided filter.
+ * @param path The path of the website page.
+ * @param filter The filter to test the path against, using 'startsWith' and RegExp's test.
+ * @returns {boolean}
+ */
+const pathnameMatchesFilter = (path, filter) => {
+  try {
+    if (!filter || filter.length === 0 || path.startsWith(filter)) {
+      return true;
+    }
+    return new RegExp(filter).test(path);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(`Could not test path ${path} with provided filter: ${filter}`, e);
+    alert.error(`Could not test path with provided filter: ${filter}`);
+    return false;
+  }
+};
+
 const getContentFrame = () => document.querySelector(`${PARENT_SELECTOR} iframe`);
 
 const attachListeners = () => {
@@ -193,7 +213,7 @@ const attachListeners = () => {
                       if (!crawlStatus.urls.includes(found)
                         && !urlsArray.includes(found)
                         && current !== found
-                        && u.pathname.startsWith(config.fields['crawl-filter-pathname'])) {
+                        && pathnameMatchesFilter(u.pathname, config.fields['crawl-filter-pathname'])) {
                         urlsArray.push(found);
                         linksToFollow.push(found);
                       } else {
@@ -354,7 +374,7 @@ const attachListeners = () => {
         sitemap: config.fields['crawl-sitemap-file'],
       })).filter((url) => {
         const u = new URL(url);
-        return u.pathname.startsWith(config.fields['crawl-filter-pathname']);
+        return pathnameMatchesFilter(u.pathname, config.fields['crawl-filter-pathname']);
       });
 
       crawlStatus.crawled = crawlStatus.urls.length;
