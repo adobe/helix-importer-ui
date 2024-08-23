@@ -599,6 +599,22 @@ You can also use Chrome extensions like:
 
 to disable CORS headers or set a custom cookie / referer for some of the requests made by the site.
 
+### Custom headers
+
+Using the following command, you can define custom header sent by the proxy to the remote host:
+
+```
+aem import --headers-file ./headers.json
+```
+
+This is useful to control the headers of the proxied request. One typical usecase is to define the `Authorization` header or the `Cookie` header to authenticate to the remote host. The `headers.json` file would then look like this:
+
+```
+{
+  "Authorization": "Bearer your_token_here"
+}
+```
+
 ### Images
 
 When the import process creates the docx, images are downloaded and inlined inside the Word document. Later, when the page is previewed for the first time, the images are then uploaded to the AEM Edge Delivery media bus.
