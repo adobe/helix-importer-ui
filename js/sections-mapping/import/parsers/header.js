@@ -1,29 +1,33 @@
 /* global WebImporter */
 
+import { IMPORT_TARGETS } from "../sections-mapping.import.js";
+
 const brandLogoMapping = [
   {
     checkFn: (e) => e.querySelector('a > picture, a > img'),
-    parseFn: (e, targetEl, bodyWidth, x) => {
+    parseFn: (e, targetEl, bodyWidth, x, target) => {
       if (bodyWidth && x < bodyWidth / 2) {
-        const linkedPictureEl = document.createElement('div');
-        const linkEl = e.parentElement;
-        linkEl.parentElement.append(linkedPictureEl);
-        linkedPictureEl.append(document.createElement('br'));
-        linkedPictureEl.append(linkEl);
-        linkedPictureEl.prepend(...linkEl.children);
-        console.log('brand logo is an anchor containing an image >>', linkEl.textContent.replaceAll(/[\n\t]/gm, '').trim(), '<<');
-        if (linkEl.textContent.replaceAll(/[\n\t]/gm, '').trim().length === 0) {
-          linkEl.textContent = linkEl.href;
-        }
-
-        if (linkedPictureEl.closest('li')) {
-          const liEl = linkedPictureEl.closest('li');
-          targetEl.append(...liEl.children);
-          liEl.remove();
+        if (target === IMPORT_TARGETS.CROSSWALK) {
+          targetEl.append(e);
         } else {
-          targetEl.append(linkedPictureEl);
+          const linkedPictureEl = document.createElement('div');
+          const linkEl = e.parentElement;
+          linkEl.parentElement.append(linkedPictureEl);
+          linkedPictureEl.append(document.createElement('br'));
+          linkedPictureEl.append(linkEl);
+          linkedPictureEl.prepend(...linkEl.children);
+          if (linkEl.textContent.replaceAll(/[\n\t]/gm, '').trim().length === 0) {
+            linkEl.textContent = linkEl.href;
+          }
+
+          if (linkedPictureEl.closest('li')) {
+            const liEl = linkedPictureEl.closest('li');
+            targetEl.append(...liEl.children);
+            liEl.remove();
+          } else {
+            targetEl.append(linkedPictureEl);
+          }
         }
-        console.log('brand logo is an anchor containing an image', e);
         return true;
       }
       return false;
@@ -31,16 +35,20 @@ const brandLogoMapping = [
   },
   {
     checkFn: (e) => e.querySelector('picture + br + a, img + br + a'),
-    parseFn: (e, targetEl, bodyWidth, x) => {
+    parseFn: (e, targetEl, bodyWidth, x, target) => {
       if (bodyWidth && x < bodyWidth / 2) {
         const imgEl = e.closest('picture, img');
         if (imgEl) {
-          if (imgEl.closest('li')) {
-            const liEl = imgEl.closest('li');
-            targetEl.append(...liEl.children);
-            liEl.remove();
-          } else {
+          if (target === IMPORT_TARGETS.CROSSWALK) {
             targetEl.append(imgEl);
+          } else {
+            if (imgEl.closest('li')) {
+              const liEl = imgEl.closest('li');
+              targetEl.append(...liEl.children);
+              liEl.remove();
+            } else {
+              targetEl.append(imgEl);
+            }
           }
         }
         return true;
@@ -92,10 +100,10 @@ const brandLogoMapping = [
   },
 ];
 
-function getBrandLogo(rootEl, document, { bodyWidth, originURL }) {
+function getBrandLogo(rootEl, document, { bodyWidth, originURL, target }) {
   const brandEl = document.createElement('div');
   brandLogoMapping.some((m) => {
-    const logoEl = m.checkFn(rootEl, { originURL });
+    const logoEl = m.checkFn(rootEl, { originURL, target });
     if (logoEl) {
       let x = 0;
       try {
@@ -104,7 +112,7 @@ function getBrandLogo(rootEl, document, { bodyWidth, originURL }) {
         console.error('error', e);
       }
 
-      return m.parseFn(logoEl, brandEl, bodyWidth, x);
+      return m.parseFn(logoEl, brandEl, bodyWidth, x, target);
     }
     return false;
   });
@@ -124,7 +132,7 @@ const navMapping = [
           console.error('error', err);
         }
 
-        if (!acc || x < acc.x) {
+        if (!acc || (typeof x === 'number' && x < acc.x)) {
           return {
             el: navListEl,
             x,
@@ -149,7 +157,7 @@ const navMapping = [
           console.error('error', err);
         }
 
-        if (!acc || x < acc.x) {
+        if (!acc || (typeof x === 'number' && x < acc.x)) {
           return {
             el: navListEl,
             x,
@@ -236,14 +244,14 @@ function cleanup(el) {
   return el;
 }
 
-export default function headerParser(el, { document, params, allMappings }) {
+export default function headerParser(el, { document, params, allMappings, target }) {
   const containerEl = document.createElement('div');
 
   const bodyWidth = allMappings.sections[0]?.blocks[0]?.width;
   const originURL = new URL(params.originalURL).origin;
 
   // get brand logo
-  const brandEl = getBrandLogo(el, document, { bodyWidth, originURL });
+  const brandEl = getBrandLogo(el, document, { bodyWidth, originURL, target });
 
   // get navigation content
   const navEl = getNavigation(el, document, { bodyWidth });

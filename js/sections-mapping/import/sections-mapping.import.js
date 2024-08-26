@@ -77,7 +77,7 @@ export function getFragmentSectionsMappingData(url) {
  * constants
  */
 
-const IMPORT_TARGETS = {
+export const IMPORT_TARGETS = {
   AEM_BLOCK_COLLECTION: 'aem-block-collection',
   CROSSWALK: 'crosswalk',
 };
@@ -187,13 +187,6 @@ export default {
             }
           });
 
-          // crosswalk does not support images inside links
-          if (target === IMPORT_TARGETS.CROSSWALK) {
-            bEl.querySelectorAll('a > img').forEach((i) => {
-              i.parentElement.before(i);
-            });
-          }
-
           bEl.querySelectorAll('img').forEach((img) => {
             const src = img.getAttribute('src');
             if (!src.startsWith('./') && !src.startsWith('/') && !src.startsWith('../') && !src.startsWith('http')) {
@@ -244,6 +237,13 @@ export default {
         if (m.path !== '/nav' && m.path !== '/footer') {
           WebImporter.rules.createMetadata(el, document);
         }
+      }
+
+      // crosswalk does not support images inside links
+      if (target === IMPORT_TARGETS.CROSSWALK) {
+        el.querySelectorAll('a > img').forEach((i) => {
+          i.parentElement.before(i);
+        });
       }
 
       // adjust anchor links
