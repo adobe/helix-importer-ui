@@ -110,15 +110,28 @@ export default {
     );
     document.elementFromPoint(0, 0)?.click();
 
-    // mark hidden divs + add bounding client rect data to all "visible" divs
+    // mark hidden elements
     document.querySelectorAll('*').forEach((el) => {
-      if (el && /none/i.test(window.getComputedStyle(el).display.trim())) {
+      if (
+        el
+        && (
+          /none/i.test(window.getComputedStyle(el).display.trim())
+          || /hidden/i.test(window.getComputedStyle(el).visibility.trim())
+        )
+      ) {
         el.setAttribute('data-hlx-imp-hidden-div', '');
       }
     });
 
+    // mark hidden divs + add bounding client rect data to all "visible" divs
     document.querySelectorAll('div').forEach((div) => {
-      if (div && /none/i.test(window.getComputedStyle(div).display.trim())) {
+      if (
+        div
+        && (
+          /none/i.test(window.getComputedStyle(div).display.trim())
+          || /hidden/i.test(window.getComputedStyle(div).visibility.trim())
+        )
+      ) {
         div.setAttribute('data-hlx-imp-hidden-div', '');
       } else {
         const domRect = div.getBoundingClientRect().toJSON();
@@ -220,7 +233,11 @@ export default {
               allMappings: m,
             });
             if (block) {
-              el.appendChild(block);
+              if (m.path === '/nav' && b.mapping === 'header') {
+                el.prepend(block);
+              } else {
+                el.appendChild(block);
+              }
             }
           } else {
             console.warn('parser not found', m.mapping);

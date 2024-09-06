@@ -4,7 +4,7 @@ import { IMPORT_TARGETS } from "../sections-mapping.import.js";
 
 const brandLogoMapping = [
   {
-    checkFn: (e) => e.querySelector('a > picture, a > img'),
+    checkFn: (e) => [...e.querySelectorAll('a > picture, a > img')].filter((i) => i.closest('[data-hlx-imp-hidden-div]') === null)[0],
     parseFn: (e, targetEl, bodyWidth, x, target) => {
       if (bodyWidth && x < bodyWidth / 2) {
         if (target === IMPORT_TARGETS.CROSSWALK) {
