@@ -139,6 +139,15 @@ export default {
         }
       }
     });
+
+    // fix image with only srcset attribute (not supported in helix-importer)
+    document.querySelectorAll('img').forEach((img) => {
+      const src = img.getAttribute('src');
+      const srcset = img.getAttribute('srcset')?.split(' ')[0];
+      if (!src && srcset) {
+        img.setAttribute('src', srcset);
+      }
+    });
   },
 
   transform: async ({ document, params }) => {
