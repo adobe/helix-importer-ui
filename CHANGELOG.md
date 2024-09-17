@@ -1,3 +1,10 @@
+# [1.52.0](https://github.com/adobe/helix-importer-ui/compare/v1.51.39...v1.52.0) (2024-09-17)
+
+
+### Features
+
+* **import:** indicate if default transformation file is being used ([#427](https://github.com/adobe/helix-importer-ui/issues/427)) ([13500e6](https://github.com/adobe/helix-importer-ui/commit/13500e660e914cc1ecd8f143125679830204ac16))
+
 ## [1.51.39](https://github.com/adobe/helix-importer-ui/compare/v1.51.38...v1.51.39) (2024-09-08)
 
 
