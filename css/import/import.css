@@ -45,6 +45,18 @@
   border: 1px solid var(--spectrum-global-color-gray-100);
 }
 
+.import #import-action-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.import #transformation-file-default {
+  text-align: right;
+  font-style: italic;
+  font-size: 12px;
+}
+
 .import sp-theme[color="light"] {
   width: 100%;
   background-color: var(--spectrum-global-color-gray-50);

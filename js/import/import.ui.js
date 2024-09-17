@@ -24,6 +24,7 @@ const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-previ
 
 const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
+const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
 
 // const SAVEASWORD_BUTTON = document.getElementById('saveAsWord');
 const FOLDERNAME_SPAN = document.getElementById('folder-name');
@@ -396,6 +397,14 @@ const smartScroll = async (window) => {
   }
 };
 
+const setDefaultTransformerNotice = (importer) => {
+  if (importer.usingDefaultTransformer) {
+    DEFAULT_TRANSFORMER_USED.classList.remove('hidden');
+  } else {
+    DEFAULT_TRANSFORMER_USED.classList.add('hidden');
+  }
+};
+
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
 
@@ -433,6 +442,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', (async () => {
     initImportStatus();
+    setDefaultTransformerNotice(config.importer);
 
     if (IS_BULK) {
       clearResultPanel();
@@ -611,6 +621,7 @@ const attachListeners = () => {
   IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
     if (config.importer) {
       await config.importer.setImportFileURL(event.target.value);
+      setDefaultTransformerNotice(config.importer);
     }
   });
 

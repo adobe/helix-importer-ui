@@ -52,6 +52,7 @@ export default class PollImporter {
     this.projectTransform = null;
     this.projectTransformFileURL = '';
     this.running = false;
+    this.usingDefaultTransformer = true;
 
     this.#init();
   }
@@ -71,6 +72,7 @@ export default class PollImporter {
       const res = await fetch(projectTransformFileURL);
       body = await res.text();
 
+      this.usingDefaultTransformer = !res.ok;
       if (res.ok && body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
         await loadModule(projectTransformFileURL);
