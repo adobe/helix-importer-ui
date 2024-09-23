@@ -13,7 +13,7 @@ import { getContentFrame, IS_EXPRESS, IS_FRAGMENTS } from './ui.js';
 // eslint-disable-next-line import/no-cycle
 import {
   getFragmentSectionsMappingData,
-} from '../sections-mapping/import/sections-mapping.import.js';
+} from '../sections-mapping/utils.js';
 import {
   getFreeSelectionsMapping,
 } from '../express/free-mapping/free.mapping.utils.js';
@@ -113,7 +113,7 @@ const getXPath = (elm, document, withDetails = false) => {
 
 function getSectionsMappingData(url) {
   if (IS_FRAGMENTS) {
-    return getFragmentSectionsMappingData(url);
+    return getFragmentSectionsMappingData(url).mapping;
   }
   if (IS_EXPRESS) {
     return getFreeSelectionsMapping(url);

@@ -2,8 +2,8 @@
  * GENERIC IMPORT SCRIPT FOR SECTIONS MAPPING DATA
  */
 /* global WebImporter */
-
 import { getElementByXpath } from '../../shared/utils.js';
+import { generateDocumentPath, getFragmentSectionsMappingData } from '../utils.js';
 import * as parsers from './parsers/parsers.js';
 
 /**
@@ -36,40 +36,6 @@ function getImgFromBackground(element, document, originalURL) {
       return img;
     }
   }
-  return null;
-}
-
-export function generateDocumentPath({ url }) {
-  let p = new URL(url).pathname;
-  if (p.endsWith('/')) {
-    p = `${p}index`;
-  }
-  p = decodeURIComponent(p)
-    .toLowerCase()
-    .replace(/\.html$/, '')
-    .replace(/[^a-z0-9/]/gm, '-');
-  return WebImporter.FileUtils.sanitizePath(p);
-}
-
-export function getFragmentSectionsMappingData(url) {
-  const item = localStorage.getItem('helix-importer-sections-mapping');
-
-  if (item) {
-    const mData = JSON.parse(item);
-
-    // return manual mapping first
-    let found = mData.find((m) => m.url === url && m.autoDetect === false);
-    if (found) {
-      return found.mapping;
-    }
-
-    // return auto-detected mapping
-    found = mData.find((m) => m.url === url && m.autoDetect === true);
-    if (found) {
-      return found.mapping;
-    }
-  }
-
   return null;
 }
 
@@ -168,18 +134,20 @@ export default {
      * get sections mapping data
      */
 
-    const mapping = getFragmentSectionsMappingData(params.originalURL);
+    const { mapping } = getFragmentSectionsMappingData(params.originalURL);
     if (!mapping) {
       throw new Error('No sections mapping data found, aborting');
     }
 
     // get import target
     const target = sessionStorage.getItem('demo-tool-aem-importer-target') || IMPORT_TARGETS.AEM_BLOCK_COLLECTION;
-
     const importedElements = mapping.map((m) => {
+      // sanitize path
+      const sanitizedPath = generateDocumentPath({ url: `http://domain.com${m.path}` });
+
       const importedEl = {
         element: null,
-        path: m.path,
+        path: sanitizedPath,
         report: {},
       };
 
@@ -313,13 +281,4 @@ export default {
 
     return importedElements;
   },
-
-  /**
-   * Return a path that describes the document being transformed (file name, nesting...).
-   * The path is then used to create the corresponding Word document.
-   * @param {String} url The url of the document being transformed.
-   * @param {HTMLDocument} document The document
-   */
-  generateDocumentPath,
-
 };
