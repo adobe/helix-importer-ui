@@ -1,3 +1,4 @@
+/* global WebImporter */
 import * as fragmentUI from './sm.ui.js';
 
 export default async function detectSections(src, frame, autoDetect) {
@@ -51,4 +52,38 @@ export default async function detectSections(src, frame, autoDetect) {
     // eslint-disable-next-line no-console
     console.error(`Error loading sections mapping data for url ${originalURL}`, e);
   }
+}
+
+export function generateDocumentPath({ url }) {
+  let p = new URL(url).pathname;
+  if (p.endsWith('/')) {
+    p = `${p}index`;
+  }
+  p = decodeURIComponent(p)
+    .toLowerCase()
+    .replace(/\.html$/, '')
+    .replace(/[^a-z0-9/]/gm, '-');
+  return WebImporter.FileUtils.sanitizePath(p);
+}
+
+export function getFragmentSectionsMappingData(url) {
+  const item = localStorage.getItem('helix-importer-sections-mapping');
+
+  if (item) {
+    const mData = JSON.parse(item);
+
+    // return manual mapping first
+    let found = mData.find((m) => m.url === url && m.autoDetect === false);
+    if (found) {
+      return found;
+    }
+
+    // return auto-detected mapping
+    found = mData.find((m) => m.url === url && m.autoDetect === true);
+    if (found) {
+      return found;
+    }
+  }
+
+  return null;
 }

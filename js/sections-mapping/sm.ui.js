@@ -1,6 +1,7 @@
 import alert from '../shared/alert.js';
 import { getContentFrame } from '../shared/ui.js';
 import { getElementByXpath } from '../shared/utils.js';
+import { generateDocumentPath } from './utils.js';
 
 const ADD_FRAGMENT_BTN = document.getElementById('sm-add-fragment');
 const SM_FRAGMENTS_CONTAINER = document.getElementById('sm-fragments-container');
@@ -89,6 +90,7 @@ export function getSMCache() {
 
 export function saveSMCache() {
   const url = importerConfig.fields['import-url'];
+  const sanitizedPath = generateDocumentPath({ url });
   const autoDetect = importerConfig.fields['import-sm-auto-detect'];
   const cache = getSMCache();
   const mapping = getSMData();
@@ -101,6 +103,7 @@ export function saveSMCache() {
     } else {
       cache.push({
         url,
+        sanitizedPath,
         autoDetect,
         mapping,
       });
@@ -392,12 +395,7 @@ export function addBlockInSection(row, target) {
  */
 
 function getMainFragmentPath(url) {
-  const u = new URL(url);
-  let mainPath = u.pathname.replace(/\.[^/.]+$/, '');
-  if (mainPath === '/') {
-    mainPath = '/index';
-  }
-  return mainPath;
+  return generateDocumentPath({ url });
 }
 
 export function addFragmentAccordionElement(path) {
