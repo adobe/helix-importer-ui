@@ -372,7 +372,7 @@ const attachListeners = () => {
     // eslint-disable-next-line no-alert
     try {
       crawlStatus.urls = (await loadURLsFromRobots(config.origin, URLS_INPUT.value, {
-        log: alert.info,
+        log: alert.success,
         sitemap: config.fields['crawl-sitemap-file'],
       })).filter((url) => {
         const u = new URL(url);
