@@ -34,7 +34,7 @@ body.loading {
 }
 
 body.parent .main-content {
-  height: calc(100vh - 74px);
+  height: calc(100vh - 56px);
   display: grid;
   grid-template-columns: 240px 1fr;
   grid-template-rows: 1fr;
@@ -118,7 +118,7 @@ nav {
 
 /* HEADER */
 header {
-  padding: 24px 0;
+  padding: var(--spectrum-global-dimension-size-150) 0;
 }
 
 header a {
