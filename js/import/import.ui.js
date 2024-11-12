@@ -23,7 +23,8 @@ import {
   attachPreviewListeners,
   updatePreview,
   getReport,
-  REPORT_FILENAME, toggleReportButton,
+  REPORT_FILENAME,
+  toggleReportButton,
 } from './import.preview.js';
 import {
   updateBulkResults,

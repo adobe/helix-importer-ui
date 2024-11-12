@@ -94,15 +94,6 @@ const attachListeners = (config, parentSelector) => {
     a.click();
   }));
 
-  PreviewElements.DOWNLOAD_IMPORT_CONTENT_BUTTON?.addEventListener('click', (async () => {
-    const link = await config.service.fetchResult();
-    const { downloadUrl } = link;
-    const a = document.createElement('a');
-    a.setAttribute('href', downloadUrl);
-    a.setAttribute('download', CONTENT_FILENAME);
-    a.click();
-  }));
-
   const tabs = SPTABS(parentSelector);
   if (tabs) {
     tabs.addEventListener('change', () => {
@@ -213,7 +204,7 @@ const updatePreview = (results) => {
 };
 
 const toggleReportButton = (show) => {
-  PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON.classList.toggle('hidden', show);
+  PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON.classList.toggle('hidden', !show);
 };
 
 export {
