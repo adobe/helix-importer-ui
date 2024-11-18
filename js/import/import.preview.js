@@ -11,6 +11,7 @@
  */
 /* global CodeMirror, html_beautify, WebImporter, ExcelJS */
 
+import importStatus from './import.status.js';
 import alert from '../shared/alert.js';
 
 const PreviewElements = Object.freeze({
@@ -85,8 +86,8 @@ const getReport = async (importStatus) => {
 };
 
 const attachListeners = (config, parentSelector) => {
-  PreviewElements.DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
-    const buffer = await getReport();
+  PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
+    const buffer = await getReport(importStatus.getStatus());
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     a.setAttribute('href', URL.createObjectURL(blob));
