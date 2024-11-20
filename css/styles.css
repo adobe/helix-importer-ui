@@ -134,7 +134,7 @@ header a i {
 }
 
 sp-theme[color="light"] header a i {
-  border: 1px solid #d3d3d3;
+  border: 1px solid var(--spectrum-global-color-gray-200);
   border-radius: 22%;
 }
 
@@ -167,7 +167,6 @@ footer svg {
 }
 
 .tool main {
-  grid-area: main;
   height: 100vh;
   max-height: 100vh;
   padding: var(--spectrum-global-dimension-size-300) var(--spectrum-global-dimension-size-300) 0;
@@ -316,6 +315,8 @@ section sp-tabs sp-tab-panel > div {
 }
 
 section .page-preview {
+  display: flex;
+  flex-direction: column;
   height: calc(100vh - 305px);
   margin-top: var(--spectrum-global-dimension-size-150);
   overflow: hidden;
@@ -325,6 +326,17 @@ section .page-preview h3 {
   padding-top: var(--spectrum-global-dimension-size-150);
 }
 
+section .page-preview > div:first-of-type {
+  flex: 1;
+  width: 100%;
+  border: none;
+  box-sizing: border-box;
+}
+
+body > sp-theme[color="light"] section .page-preview > div:first-of-type {
+ border: 1px solid var(--spectrum-global-color-gray-300);
+}
+
 section .page-preview iframe {
   height: calc(100% / .45);
   width: calc(100% / .45);
@@ -332,6 +344,7 @@ section .page-preview iframe {
   transform-origin: 0 0;
   background-color: var(--spectrum-global-color-gray-75);
   overflow-x: auto;
+  border: none;
 }
 
 /* ALERT CONTAINER */

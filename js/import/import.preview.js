@@ -13,6 +13,7 @@
 
 import importStatus from './import.status.js';
 import alert from '../shared/alert.js';
+import { getTheme } from '../shared/theme.js';
 
 const PreviewElements = Object.freeze({
   TRANSFORMED_HTML_TEXTAREA: document.getElementById('import-transformed-html'),
@@ -108,17 +109,18 @@ const attachListeners = (config, parentSelector) => {
 };
 
 const setupPreview = (parentSelector) => {
+  const codeMirrorTheme = getTheme() === 'dark' ? 'base16-dark' : 'base16-light';
   preview.transformedEditor = CodeMirror.fromTextArea(PreviewElements.TRANSFORMED_HTML_TEXTAREA, {
     lineNumbers: true,
     mode: 'htmlmixed',
-    theme: 'base16-dark',
+    theme: codeMirrorTheme,
   });
   preview.transformedEditor.setSize('100%', '100%');
 
   preview.markdownEditor = CodeMirror.fromTextArea(PreviewElements.MD_SOURCE_TEXTAREA, {
     lineNumbers: true,
     mode: 'markdown',
-    theme: 'base16-dark',
+    theme: codeMirrorTheme,
   });
   preview.markdownEditor.setSize('100%', '100%');
 
@@ -208,6 +210,12 @@ const toggleReportButton = (show) => {
   PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON.classList.toggle('hidden', !show);
 };
 
+const setTheme = (theme) => {
+  const codeMirrorTheme = theme === 'dark' ? 'base16-dark' : 'base16-light';
+  preview.transformedEditor.setOption('theme', codeMirrorTheme);
+  preview.markdownEditor.setOption('theme', codeMirrorTheme);
+}
+
 export {
   REPORT_FILENAME,
   PreviewButtons,
@@ -217,4 +225,5 @@ export {
   updatePreview,
   getReport,
   toggleReportButton,
+  setTheme as setPreviewTheme
 };

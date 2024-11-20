@@ -14,9 +14,13 @@ import { sendMessage } from '../shell.js';
 
 const SP_THEME = document.querySelector('sp-theme');
 
+function getTheme() {
+  return localStorage.getItem('sp-theme') || 'dark';
+}
+
 function applyDefaultTheme() {
   if (SP_THEME) {
-    SP_THEME.setAttribute('color', localStorage.getItem('sp-theme') || 'dark');
+    SP_THEME.setAttribute('color', getTheme());
   }
 }
 
@@ -30,6 +34,7 @@ function toggleTheme() {
 }
 
 export {
+  getTheme,
   toggleTheme,
   applyDefaultTheme,
 };

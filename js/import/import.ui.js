@@ -25,6 +25,7 @@ import {
   getReport,
   REPORT_FILENAME,
   toggleReportButton,
+  setPreviewTheme,
 } from './import.preview.js';
 import {
   updateBulkResults,
@@ -287,7 +288,7 @@ const startImport = async () => {
     } else {
       PREVIEW_CONTAINER.classList.add('hidden');
     }
-    toggleReportButton(true);
+    toggleReportButton(false);
   } else {
     toggleReportButton(false);
     PREVIEW_CONTAINER.classList.remove('hidden');
@@ -366,7 +367,10 @@ const init = () => {
   config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
 
   applyDefaultTheme();
-  registerRuntime();
+  registerRuntime(({ theme }) => {
+    setPreviewTheme(theme);
+  });
+
   createImporter();
 
   if (!IS_BULK) {

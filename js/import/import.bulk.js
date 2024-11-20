@@ -63,7 +63,7 @@ const updateBulkResults = (results, originalURL, importStatus) => {
     BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
 
     if (importStatus.urls.length === 0) {
-      alert.info('Bulk import completed');
+      alert.success('Bulk import completed');
     }
   } catch (err) {
     // eslint-disable-next-line no-console

@@ -1,9 +1,10 @@
 @import url("../libs/vendors/codemirror/codemirror.css");
 @import url("../libs/vendors/codemirror/base16-dark.css");
+@import url("../libs/vendors/codemirror/base16-light.css");
 
 .import {
   /* COLORS */
-  --hlx-import-text-color: var(--spectrum-global-color-gray-50);
+  --hlx-import-text-color: var(--spectrum-global-color-gray-500);
   --hlx-import-link-color: #0563C1;
   --hlx-import-secondary-heading-color: #434343;
   --hlx-import-tertiary-heading-color: #666;
@@ -34,7 +35,8 @@
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
-.import .cm-s-base16-dark.CodeMirror, .import .cm-s-base16-dark .CodeMirror-gutters {
+.import .CodeMirror,
+.import .CodeMirror-gutters {
   background-color: var(--spectrum-global-color-gray-75);
 }
 
@@ -43,18 +45,25 @@
   border: 1px solid var(--spectrum-global-color-gray-100);
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
+.import .cm-s-base16-light.CodeMirror {
+  border: 1px solid var(--spectrum-global-color-gray-300);
+}
+
 .import #import-action-row {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
   gap: var(--spectrum-global-dimension-size-150);
+  margin-top: var(--spectrum-global-dimension-size-150);
+}
+
+.import #import-action-row sp-button-group {
+  margin-top: unset;
 }
 
 .import sp-theme[color="light"] {
   width: 100%;
-}
-
-.import #import-content-frame {
-  border: none;
 }
 
 .import #import-markdown-preview {
