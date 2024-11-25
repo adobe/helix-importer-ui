@@ -1,14 +1,13 @@
 @import url("../libs/vendors/codemirror/codemirror.css");
 @import url("../libs/vendors/codemirror/base16-dark.css");
+@import url("../libs/vendors/codemirror/base16-light.css");
 
-:host,
-:root {
+.import {
   /* COLORS */
-  --hlx-import-text-color: #000;
+  --hlx-import-text-color: var(--spectrum-global-color-gray-500);
   --hlx-import-link-color: #0563C1;
   --hlx-import-secondary-heading-color: #434343;
   --hlx-import-tertiary-heading-color: #666;
-  --hlx-import-background-color: #fff;
   --hlx-import-table-head-background-color: #F5CBCD;
 
   /* FONTS */
@@ -36,7 +35,8 @@
 }
 
 /* stylelint-disable-next-line selector-class-pattern */
-.import .cm-s-base16-dark.CodeMirror, .import .cm-s-base16-dark .CodeMirror-gutters {
+.import .CodeMirror,
+.import .CodeMirror-gutters {
   background-color: var(--spectrum-global-color-gray-75);
 }
 
@@ -45,30 +45,33 @@
   border: 1px solid var(--spectrum-global-color-gray-100);
 }
 
+/* stylelint-disable-next-line selector-class-pattern */
+.import .cm-s-base16-light.CodeMirror {
+  border: 1px solid var(--spectrum-global-color-gray-300);
+}
+
 .import #import-action-row {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  align-items: center;
+  gap: var(--spectrum-global-dimension-size-150);
+  margin-top: var(--spectrum-global-dimension-size-150);
 }
 
-.import #transformation-file-default {
-  text-align: right;
-  font-style: italic;
-  font-size: 12px;
+.import #import-action-row sp-button-group {
+  margin-top: unset;
 }
 
 .import sp-theme[color="light"] {
   width: 100%;
-  background-color: var(--spectrum-global-color-gray-50);
-  color: var(--spectrum-global-color-gray-800);
 }
 
 .import #import-markdown-preview {
   height: calc(100vh - 232px);
-  border: 1px solid var(--spectrum-global-color-gray-100);
+  border: 1px solid var(--spectrum-global-color-gray-300);
   padding: 12px;
-  background-color: var(--hlx-import-background-color);
-  color: var(--hlx-import-text-color);
+  background-color: var(--spectrum-global-color-gray-50);
+  color: var(--spectrum-global-color-gray-800);
   font-family: var(--hlx-import-font-family);
   font-size: var(--hlx-import-body-font-size);
   line-height: 1.15;

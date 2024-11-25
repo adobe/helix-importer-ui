@@ -22,6 +22,7 @@ module.exports = {
     'import/extensions': ['error', {
       js: 'always',
     }],
+    'import/no-unresolved': [2, { ignore: ['^preact', '^htm'] }],
   },
   plugins: ['import'],
   settings: {
