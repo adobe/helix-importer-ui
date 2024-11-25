@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-importer-ui",
   "description": "helix-importer-ui",
-  "version": "1.52.16",
+  "version": "1.52.17",
   "type": "module",
   "scripts": {
     "test": "c8 mocha",
@@ -15,7 +15,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "3.4.28",
+    "@adobe/helix-importer": "3.4.30",
     "@adobe/mdast-util-gridtables": "4.0.8",
     "@adobe/remark-gridtables": "3.0.8",
     "@spectrum-web-components/bundle": "0.49.0",
