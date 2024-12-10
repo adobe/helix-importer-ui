@@ -11,6 +11,8 @@
  */
 /* global WebImporter */
 
+import { loadComponents } from './jcr.js';
+
 const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
 
 function deepCloneWithStyles(document, styles = DEFAULT_SUPPORTED_STYLES) {
@@ -135,7 +137,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, url, document, params,
+      includeDocx, createJCR, url, document, params,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -158,6 +160,19 @@ export default class PollImporter {
           const { path } = result;
           result.filename = `${path}.docx`;
         });
+      } else if (createJCR) {
+        const components = await loadComponents(this.config);
+        const out = await WebImporter.md2jcr(
+          url,
+          documentClone,
+          this.projectTransform,
+          {
+            components,
+            ...params,
+          },
+        );
+        out.url = params.originalURL;
+        results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
           url,
@@ -192,12 +207,14 @@ export default class PollImporter {
     document,
     includeDocx = false,
     params,
+    createJCR = false,
   }) {
     this.transformation = {
       url,
       document,
       includeDocx,
       params,
+      createJCR,
     };
   }
 

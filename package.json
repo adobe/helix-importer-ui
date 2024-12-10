@@ -8,6 +8,7 @@
     "clean": "rm -fr ./js/dist",
     "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs",
     "build:dev": "npm run clean && npm i && webpack --config webpack.dev.cjs",
+    "build:ben": "npm run clean && webpack --config webpack.dev.cjs",
     "build": "npm run build:prod",
     "lint:js": "eslint .",
     "lint:css": "stylelint './css/**/*.css'",

@@ -76,6 +76,9 @@
                                             <sp-checkbox class="option-field" id="import-local-md">
                                                 Save as Markdown
                                             </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-jcr-package">
+                                                Save as JCR Package
+                                            </sp-checkbox>
                                         </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">
@@ -94,14 +97,14 @@
                                 </sp-accordion-item>
                             </sp-accordion>
 
-                            <div id="import-action-row">
-                                <sp-button-group>
-                                    <sp-button id="import-doimport-button">Import</sp-button>
-                                </sp-button-group>
-                                <div id="transformation-file-default" class="hidden">
-                                    <sp-status-light size="s" variant="notice">The default transformation file is being used</sp-status-light>
-                                </div>
+                        <div id="import-action-row">
+                            <sp-button-group>
+                                <sp-button id="import-doimport-button">Import</sp-button>
+                            </sp-button-group>
+                            <div id="transformation-file-default" class="hidden">
+                                <sp-status-light size="s" variant="notice">The default transformation file is being used</sp-status-light>
                             </div>
+                        </div>
                         </form>
                         <span id="folder-name"></span>
                         <div class="page-preview hidden">
@@ -114,6 +117,7 @@
                         <sp-tabs selected="import-preview">
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                            <sp-tab label="JCR" value="import-jcr"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="import-preview">
@@ -124,15 +128,22 @@
                             <sp-tab-panel value="import-markdown">
                                 <div data-panel="source">
                                   <div class="code">
-                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                      <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
                                   </div>
                                 </div>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-html">
                                 <div data-panel="source">
                                   <div class="code">
-                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                      <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
                                   </div>
+                                </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-jcr">
+                                <div data-panel="source">
+                                    <div class="code">
+                                        <textarea id="import-jcr" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                         </sp-tabs>

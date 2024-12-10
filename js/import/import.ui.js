@@ -55,6 +55,7 @@ const config = {};
 
 let isSaveLocal = false;
 let dirHandle = null;
+let jcrPages = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -75,14 +76,14 @@ const enableProcessButtons = () => {
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
   await asyncForEach(results, async ({
-    docx, html, md, filename, path, report, from,
+    docx, html, md, jcr, filename, path, report, from,
   }) => {
     const data = {
       url: originalURL,
       path,
     };
 
-    if (isSaveLocal && dirHandle && (docx || html || md)) {
+    if (isSaveLocal && dirHandle && (docx || html || md || jcr)) {
       const files = [];
       if (config.fields['import-local-docx'] && docx) {
         files.push({ type: 'docx', filename, data: docx });
@@ -90,6 +91,13 @@ const postSuccessfulStep = async (results, originalURL) => {
         files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
       } else if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
+      } else if (config.fields['import-jcr-package'] && jcr) {
+        jcrPages.push({
+          type: 'jcr',
+          path,
+          data: jcr,
+          url: originalURL,
+        });
       }
 
       files.forEach((file) => {
@@ -239,6 +247,7 @@ const startImport = async () => {
 
       if (res.document) {
         const includeDocx = !!dirHandle && config.fields['import-local-docx'];
+        const createJCR = !!dirHandle && config.fields['import-jcr-package'];
 
         const { document, replacedURL, originalURL } = res;
         const onLoadSucceeded = await config.importer.onLoad({
@@ -253,6 +262,7 @@ const startImport = async () => {
             document,
             includeDocx,
             params: { originalURL },
+            createJCR,
           });
           await config.importer.transform();
           processNext();
@@ -296,7 +306,7 @@ const startImport = async () => {
 
   disableProcessButtons();
   toggleLoadingButton(IMPORT_BUTTON);
-  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'];
+  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-jcr-package'];
   if (isSaveLocal && !dirHandle) {
     try {
       dirHandle = await getDirectoryHandle();
@@ -351,6 +361,7 @@ const attachListeners = () => {
   });
 
   IMPORT_BUTTON.addEventListener('click', async () => {
+    jcrPages = [];
     startImport();
   });
 

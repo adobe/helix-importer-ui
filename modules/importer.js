@@ -18,6 +18,7 @@ import {
   Blocks,
   html2docx,
   html2md,
+  md2jcr,
   rules,
 } from '@adobe/helix-importer';
 
@@ -81,6 +82,10 @@ async function html2docxWrapper(url, document, transformCfg, params) {
   return html2docx(url, document, transformCfg, options, params);
 }
 
+async function md2jcrWrapper(url, document, transformCfg, params) {
+  return md2jcr(url, document, transformCfg, options, params);
+}
+
 export { default as md2html } from './md2html.js';
 
 export {
@@ -90,5 +95,6 @@ export {
   FileUtils,
   html2mdWrapper as html2md,
   html2docxWrapper as html2docx,
+  md2jcrWrapper as md2jcr,
   rules,
 };
