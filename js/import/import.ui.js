@@ -37,6 +37,8 @@ import {
   getProxyURLSetup,
   loadDocument,
 } from '../shared/document.js';
+import { createJcrPackage } from '../shared/jcr/packaging.js';
+import { getImageUrlMap } from '../shared/jcr/imageurl.mapping.js';
 
 const PARENT_SELECTOR = '.import';
 
@@ -91,7 +93,10 @@ const postSuccessfulStep = async (results, originalURL) => {
         files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
       } else if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
-      } else if (config.fields['import-jcr-package'] && jcr) {
+      }
+
+      // Save JCR pages
+      if (config.fields['import-jcr-package'] && jcr) {
         jcrPages.push({
           type: 'jcr',
           path,
@@ -99,7 +104,21 @@ const postSuccessfulStep = async (results, originalURL) => {
           url: originalURL,
         });
       }
+      if (jcrPages && jcrPages.length > 0) {
+        // get image mappings for JCR pages from the markdown content
+        const imageMappings = getImageUrlMap(md);
 
+        // create JCR package containing all JCR pages
+        await createJcrPackage(dirHandle, jcrPages, imageMappings, "xwalkdemo");
+
+        // Convert Map to plain object
+        const obj = Object.fromEntries(imageMappings);
+
+        // Save the object to a JSON file
+        saveFile(dirHandle, "jcr-image-mappings.json", JSON.stringify(obj, null, 2));
+      }
+
+      // save all other files (doc, html, md)
       files.forEach((file) => {
         try {
           const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
