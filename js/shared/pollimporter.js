@@ -11,7 +11,7 @@
  */
 /* global WebImporter */
 
-import { loadComponents } from './jcr.js';
+import { loadComponents } from './component.loader.js';
 
 const DEFAULT_SUPPORTED_STYLES = [{ name: 'background-image', exclude: /none/g }];
 

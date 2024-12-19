@@ -32,6 +32,8 @@
     <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
     <script src="./js/dist/helix-importer.js"></script>
     <script src="./js/import/import.ui.js" type="module"></script>
+    <!-- TODO: fix this direct inclusion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
 
 <body class="tool loading">
@@ -60,11 +62,15 @@
                             <sp-accordion>
                                 <sp-accordion-item label="Import Options">
                                     <div>
-                                        <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
-                                        <sp-textfield class="option-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                                        <sp-field-label for="import-file-url" required>Transformation file
+                                            URL</sp-field-label>
+                                        <sp-textfield class="option-field" id="import-file-url" type="url"
+                                            value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
 
                                         <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
-                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100"
+                                            min="0" step="100"
+                                            format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
                                         <div class="local-save">
                                             <sp-checkbox class="option-field" id="import-local-docx" checked>
@@ -85,26 +91,29 @@
                                             Enable JavaScript
                                         </sp-checkbox>
                                         <sp-help-text variant="negative" icon>
-                                            Security risk: only enable Javascript execution when importing from trusted websites.
+                                            Security risk: only enable Javascript execution when importing from trusted
+                                            websites.
                                         </sp-help-text>
                                         <sp-checkbox class="option-field" id="import-scroll-to-bottom" checked>
                                             Scroll to bottom
                                         </sp-checkbox>
 
                                         <sp-field-label for="import-custom-headers">Custom headers</sp-field-label>
-                                        <sp-textfield class="option-field" id="import-custom-headers" multiline placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
+                                        <sp-textfield class="option-field" id="import-custom-headers" multiline
+                                            placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
 
-                        <div id="import-action-row">
-                            <sp-button-group>
-                                <sp-button id="import-doimport-button">Import</sp-button>
-                            </sp-button-group>
-                            <div id="transformation-file-default" class="hidden">
-                                <sp-status-light size="s" variant="notice">The default transformation file is being used</sp-status-light>
+                            <div id="import-action-row">
+                                <sp-button-group>
+                                    <sp-button id="import-doimport-button">Import</sp-button>
+                                </sp-button-group>
+                                <div id="transformation-file-default" class="hidden">
+                                    <sp-status-light size="s" variant="notice">The default transformation file is being
+                                        used</sp-status-light>
+                                </div>
                             </div>
-                        </div>
                         </form>
                         <span id="folder-name"></span>
                         <div class="page-preview hidden">
@@ -127,16 +136,16 @@
                             </sp-tab-panel>
                             <sp-tab-panel value="import-markdown">
                                 <div data-panel="source">
-                                  <div class="code">
-                                      <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-html">
                                 <div data-panel="source">
-                                  <div class="code">
-                                      <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-jcr">
@@ -148,7 +157,8 @@
                             </sp-tab-panel>
                         </sp-tabs>
                         <sp-button-group>
-                            <sp-button id="import-downloadImportReport" class="hidden">Download import report</sp-button>
+                            <sp-button id="import-downloadImportReport" class="hidden">Download import
+                                report</sp-button>
                         </sp-button-group>
                     </div>
                 </div>
@@ -158,4 +168,5 @@
     </sp-theme>
     <script src="./js/swc_loader.js" type="module"></script>
 </body>
+
 </html>
