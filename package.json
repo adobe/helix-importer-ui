@@ -29,7 +29,9 @@
     "rehype-format": "5.0.1",
     "remark-gfm": "4.0.0",
     "remark-parse": "11.0.0",
-    "unified": "11.0.5"
+    "unified": "11.0.5",
+    "jszip": "3.10.1",
+    "ws": "8.6.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.8",
