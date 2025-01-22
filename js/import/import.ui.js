@@ -10,7 +10,11 @@
  * governing permissions and limitations under the License.
  */
 /* global WebImporter */
-import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
+import {
+  initFields,
+  attachOptionFieldsListeners,
+  attachTextFieldListeners
+} from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
 import PollImporter from '../shared/pollimporter.js';
@@ -45,15 +49,15 @@ const PARENT_SELECTOR = '.import';
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
 
-const IMPORTFILEURL_FIELD = document.getElementById('import-file-url');
+const IMPORT_FILE_URL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
 const SAVE_AS_JCR_PACKAGE = document.getElementById('import-jcr-package');
-const JCR_PACKAGE_FIELDS = document.getElementById("jcr-package-fields");
+const JCR_PACKAGE_FIELDS = document.getElementById('jcr-package-fields');
 const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
 const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
 
-const FOLDERNAME_SPAN = document.getElementById('folder-name');
+const FOLDER_NAME_SPAN = document.getElementById('folder-name');
 
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 
@@ -79,24 +83,17 @@ const enableProcessButtons = () => {
   IMPORT_BUTTON.disabled = false;
 };
 
-// Function to toggle the "required" state of JCR fields
-const toggleJCRPackageFields = () => {
+const toggleJcrFields = () => {
   if (SAVE_AS_JCR_PACKAGE.checked) {
-    JCR_PACKAGE_FIELDS.style.display = "flex"; // Show fields
-    JCR_SITE_FOLDER.required = true;;         // Mark as required
-    JCR_ASSET_FOLDER.required = true;;        // Mark as required
+    JCR_PACKAGE_FIELDS.classList.add('open');
   } else {
-    JCR_PACKAGE_FIELDS.style.display = "none"; // Hide fields
-    JCR_SITE_FOLDER.required = false;        // Remove required
-    JCR_ASSET_FOLDER.required = false;       // Remove required
+    JCR_PACKAGE_FIELDS.classList.remove('open');
   }
+
+  // initial state setup, if the fields are empty, mark them as invalid
+  JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+  JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
 };
-
-// Initialize on page load
-toggleJCRPackageFields();
-
-// Add event listener for checkbox state change
-SAVE_AS_JCR_PACKAGE.addEventListener("change", toggleJCRPackageFields);
 
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
@@ -110,15 +107,22 @@ const postSuccessfulStep = async (results, originalURL) => {
 
     if (isSaveLocal && dirHandle && (docx || html || md || jcr)) {
       const files = [];
+      // if we were told to ave the doc file, add it to the list
       if (config.fields['import-local-docx'] && docx) {
         files.push({ type: 'docx', filename, data: docx });
-      } else if (config.fields['import-local-html'] && html) {
+      }
+
+      // if we were told to save the html file, add it to the list
+      if (config.fields['import-local-html'] && html) {
         files.push({ type: 'html', filename: `${path}.html`, data: `<html><head></head>${html}</html>` });
-      } else if (config.fields['import-local-md'] && md) {
+      }
+
+      // if we were told to save the md file, add it to the list
+      if (config.fields['import-local-md'] && md) {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
       }
 
-      // Save JCR pages
+      // if we were told to save the JCR package, add it to the list
       if (config.fields['import-jcr-package'] && jcr) {
         jcrPages.push({
           type: 'jcr',
@@ -128,12 +132,12 @@ const postSuccessfulStep = async (results, originalURL) => {
         });
       }
       if (jcrPages && jcrPages.length > 0) {
-        const siteFolder = JCR_SITE_FOLDER.value ? JCR_SITE_FOLDER.value : 'xwalk-site';
-        const assetFolder = JCR_ASSET_FOLDER.value ? JCR_ASSET_FOLDER.value : 'xwalk-assets';
+        const siteFolder = JCR_SITE_FOLDER.value ? JCR_SITE_FOLDER.value : '';
+        const assetFolder = JCR_ASSET_FOLDER.value ? JCR_ASSET_FOLDER.value : '';
 
         // get image mappings for JCR pages from the markdown content
         const imageMappings = getImageUrlMap(md);
-        imageMappings.set("asset-folder-name", assetFolder);
+        imageMappings.set('asset-folder-name', assetFolder);
 
         // create JCR package containing all JCR pages
         await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
@@ -142,7 +146,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const obj = Object.fromEntries(imageMappings);
 
         // Save the object to a JSON file
-        saveFile(dirHandle, "jcr-image-mappings.json", JSON.stringify(obj, null, 2));
+        await saveFile(dirHandle, 'jcr-image-mappings.json', JSON.stringify(obj, null, 2));
       }
 
       // save all other files (doc, html, md)
@@ -359,8 +363,8 @@ const startImport = async () => {
       await dirHandle.requestPermission({
         mode: 'readwrite',
       });
-      FOLDERNAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
-      FOLDERNAME_SPAN.classList.remove('hidden');
+      FOLDER_NAME_SPAN.innerText = `Saving file(s) to: ${dirHandle.name}`;
+      FOLDER_NAME_SPAN.classList.remove('hidden');
     } catch (e) {
       // eslint-disable-next-line no-console
       console.log('No directory selected');
@@ -372,6 +376,8 @@ const startImport = async () => {
 
 const attachListeners = () => {
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
+  attachTextFieldListeners(config.fields, PARENT_SELECTOR);
+
   attachPreviewListeners(config, PARENT_SELECTOR);
 
   config.importer.addListener(async ({ results }) => {
@@ -411,17 +417,19 @@ const attachListeners = () => {
     startImport();
   });
 
-  IMPORTFILEURL_FIELD.addEventListener('change', async (event) => {
+  IMPORT_FILE_URL_FIELD.addEventListener('change', async (event) => {
     if (config.importer) {
       await config.importer.setImportFileURL(event.target.value);
       setDefaultTransformerNotice(config.importer);
     }
   });
+
+  SAVE_AS_JCR_PACKAGE.addEventListener('change', toggleJcrFields);
 };
 
 const init = () => {
   config.origin = window.location.origin;
-  config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
+  config.fields = initFields(CONFIG_PARENT_SELECTOR);
 
   applyDefaultTheme();
   registerRuntime(({ theme }) => {
@@ -435,6 +443,7 @@ const init = () => {
   }
 
   attachListeners();
+  toggleJcrFields();
 };
 
 init();
