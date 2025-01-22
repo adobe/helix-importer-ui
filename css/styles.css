@@ -291,9 +291,18 @@ section sp-accordion sp-accordion-item {
 }
 
 section .local-save {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 2%;
+}
+
+section .local-save #jcr-package-fields {
+  gap: 10%;
+}
+
+section .local-save #jcr-package-fields>div>sp-textfield {
+  max-width: 100%;
 }
 
 section .local-save .option-field + sp-checkbox {

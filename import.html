@@ -86,16 +86,19 @@
                                                 Save as JCR Package
                                             </sp-checkbox>
                                             <!-- Fields to be dynamically displayed -->
-                                            <div id="jcr-package-fields" style="display: none;">
-                                                <sp-field-label id="jcr-site-folder-label" for="jcr-site-folder">AEM
-                                                    site folder name</sp-field-label>
-                                                <sp-textfield class="option-field" id="jcr-site-folder" type="text"
-                                                    value="xwalk-site"></sp-textfield>
-
-                                                <sp-field-label id="jcr-asset-folder-label" for="jcr-asset-folder">AEM
-                                                    asset folder name</sp-field-label>
-                                                <sp-textfield class="option-field" id="jcr-asset-folder" type="text"
-                                                    value="xwalk-assets"></sp-textfield>
+                                            <div id="jcr-package-fields">
+                                                <div>
+                                                    <sp-field-label for="jcr-site-folder" required>AEM Site's folder
+                                                        name</sp-field-label>
+                                                    <sp-textfield id="jcr-site-folder" type="text"
+                                                        value="xwalk-site"></sp-textfield>
+                                                </div>
+                                                <div>
+                                                    <sp-field-label for="jcr-asset-folder" required>AEM Assets' folder
+                                                        name</sp-field-label>
+                                                    <sp-textfield id="jcr-asset-folder" type="text"
+                                                        value="xwalk-assets"></sp-textfield>
+                                                </div>
                                             </div>
                                         </div>
 
