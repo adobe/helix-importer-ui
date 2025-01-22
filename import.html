@@ -85,6 +85,18 @@
                                             <sp-checkbox class="option-field" id="import-jcr-package">
                                                 Save as JCR Package
                                             </sp-checkbox>
+                                            <!-- Fields to be dynamically displayed -->
+                                            <div id="jcr-package-fields" style="display: none;">
+                                                <sp-field-label id="jcr-site-folder-label" for="jcr-site-folder">AEM
+                                                    site folder name</sp-field-label>
+                                                <sp-textfield class="option-field" id="jcr-site-folder" type="text"
+                                                    value="xwalk-site"></sp-textfield>
+
+                                                <sp-field-label id="jcr-asset-folder-label" for="jcr-asset-folder">AEM
+                                                    asset folder name</sp-field-label>
+                                                <sp-textfield class="option-field" id="jcr-asset-folder" type="text"
+                                                    value="xwalk-assets"></sp-textfield>
+                                            </div>
                                         </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">

@@ -32,16 +32,16 @@ const addPage = async (page, dir, prefix, zip) => {
     await saveFile(dir, `${prefix}/${page.contentXmlPath}`, page.processedXml);
 };
 
-export const getJcrPages = async (pages, siteName, imageMappings) => {
+export const getJcrPages = async (pages, siteFolderName, assetFolderName, imageMappings) => {
     if (jcrPages.length === 0) {
         jcrPages = Promise.all(pages.map(async (page) => ({
             path: page.path,
             sourceXml: page.data,
             pageProperties: getPageProperties(page.data),
             pageContentChildren: getPageContentChildren(page.data),
-            processedXml: await getProcessedJcr(page.data, page.url, siteName, imageMappings),
-            jcrPath: getJcrPagePath(page.path, siteName),
-            contentXmlPath: `jcr_root${getJcrPagePath(page.path, siteName)}/.content.xml`,
+            processedXml: await getProcessedJcr(page.data, page.url, assetFolderName, imageMappings),
+            jcrPath: getJcrPagePath(page.path, siteFolderName),
+            contentXmlPath: `jcr_root${getJcrPagePath(page.path, assetFolderName)}/.content.xml`,
             url: page.url,
         })));
     }
@@ -91,7 +91,7 @@ const getEmptyAncestorPages = (pages) => {
 };
 
 // Updates the asset references to point to their respective JCR paths
-const getProcessedJcr = async (xml, pageUrl, siteName, imageMappings) => {
+const getProcessedJcr = async (xml, pageUrl, assetFolderName, imageMappings) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(xml, 'text/xml');
     // if parsing fails, log the error
@@ -102,7 +102,7 @@ const getProcessedJcr = async (xml, pageUrl, siteName, imageMappings) => {
     }
 
     // Start traversal from the document root and update the asset references
-    traverseAndUpdateAssetReferences(doc.documentElement, pageUrl, siteName, imageMappings);
+    traverseAndUpdateAssetReferences(doc.documentElement, pageUrl, assetFolderName, imageMappings);
 
     const serializer = new XMLSerializer();
     return serializer.serializeToString(doc);
@@ -113,21 +113,22 @@ const getProcessedJcr = async (xml, pageUrl, siteName, imageMappings) => {
  * @param {*} dir - The directory handle
  * @param {Array} pages - An array of pages
  * @param {Map} imageMappings - An map to store the image urls and their corresponding jcr paths
- * @param {string} siteName - The name of the site
+ * @param {string} siteFolderName - The name of the site folder in AEM
+ * @param {string} assetFolderName - The name of the asset folder in AEM
  * @returns {Promise} The file handle for the generated package.
  */
-export const createJcrPackage = async (dir, pages, imageMappings, siteName) => {
+export const createJcrPackage = async (dir, pages, imageMappings, siteFolderName, assetFolderName) => {
     if (pages.length === 0) {
         return;
     }
 
     init();
-    const packageName = getPackageName(pages, siteName);
+    const packageName = getPackageName(pages, siteFolderName);
     const zip = new JSZip();
     const prefix = 'jcr';
 
     // add the pages
-    jcrPages = await getJcrPages(pages, siteName, imageMappings);
+    jcrPages = await getJcrPages(pages, siteFolderName, assetFolderName, imageMappings);
     for (let i = 0; i < jcrPages.length; i += 1) {
         const page = jcrPages[i];
         // eslint-disable-next-line no-await-in-loop
