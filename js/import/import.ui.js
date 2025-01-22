@@ -50,8 +50,8 @@ const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
 const SAVE_AS_JCR_PACKAGE = document.getElementById('import-jcr-package');
 const JCR_PACKAGE_FIELDS = document.getElementById("jcr-package-fields");
-const JCR_ASSET_FOLDER_LABEL = document.getElementById('jcr-asset-folder-label');
-const JCR_SITE_FOLDER_LABEL = document.getElementById('jcr-site-folder-label');
+const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
+const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
 
 const FOLDERNAME_SPAN = document.getElementById('folder-name');
 
@@ -82,13 +82,13 @@ const enableProcessButtons = () => {
 // Function to toggle the "required" state of JCR fields
 const toggleJCRPackageFields = () => {
   if (SAVE_AS_JCR_PACKAGE.checked) {
-    JCR_PACKAGE_FIELDS.style.display = "block"; // Show fields
-    JCR_SITE_FOLDER_LABEL.setAttribute("required", "");         // Mark as required
-    JCR_ASSET_FOLDER_LABEL.setAttribute("required", "");        // Mark as required
+    JCR_PACKAGE_FIELDS.style.display = "flex"; // Show fields
+    JCR_SITE_FOLDER.required = true;;         // Mark as required
+    JCR_ASSET_FOLDER.required = true;;        // Mark as required
   } else {
     JCR_PACKAGE_FIELDS.style.display = "none"; // Hide fields
-    JCR_SITE_FOLDER_LABEL.removeAttribute("required");        // Remove required
-    JCR_ASSET_FOLDER_LABEL.removeAttribute("required");       // Remove required
+    JCR_SITE_FOLDER.required = false;        // Remove required
+    JCR_ASSET_FOLDER.required = false;       // Remove required
   }
 };
 
