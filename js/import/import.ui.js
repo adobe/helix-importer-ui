@@ -128,12 +128,14 @@ const postSuccessfulStep = async (results, originalURL) => {
         });
       }
       if (jcrPages && jcrPages.length > 0) {
-        // get image mappings for JCR pages from the markdown content
-        const imageMappings = getImageUrlMap(md);
-
-        // create JCR package containing all JCR pages
         const siteFolder = JCR_SITE_FOLDER.value ? JCR_SITE_FOLDER.value : 'xwalk-site';
         const assetFolder = JCR_ASSET_FOLDER.value ? JCR_ASSET_FOLDER.value : 'xwalk-assets';
+
+        // get image mappings for JCR pages from the markdown content
+        const imageMappings = getImageUrlMap(md);
+        imageMappings.set("asset-folder-name", assetFolder);
+
+        // create JCR package containing all JCR pages
         await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
         // Convert Map to plain object
