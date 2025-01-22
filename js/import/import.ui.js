@@ -85,16 +85,15 @@ const enableProcessButtons = () => {
 };
 
 const toggleJcrFields = () => {
-  if (SAVE_AS_JCR_PACKAGE.checked) {
-    JCR_PACKAGE_FIELDS.classList.add('open');
-  } else {
-    JCR_PACKAGE_FIELDS.classList.remove('open');
-  }
+  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
 
   // if SAVE_AS_DOCX is checked, uncheck it as only JCR or DOC can be selected
-  if (SAVE_AS_JCR_PACKAGE.checked) {
-    SAVE_AS_DOCX.checked = false;
-  }
+
+  // update our fields
+  config.fields['import-jcr-package'] = SAVE_AS_JCR_PACKAGE.checked;
+  config.fields['import-local-docx'] = !SAVE_AS_JCR_PACKAGE.checked;;
+
+  SAVE_AS_DOCX.checked = !SAVE_AS_JCR_PACKAGE.checked;
 
   // initial state setup, if the fields are empty, mark them as invalid
   JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
@@ -102,10 +101,14 @@ const toggleJcrFields = () => {
 };
 
 const saveAsDocListener = () => {
-  // when the SAVE_AS_DOCX checkbox is checked, the JCR_PACKAGE_FIELDS should deselected
+  // update our fields
+  config.fields['import-local-docx'] = SAVE_AS_DOCX.checked;
+  config.fields['import-jcr-package'] = !SAVE_AS_DOCX.checked;
+
+  SAVE_AS_JCR_PACKAGE.checked = !SAVE_AS_DOCX.checked;
+
   if (SAVE_AS_DOCX.checked) {
-    SAVE_AS_JCR_PACKAGE.checked = false;
-    JCR_PACKAGE_FIELDS.classList.remove('open');
+    JCR_PACKAGE_FIELDS.classList.toggle('open', !SAVE_AS_DOCX.checked);
   }
 };
 
@@ -166,7 +169,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       // save all other files (doc, html, md)
       files.forEach((file) => {
         try {
-          const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
+          const filePath = `/${file.type}${file.filename}`;
           saveFile(dirHandle, filePath, file.data);
           data.file = filePath;
           data.status = 'Success';

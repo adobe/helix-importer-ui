@@ -213,7 +213,25 @@
   display: flex;
 }
 
+.import .docx-or-jcr {
+  display: flex;
+}
+
+.import .docx-or-jcr-selection {
+  display: flex;
+}
+
 /* if the open class is missing then hide the fields */
 .import #jcr-package-fields {
   display: none;
 }
+
+.import .local-save {
+  padding-top: 10px;
+}
+
+.import .docx-or-jcr-selection sp-contextual-help > * {
+  width: 268px;
+  max-width: 268px;
+}
+

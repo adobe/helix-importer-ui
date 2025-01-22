@@ -72,19 +72,26 @@
                                             format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
                                         <div class="local-save">
-                                            <sp-checkbox class="option-field" id="import-local-docx" checked>
-                                                Save as docx
-                                            </sp-checkbox>
-                                            <sp-checkbox class="option-field" id="import-local-html">
-                                                Save as HTML
-                                            </sp-checkbox>
-                                            <sp-checkbox class="option-field" id="import-local-md">
-                                                Save as Markdown
-                                            </sp-checkbox>
-                                            <sp-checkbox class="option-field" id="import-jcr-package">
-                                                Save as JCR Package
-                                            </sp-checkbox>
-                                            <!-- Fields to be dynamically displayed -->
+                                            <div class="docx-or-jcr-selection">
+                                                <sp-help-text size="m" slot="help-text">
+                                                    Select either doc based or crosswalk.
+                                                </sp-help-text>
+                                                <sp-contextual-help placement="top-start">
+                                                    <h3 slot="heading">Document or Crosswalk Project?</h3>
+                                                    <p>Select the target output format before importing the content.
+                                                        Selecting Save as docx, will save the content as a docx file.
+                                                        Selecting Save as JCR Package, will save the content as a JCR package.</p>
+                                                </sp-contextual-help>
+                                            </div>
+                                            <div class="docx-or-jcr">
+                                                <sp-checkbox class="option-field" id="import-local-docx" checked>
+                                                    Save as docx
+                                                </sp-checkbox>
+                                                <sp-checkbox class="option-field" id="import-jcr-package">
+                                                    Save as JCR Package
+                                                </sp-checkbox>
+                                                <!-- Fields to be dynamically displayed -->
+                                            </div>
                                             <div id="jcr-package-fields">
                                                 <div>
                                                     <sp-field-label for="jcr-site-folder" required>AEM Site's folder name</sp-field-label>
@@ -95,6 +102,12 @@
                                                     <sp-textfield id="jcr-asset-folder" type="text" class="textfield"></sp-textfield>
                                                 </div>
                                             </div>
+                                            <sp-checkbox class="option-field" id="import-local-html">
+                                                Save as HTML
+                                            </sp-checkbox>
+                                            <sp-checkbox class="option-field" id="import-local-md">
+                                                Save as Markdown
+                                            </sp-checkbox>
                                         </div>
 
                                         <sp-checkbox class="option-field" id="import-enable-js">
