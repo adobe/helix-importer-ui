@@ -13,7 +13,7 @@
 import {
   initFields,
   attachOptionFieldsListeners,
-  attachTextFieldListeners
+  attachTextFieldListeners,
 } from '../shared/fields.js';
 import { getDirectoryHandle, saveFile } from '../shared/filesystem.js';
 import { asyncForEach } from '../shared/utils.js';
@@ -52,6 +52,7 @@ const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-previ
 const IMPORT_FILE_URL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
+const SAVE_AS_DOCX = document.getElementById('import-local-docx');
 const SAVE_AS_JCR_PACKAGE = document.getElementById('import-jcr-package');
 const JCR_PACKAGE_FIELDS = document.getElementById('jcr-package-fields');
 const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
@@ -90,9 +91,22 @@ const toggleJcrFields = () => {
     JCR_PACKAGE_FIELDS.classList.remove('open');
   }
 
+  // if SAVE_AS_DOCX is checked, uncheck it as only JCR or DOC can be selected
+  if (SAVE_AS_JCR_PACKAGE.checked) {
+    SAVE_AS_DOCX.checked = false;
+  }
+
   // initial state setup, if the fields are empty, mark them as invalid
   JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
   JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+};
+
+const saveAsDocListener = () => {
+  // when the SAVE_AS_DOCX checkbox is checked, the JCR_PACKAGE_FIELDS should deselected
+  if (SAVE_AS_DOCX.checked) {
+    SAVE_AS_JCR_PACKAGE.checked = false;
+    JCR_PACKAGE_FIELDS.classList.remove('open');
+  }
 };
 
 const postSuccessfulStep = async (results, originalURL) => {
@@ -425,6 +439,7 @@ const attachListeners = () => {
   });
 
   SAVE_AS_JCR_PACKAGE.addEventListener('change', toggleJcrFields);
+  SAVE_AS_DOCX.addEventListener('change', saveAsDocListener);
 };
 
 const init = () => {
