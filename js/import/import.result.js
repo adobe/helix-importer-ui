@@ -10,36 +10,36 @@
  * governing permissions and limitations under the License.
  */
 
-const importStatus = {};
+const importResult = {};
 
-const resetImportStatus = () => {
-  importStatus.startTime = 0;
-  importStatus.imported = 0;
-  importStatus.total = 0;
-  importStatus.urls = [];
-  importStatus.rows = [];
-  importStatus.extraCols = [];
+const resetImportResult = () => {
+  importResult.startTime = 0;
+  importResult.imported = 0;
+  importResult.total = 0;
+  importResult.urls = [];
+  importResult.rows = [];
+  importResult.extraCols = [];
 };
 
-const ImportStatus = {
-  getStatus: () => importStatus,
-  reset: resetImportStatus,
+const ImportResult = {
+  getStatus: () => importResult,
+  reset: resetImportResult,
   merge: (status = {}) => {
     Object.entries(status).forEach(([key, value]) => {
-      importStatus[key] = value;
+      importResult[key] = value;
     });
   },
   addExtraCols: (key) => {
-    if (!importStatus.extraCols.includes(key)) {
-      importStatus.extraCols.push(key);
+    if (!importResult.extraCols.includes(key)) {
+      importResult.extraCols.push(key);
     }
   },
   addRow: (row) => {
-    importStatus.rows.push(row);
+    importResult.rows.push(row);
   },
   incrementImported: () => {
-    importStatus.imported += 1;
+    importResult.imported += 1;
   },
 };
 
-export default ImportStatus;
+export default ImportResult;

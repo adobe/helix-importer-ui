@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+// eslint-disable-next-line import/prefer-default-export
 export const loadComponents = async (config) => {
   const components = {};
   if (config.origin) {

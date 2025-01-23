@@ -11,7 +11,7 @@
  */
 /* global CodeMirror, html_beautify, WebImporter, ExcelJS */
 
-import importStatus from './import.status.js';
+import importResult from './import.result.js';
 import alert from '../shared/alert.js';
 import { getTheme } from '../shared/theme.js';
 
@@ -33,11 +33,11 @@ const preview = {};
 
 const SPTABS = (parentSelector) => document.querySelector(`${parentSelector} sp-tabs`);
 
-const getReport = async (importStatus) => {
+const getReport = async (reportStatus) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet 1');
 
-  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(importStatus.extraCols);
+  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(reportStatus.extraCols);
 
   // create Excel auto Filters for the first row / header
   worksheet.autoFilter = {
@@ -54,13 +54,13 @@ const getReport = async (importStatus) => {
 
   worksheet.addRows([
     headers,
-  ].concat(importStatus.rows.map((row) => {
+  ].concat(reportStatus.rows.map((row) => {
     const {
       url, path, file, status, redirect, report,
     } = row;
     const extra = [];
     if (report) {
-      importStatus.extraCols.forEach((col) => {
+      reportStatus.extraCols.forEach((col) => {
         const e = report[col];
         if (e) {
           if (typeof e === 'string') {
@@ -94,7 +94,7 @@ const attachListeners = (config, parentSelector) => {
   }));
 
   PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
-    const buffer = await getReport(importStatus.getStatus());
+    const buffer = await getReport(importResult.getStatus());
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     a.setAttribute('href', URL.createObjectURL(blob));

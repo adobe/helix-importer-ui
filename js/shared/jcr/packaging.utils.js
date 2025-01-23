@@ -83,10 +83,7 @@ export const getPropertiesXml = (packageName) => {
  * @returns the filter.xml file
  */
 export const getFilterXml = async (jcrPages) => {
-
-  const pageFilters = jcrPages.reduce((acc, page) => {
-    return `${acc}<filter root='${page.jcrPath}'>\n</filter>\n`;
-  }, '');
+  const pageFilters = jcrPages.reduce((acc, page) => `${acc}<filter root='${page.jcrPath}'>\n</filter>\n`, '');
 
   const filterXml = `<?xml version='1.0' encoding='UTF-8'?>
     <workspaceFilter version='1.0'>
@@ -97,82 +94,36 @@ export const getFilterXml = async (jcrPages) => {
 };
 
 /**
- * Create a valid node name label out of an arbitrary site name.
- * @param {string} siteName the site name
- * @returns string which can be used as a JCR node name
- */
-const getSiteName = (siteNameStr) => {
-  const labelCharMapping = ['_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_',
-    '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_',
-    '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '-', '_', '_',
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '_', '_', '_', '_', '_', '_',
-    '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_', '_', '_', '_', '_',
-    '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
-    'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '_', '_', '_', '_', '_',
-    '_', 'f', '_', '_', '_', 'fi', 'fi', '_', '_', '_', '_', '_', '_', '_', '_', '_',
-    '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', 'y', '_', '_', '_',
-    '_', 'i', 'c', 'p', 'o', 'v', '_', 's', '_', '_', '_', '_', '_', '_', '_', '_',
-    '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_', '_',
-    'a', 'a', 'a', 'a', 'ae', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-    'd', 'n', 'o', 'o', 'o', 'o', 'oe', 'x', 'o', 'u', 'u', 'u', 'ue', 'y', 'b', 'ss',
-    'a', 'a', 'a', 'a', 'ae', 'a', 'ae', 'c', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-    'o', 'n', 'o', 'o', 'o', 'o', 'oe', '_', 'o', 'u', 'u', 'u', 'ue', 'y', 'b', 'y'];
-  const defaultReplacementCharacter = '_';
-  const name = [];
-  let prevEscaped = false;
-  for (let idx = 0; idx < siteNameStr.length && name.length < 64; idx += 1) {
-    const c = siteNameStr.charCodeAt(idx);
-    let repl = defaultReplacementCharacter;
-    if (c >= 0 && c < labelCharMapping.length) {
-      repl = labelCharMapping[c];
-    }
-    if (repl === defaultReplacementCharacter) {
-      // prevent escaping after a certain length
-      if (!prevEscaped && name.length < 16) {
-        name.push(defaultReplacementCharacter);
-      }
-      prevEscaped = true;
-    } else {
-      name.push(repl);
-      prevEscaped = false;
-    }
-  }
-  return name.join('');
-};
-
-/**
- * Get the package name based on the site name and the pages.
+ * Get the package name based on the site folder name and the pages.
  * @param {Array} pages the pages to be included in the package
- * @param {string} siteNameStr the site name
+ * @param {string} siteFolderName the name of the site folder in AEM
  * @returns the package name
  */
-export const getPackageName = (pages, siteNameStr) => {
-  const siteName = getSiteName(siteNameStr);
+export const getPackageName = (pages, siteFolderName) => {
   if (pages.length === 1) {
     const pageName = pages[0].path.split('/').pop();
-    return `${siteName}_${pageName}`;
+    return `${siteFolderName}_${pageName}`;
   }
-  return siteName;
+  return siteFolderName;
 };
 
 /**
- * Get the JCR page path based on the site name and the path.
+ * Get the JCR page path based on the site folder name and the path.
  * @param {string} path the path of the page
- * @param {string} siteNameStr the site name
+ * @param {string} siteFolderName the name of the site folder in AEM
  * @returns the JCR page path
  */
-export const getJcrPagePath = (path, siteNameStr) => {
-  const siteName = getSiteName(siteNameStr);
+export const getJcrPagePath = (path, siteFolderName) => {
   if (path.startsWith('/content/')) {
-    // replace the 2nd token with the site name
+    // replace the 2nd token with the site folder name
     const tokens = path.split('/');
-    tokens.splice(2, 1, siteName);
+    tokens.splice(2, 1, siteFolderName);
     return tokens.join('/');
   }
   // Remove any leading "/" from the path
+  // eslint-disable-next-line no-param-reassign
   path = path.replace(/^\/+/, '');
-  return `/content/${siteName}/${path}`;
+  return `/content/${siteFolderName}/${path}`;
 };
 
 /**
@@ -185,7 +136,7 @@ export const getBlocks = (doc) => {
   const allElements = doc.getElementsByTagName('*'); // Get all elements
   const items = [];
 
-  for (let i = 0; i < allElements.length; i++) {
+  for (let i = 0; i < allElements.length; i += 1) {
     const element = allElements[i];
 
     // Check if the element has the 'fileReference' attribute
@@ -199,20 +150,18 @@ export const getBlocks = (doc) => {
 
 /**
  * Get the JCR path for an asset.
- * @param {string} assetUrl 
- * @param {string} siteNameStr 
+ * @param {string} assetUrl - The URL of the asset
+ * @param {string} assetFolderName - The name of the asset folder in AEM
  * @returns the JCR path for the asset
  */
-const getJcrAssetPath = (assetUrl, siteNameStr) => {
-  const siteName = getSiteName(siteNameStr);
+const getJcrAssetPath = (assetUrl, assetFolderName) => {
   // add the query parameters to the path as _name1value1_name2value2
-  const params = assetUrl.searchParams;
   const extension = (assetUrl.pathname.includes('.')) ? `.${assetUrl.pathname.split('.').pop()}` : '';
   let path = assetUrl.pathname.replace(extension, '');
   if (path.startsWith('/content/dam/')) {
-    // replace the 3rd token with the site name
+    // replace the 3rd token with the asset folder name
     const tokens = path.split('/');
-    tokens.splice(3, 1, siteName);
+    tokens.splice(3, 1, assetFolderName);
     return `${tokens.join('/')}${extension}`;
   }
   // const suffix = Array.from(params.keys()).map((key) => `_${key}${params.get(key)}`).join('');
@@ -220,17 +169,17 @@ const getJcrAssetPath = (assetUrl, siteNameStr) => {
   // replace media_ with media1_ in path to avoid conflicts with the media folder
   path = path.replace('/media_', '/media1_');
 
-  return `/content/dam/${siteName}${path}${suffix}${extension}`;
+  return `/content/dam/${assetFolderName}${path}${suffix}${extension}`;
 };
 
 /**
  * Get the JCR path for a asset reference.
  * @param {string} assetReference the asset reference
  * @param {string} pageUrl the URL of the page
- * @param {string} siteName the name of the site
+ * @param {string} assetFolderName the name of the asset folder in AEM
  * @returns the JCR path for the file reference
  */
-const getJcrAssetRef = (assetReference, pageUrl, siteName) => {
+const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
   if (!assetReference || assetReference === '') {
     return null;
   }
@@ -244,48 +193,47 @@ const getJcrAssetRef = (assetReference, pageUrl, siteName) => {
     url = new URL(assetReference);
     if (url.origin === host || url.origin === 'http://localhost:3001' || url.origin === 'https://localhost:3001') {
       // the asset is hosted on the same server
-      jcrPath = getJcrAssetPath(url, siteName);
+      jcrPath = getJcrAssetPath(url, assetFolderName);
     }
   } else if (assetReference.startsWith('/content/dam/')) {
     // DAM fileReference
     url = new URL(`${host}${assetReference}`);
-    jcrPath = getJcrAssetPath(url, siteName);
+    jcrPath = getJcrAssetPath(url, assetFolderName);
   } else if (assetReference.startsWith('/')) {
     // absolute fileReference
     url = new URL(`${host}${assetReference}`);
-    jcrPath = getJcrAssetPath(url, siteName);
+    jcrPath = getJcrAssetPath(url, assetFolderName);
   } else if (assetReference.startsWith('./')) {
     // relative fileReference: use the page path to make it an absolute path
     const parentPath = pagePath.substring(0, pagePath.lastIndexOf('/'));
     // eslint-disable-next-line no-param-reassign
     url = new URL(`${host}${parentPath}${assetReference.substring(1)}`);
-    jcrPath = getJcrAssetPath(url, siteName);
+    jcrPath = getJcrAssetPath(url, assetFolderName);
   }
   return jcrPath;
-}
+};
 
 /**
  * Traverse the DOM tree and update the asset references to point to the JCR paths.
  * @param {*} node - The node to traverse
  * @param {string} pageUrl - The URL of the page
- * @param {string} siteName - The name of the site
+ * @param {string} assetFolderName - The name of the asset folder in AEM
  * @param {Map} jcrAssetMap - A map of asset references to their corresponding JCR paths
  */
-export const traverseAndUpdateAssetReferences = (node, pageUrl, siteName, jcrAssetMap) => {
+export const traverseAndUpdateAssetReferences = (node, pageUrl, assetFolderName, jcrAssetMap) => {
   if (node.nodeType === 1) { // Element node
+    // eslint-disable-next-line no-restricted-syntax
     for (const attr of node.attributes) {
       const attrValue = node.getAttribute(attr.name);
       if (jcrAssetMap.has(attrValue)) {
-        const jcrAssetPath = getJcrAssetRef(attrValue, pageUrl, siteName);
+        const jcrAssetPath = getJcrAssetRef(attrValue, pageUrl, assetFolderName);
         jcrAssetMap.set(attr.value, jcrAssetPath);
         node.setAttribute(attr.name, jcrAssetPath);
       }
     }
   }
   // Traverse child nodes
-  for (let i = 0; i < node.childNodes.length; i++) {
-    traverseAndUpdateAssetReferences(node.childNodes[i], pageUrl, siteName, jcrAssetMap);
+  for (let i = 0; i < node.childNodes.length; i += 1) {
+    traverseAndUpdateAssetReferences(node.childNodes[i], pageUrl, assetFolderName, jcrAssetMap);
   }
-}
-
-
+};
