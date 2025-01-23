@@ -370,7 +370,7 @@ section .page-preview iframe {
 }
 
 /* Contextual Help */
- sp-contextual-help > * {
-   width: 268px;
-   max-width: 268px;
- }
+sp-contextual-help > * {
+  width: 268px;
+  max-width: 268px;
+}

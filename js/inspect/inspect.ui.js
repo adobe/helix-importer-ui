@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
+import { initFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { drop, generateCSS, rgb2hex } from './inspect.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
@@ -282,7 +282,7 @@ const attachListeners = () => {
 };
 
 const init = () => {
-  config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
+  config.fields = initFields(CONFIG_PARENT_SELECTOR);
 
   applyDefaultTheme();
   attachListeners();
