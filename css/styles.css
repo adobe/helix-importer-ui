@@ -6,12 +6,12 @@
 
 html:has(body > sp-theme[color="dark"]),
 sp-theme[color="dark"] main > iframe {
-  background-color: rgb(29,29,29);
+  background-color: rgb(29 29 29);
 }
 
 html:has(body > sp-theme[color="light"]),
 sp-theme[color="light"] main > iframe {
-  background-color: rgb(255,255,255);
+  background-color: rgb(255 255 255);
 }
 
 body,

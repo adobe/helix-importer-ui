@@ -24,16 +24,16 @@ const referenceRegex = /\[([^\]]+)]:\s*(\S+)/g;
  * @param markdownContent - The content of the markdown file
  * @returns {{}} A map of reference definitions
  */
-function findReferenceDefinitionsInMarkdown(markdownContent) {
-    const references = {};
-    let match;
-    // eslint-disable-next-line no-cond-assign
-    while ((match = referenceRegex.exec(markdownContent)) !== null) {
-        // eslint-disable-next-line prefer-destructuring
-        references[match[1]] = match[2]; // Map: referenceLabel -> URL
-    }
-    return references;
-}
+const findReferenceDefinitionsInMarkdown = (markdownContent) => {
+  const references = {};
+  let match;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = referenceRegex.exec(markdownContent)) !== null) {
+    // eslint-disable-next-line prefer-destructuring
+    references[match[1]] = match[2]; // Map: referenceLabel -> URL
+  }
+  return references;
+};
 
 /**
  * Function to scan for images in a markdown file.
@@ -41,39 +41,46 @@ function findReferenceDefinitionsInMarkdown(markdownContent) {
  * @param markdownContent - The content of the markdown file
  * @returns {Array} an array of image urls
  */
-function findImagesInMarkdown(markdownContent) {
-    const references = findReferenceDefinitionsInMarkdown(markdownContent);
+const findImagesInMarkdown = (markdownContent) => {
+  const references = findReferenceDefinitionsInMarkdown(markdownContent);
 
-    // Create a new Map
-    const imageUrls = new Map();
+  // Create a new Map
+  const imageUrls = new Map();
 
-    // Identify each image url in the markdown content
-    let match;
-    // eslint-disable-next-line no-cond-assign
-    while ((match = imageRegex.exec(markdownContent)) !== null) {
-        let url;
-        if (match[2]) { // Inline image
-            url = match[2];
-        } else if (match[5]) { // Reference-style image
-            url = references[match[5]] || null; // Resolve URL from reference map
-        }
-        if (url) {
-            imageUrls.set(url, "");
-        }
+  // Identify each image url in the markdown content
+  let match;
+  // eslint-disable-next-line no-cond-assign
+  while ((match = imageRegex.exec(markdownContent)) !== null) {
+    let url;
+    if (match[2]) { // Inline image
+      // eslint-disable-next-line prefer-destructuring
+      url = match[2];
+    } else if (match[5]) { // Reference-style image
+      url = references[match[5]] || null; // Resolve URL from reference map
     }
-    return imageUrls;
-}
+    if (url) {
+      imageUrls.set(url, '');
+    }
+  }
+  return imageUrls;
+};
 
 /**
- * Get the a list image urls present in the given markdown.
- * @param {string} markdownContent 
- * @returns {Map} An array of image urls as key (but empty values - will be populated later).
+ * Get the list image urls present in the given markdown.
+ * @param {string} markdownContent
+ * @returns {Array} An array of image urls as key (but empty values - will be populated later).
  */
-export function getImageUrlMap(markdownContent) {
-    try {
-        return findImagesInMarkdown(markdownContent);
-    } catch (error) {
-        console.error('Error in image urls from markdown:', error);
-        return [];
-    }
+const getImageUrlMap = (markdownContent) => {
+  try {
+    return findImagesInMarkdown(markdownContent);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.warn('Error in image urls from markdown:', error);
+    return [];
+  }
+};
+
+export {
+  // eslint-disable-next-line import/prefer-default-export
+  getImageUrlMap,
 };

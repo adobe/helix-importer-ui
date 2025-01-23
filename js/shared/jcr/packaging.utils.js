@@ -83,10 +83,7 @@ export const getPropertiesXml = (packageName) => {
  * @returns the filter.xml file
  */
 export const getFilterXml = async (jcrPages) => {
-
-  const pageFilters = jcrPages.reduce((acc, page) => {
-    return `${acc}<filter root='${page.jcrPath}'>\n</filter>\n`;
-  }, '');
+  const pageFilters = jcrPages.reduce((acc, page) => `${acc}<filter root='${page.jcrPath}'>\n</filter>\n`, '');
 
   const filterXml = `<?xml version='1.0' encoding='UTF-8'?>
     <workspaceFilter version='1.0'>
@@ -124,6 +121,7 @@ export const getJcrPagePath = (path, siteFolderName) => {
     return tokens.join('/');
   }
   // Remove any leading "/" from the path
+  // eslint-disable-next-line no-param-reassign
   path = path.replace(/^\/+/, '');
   return `/content/${siteFolderName}/${path}`;
 };
@@ -138,7 +136,7 @@ export const getBlocks = (doc) => {
   const allElements = doc.getElementsByTagName('*'); // Get all elements
   const items = [];
 
-  for (let i = 0; i < allElements.length; i++) {
+  for (let i = 0; i < allElements.length; i += 1) {
     const element = allElements[i];
 
     // Check if the element has the 'fileReference' attribute
@@ -153,7 +151,7 @@ export const getBlocks = (doc) => {
 /**
  * Get the JCR path for an asset.
  * @param {string} assetUrl - The URL of the asset
- * @param {string} assetFolderName - The name of the asset folder in AEM 
+ * @param {string} assetFolderName - The name of the asset folder in AEM
  * @returns the JCR path for the asset
  */
 const getJcrAssetPath = (assetUrl, assetFolderName) => {
@@ -213,7 +211,7 @@ const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
     jcrPath = getJcrAssetPath(url, assetFolderName);
   }
   return jcrPath;
-}
+};
 
 /**
  * Traverse the DOM tree and update the asset references to point to the JCR paths.
@@ -224,6 +222,7 @@ const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
  */
 export const traverseAndUpdateAssetReferences = (node, pageUrl, assetFolderName, jcrAssetMap) => {
   if (node.nodeType === 1) { // Element node
+    // eslint-disable-next-line no-restricted-syntax
     for (const attr of node.attributes) {
       const attrValue = node.getAttribute(attr.name);
       if (jcrAssetMap.has(attrValue)) {
@@ -234,9 +233,7 @@ export const traverseAndUpdateAssetReferences = (node, pageUrl, assetFolderName,
     }
   }
   // Traverse child nodes
-  for (let i = 0; i < node.childNodes.length; i++) {
+  for (let i = 0; i < node.childNodes.length; i += 1) {
     traverseAndUpdateAssetReferences(node.childNodes[i], pageUrl, assetFolderName, jcrAssetMap);
   }
-}
-
-
+};

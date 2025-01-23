@@ -26,10 +26,9 @@ import {
   setupPreview,
   attachPreviewListeners,
   updatePreview,
-  getReport,
   REPORT_FILENAME,
   toggleReportButton,
-  setPreviewTheme,
+  setPreviewTheme, getReport,
 } from './import.preview.js';
 import {
   updateBulkResults,
@@ -87,11 +86,9 @@ const enableProcessButtons = () => {
 const toggleJcrFields = () => {
   JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
 
-  // if SAVE_AS_DOCX is checked, uncheck it as only JCR or DOC can be selected
-
   // update our fields
   config.fields['import-jcr-package'] = SAVE_AS_JCR_PACKAGE.checked;
-  config.fields['import-local-docx'] = !SAVE_AS_JCR_PACKAGE.checked;;
+  config.fields['import-local-docx'] = !SAVE_AS_JCR_PACKAGE.checked;
 
   SAVE_AS_DOCX.checked = !SAVE_AS_JCR_PACKAGE.checked;
 
@@ -101,15 +98,11 @@ const toggleJcrFields = () => {
 };
 
 const saveAsDocListener = () => {
-  // update our fields
   config.fields['import-local-docx'] = SAVE_AS_DOCX.checked;
   config.fields['import-jcr-package'] = !SAVE_AS_DOCX.checked;
 
   SAVE_AS_JCR_PACKAGE.checked = !SAVE_AS_DOCX.checked;
-
-  if (SAVE_AS_DOCX.checked) {
-    JCR_PACKAGE_FIELDS.classList.toggle('open', !SAVE_AS_DOCX.checked);
-  }
+  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
 };
 
 const postSuccessfulStep = async (results, originalURL) => {
