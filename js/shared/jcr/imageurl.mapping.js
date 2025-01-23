@@ -22,7 +22,7 @@ const referenceRegex = /\[([^\]]+)]:\s*(\S+)/g;
  * Function to find reference definitions in a markdown file.
  *
  * @param markdownContent - The content of the markdown file
- * @returns {{}} A map of reference definitions
+ * @returns {{label: string, url: string}} A map of reference definitions
  */
 const findReferenceDefinitionsInMarkdown = (markdownContent) => {
   const references = {};
@@ -39,7 +39,7 @@ const findReferenceDefinitionsInMarkdown = (markdownContent) => {
  * Function to scan for images in a markdown file.
  *
  * @param markdownContent - The content of the markdown file
- * @returns {Array} an array of image urls
+ * @returns {Map} A Map of image urls as key
  */
 const findImagesInMarkdown = (markdownContent) => {
   const references = findReferenceDefinitionsInMarkdown(markdownContent);
@@ -68,7 +68,7 @@ const findImagesInMarkdown = (markdownContent) => {
 /**
  * Get the list image urls present in the given markdown.
  * @param {string} markdownContent
- * @returns {Array} An array of image urls as key (but empty values - will be populated later).
+ * @returns {Map} A Map of image urls as key (but empty values - will be populated later).
  */
 const getImageUrlMap = (markdownContent) => {
   try {
@@ -76,7 +76,7 @@ const getImageUrlMap = (markdownContent) => {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.warn('Error in image urls from markdown:', error);
-    return [];
+    return new Map();
   }
 };
 

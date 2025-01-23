@@ -34,7 +34,7 @@ import {
   updateBulkResults,
   clearBulkResults,
 } from './import.bulk.js';
-import importStatus from './import.result.js';
+import ImportStatus from './import.result.js';
 import {
   getContentFrame,
   getProxyURLSetup,
@@ -71,7 +71,7 @@ const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
     updatePreview(results, originalURL);
   } else {
-    updateBulkResults(results, originalURL, importStatus.getStatus());
+    updateBulkResults(results, originalURL);
   }
 };
 
@@ -141,15 +141,14 @@ const postSuccessfulStep = async (results, originalURL) => {
           url: originalURL,
         });
       }
-      if (jcrPages && jcrPages.length > 0) {
-        const siteFolder = JCR_SITE_FOLDER.value ? JCR_SITE_FOLDER.value : '';
-        const assetFolder = JCR_ASSET_FOLDER.value ? JCR_ASSET_FOLDER.value : '';
 
-        // get image mappings for JCR pages from the markdown content
+      if (jcrPages && jcrPages.length > 0) {
+        const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
+        const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
+
         const imageMappings = getImageUrlMap(md);
         imageMappings.set('asset-folder-name', assetFolder);
 
-        // create JCR package containing all JCR pages
         await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
         // Convert Map to plain object
@@ -161,6 +160,7 @@ const postSuccessfulStep = async (results, originalURL) => {
 
       // save all other files (doc, html, md)
       files.forEach((file) => {
+        console.log(`Saving ${file.type} file ${path}`);
         try {
           const filePath = `/${file.type}${file.filename}`;
           saveFile(dirHandle, filePath, file.data);
@@ -204,12 +204,12 @@ const postSuccessfulStep = async (results, originalURL) => {
 
     if (report) {
       Object.keys(report).forEach((key) => {
-        importStatus.addExtraCols(key);
+        ImportStatus.addExtraCols(key);
       });
       data.report = report;
     }
 
-    importStatus.addRow(data);
+    ImportStatus.addRow(data);
   });
 
   return error;
@@ -221,7 +221,7 @@ const postImportStep = async () => {
   if (autoSaveReport()) {
     // save report file in the folder
     try {
-      await saveFile(dirHandle, REPORT_FILENAME, await getReport(importStatus.getStatus()));
+      await saveFile(dirHandle, REPORT_FILENAME, await getReport(ImportStatus.getStatus()));
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Failed to save report file', e);
@@ -250,8 +250,13 @@ const createImporter = () => {
 const startImport = async () => {
   const field = IS_BULK ? 'import-urls' : 'import-url';
   const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
-  importStatus.reset();
-  importStatus.merge({
+
+  console.log('***************************************************************');
+  console.log(`Performing import on ${urlsArray.length} URLs`);
+  console.log('***************************************************************');
+
+  ImportStatus.reset();
+  ImportStatus.merge({
     urls: urlsArray,
     total: urlsArray.length,
     startTime: Date.now(),
@@ -263,9 +268,9 @@ const startImport = async () => {
       const { remote, proxy } = getProxyURLSetup(url, config.origin);
       const src = proxy.url;
 
-      importStatus.incrementImported();
+      ImportStatus.incrementImported();
       // eslint-disable-next-line no-console
-      console.log(`Importing: ${importStatus.getStatus().imported} => ${src}`);
+      console.log(`Importing: ${ImportStatus.getStatus().imported} => ${src}`);
 
       const res = await loadDocument(url, {
         origin: config.origin,
@@ -280,7 +285,7 @@ const startImport = async () => {
         // eslint-disable-next-line no-console
         console.warn(`Cannot transform ${src} - page may not exist (status ${res.status || 'unknown'})`);
         alert.error(`Cannot transform. Page may not exist (status ${res.status || 'unknown'})`);
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: `Invalid: ${res.status || 'unknown status'}`,
         });
@@ -294,7 +299,7 @@ const startImport = async () => {
         if (u.origin === window.location.origin) {
           redirect = `${remote.origin}${u.pathname}`;
         }
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: 'Redirect',
           redirect,
@@ -334,7 +339,7 @@ const startImport = async () => {
         const path = WebImporter.FileUtils.sanitizePath(u.pathname);
 
         await saveFile(dirHandle, path, res.blob);
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: 'Success',
           path,
@@ -413,7 +418,7 @@ const attachListeners = () => {
     console.error(`Error importing ${url}: ${err.message}`, err);
     alert.error('Error importing', `${url}<br/>${err.message}`);
 
-    importStatus.addRow({
+    ImportStatus.addRow({
       url: params.originalURL,
       status: `Error: ${err.message}`,
     });
