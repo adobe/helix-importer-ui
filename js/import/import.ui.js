@@ -66,6 +66,7 @@ const config = {};
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
+let imageMappings = new Map();
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -146,16 +147,24 @@ const postSuccessfulStep = async (results, originalURL) => {
         const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        const imageMappings = getImageUrlMap(md);
-        imageMappings.set('asset-folder-name', assetFolder);
+        const mapping = getImageUrlMap(md);
+        // merge the results of the mapping into the imageMappings object
+        mapping.forEach((value, key) => {
+          imageMappings.set(key, value);
+        });
 
-        await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
+        console.log(`mappingFile has ${imageMappings.size} entries`);
 
-        // Convert Map to plain object
-        const obj = Object.fromEntries(imageMappings);
+        if (ImportStatus.isFinished()) {
+          console.log(`Generating the content package now for ${jcrPages.length} pages`);
+          await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
-        // Save the object to a JSON file
-        await saveFile(dirHandle, 'jcr-image-mappings.json', JSON.stringify(obj, null, 2));
+          // Convert Map to plain object
+          const obj = Object.fromEntries(imageMappings);
+
+          // Save the object to a JSON file
+          await saveFile(dirHandle, 'image-mapping.json', JSON.stringify(obj, null, 2));
+        }
       }
 
       // save all other files (doc, html, md)
@@ -429,7 +438,8 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
-    startImport();
+    imageMappings = new Map();
+    await startImport();
   });
 
   IMPORT_FILE_URL_FIELD.addEventListener('change', async (event) => {
