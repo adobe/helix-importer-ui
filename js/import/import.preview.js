@@ -11,7 +11,7 @@
  */
 /* global CodeMirror, html_beautify, WebImporter, ExcelJS */
 
-import importResult from './import.status.js';
+import importResult from './import.result.js';
 import alert from '../shared/alert.js';
 import { getTheme } from '../shared/theme.js';
 

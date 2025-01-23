@@ -34,7 +34,7 @@ import {
   updateBulkResults,
   clearBulkResults,
 } from './import.bulk.js';
-import importStatus from './import.status.js';
+import importStatus from './import.result.js';
 import {
   getContentFrame,
   getProxyURLSetup,
