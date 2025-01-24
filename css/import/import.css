@@ -233,3 +233,10 @@
   max-width: 268px;
 }
 
+.import #import-local-docx.hidden {
+    display: none;
+}
+
+.import #import-jcr-package.hidden {
+  display: none;
+}

@@ -25,24 +25,21 @@
             <!-- IMPORT BULK SECTION -->
             <section class="import import-bulk">
                 <div class="section-title">
-                    <div>
-                        <h2>Bulk Import</h2>
-                        <sp-contextual-help>
-                            <h3>Bulk Import</h3>
-                            <p>Use your import script to bulk import a list of pages.</p>
-                        </sp-contextual-help>
-                    </div>
+                    <h2>Bulk Import</h2>
+                    <p>Use your import script to bulk import a list of pages.</p>
                 </div>
                 <sp-divider size="l"></sp-divider>
                 <div class="section-cols">
                     <div class="section-col">
                         <form class="import-form">
-                            <sp-field-label for="import-urls" required>URLs</sp-field-label>
-                            <sp-textfield class="option-field" multiline grows id="import-urls">
-                                <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
-                                <sp-help-text slot="negative-help-text">Please enter valid URLs.</sp-help-text>
-                            </sp-textfield>
                             <sp-accordion>
+                                <sp-accordion-item label="URLs">
+                                    <sp-field-label for="import-urls" required>URLs</sp-field-label>
+                                    <sp-textfield class="option-field" multiline grows id="import-urls">
+                                        <sp-help-text slot="help-text">https://www.example.com/a<br>https://www.example.com/b</sp-help-text>
+                                        <sp-help-text slot="negative-help-text">Please enter valid URLs.</sp-help-text>
+                                    </sp-textfield>
+                                </sp-accordion-item>
                                 <sp-accordion-item label="Import Options">
                                     <div>
                                         <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
@@ -53,19 +50,7 @@
                                         <sp-number-field class="option-field" id="import-pageload-timeout" value="100"
                                                          min="0" step="100"
                                                          format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
-
                                         <div class="local-save">
-                                            <div class="docx-or-jcr-selection">
-                                                <sp-help-text size="m" slot="help-text">
-                                                    Select either doc based or crosswalk.
-                                                </sp-help-text>
-                                                <sp-contextual-help placement="top-start">
-                                                    <h3 slot="heading">Document or Crosswalk Project?</h3>
-                                                    <p>Select the target output format before importing the content.
-                                                        Selecting Save as docx, will save the content as a docx file.
-                                                        Selecting Save as JCR Package, will save the content as a JCR package.</p>
-                                                </sp-contextual-help>
-                                            </div>
                                             <div class="docx-or-jcr">
                                                 <sp-checkbox class="option-field" id="import-local-docx" checked>
                                                     Save as docx

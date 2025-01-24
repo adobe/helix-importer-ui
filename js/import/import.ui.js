@@ -32,7 +32,7 @@ import {
 } from './import.preview.js';
 import {
   updateBulkResults,
-  clearBulkResults,
+  clearBulkResults, setupBulkUI,
 } from './import.bulk.js';
 import ImportStatus from './import.result.js';
 import {
@@ -42,6 +42,8 @@ import {
 } from '../shared/document.js';
 import { createJcrPackage } from '../shared/jcr/packaging.js';
 import { getImageUrlMap } from '../shared/jcr/imageurl.mapping.js';
+import Project from '../shared/project.js';
+import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 
 const PARENT_SELECTOR = '.import';
 
@@ -63,6 +65,7 @@ const IS_BULK = document.querySelector('.import-bulk') !== null;
 
 const config = {};
 
+let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
@@ -82,28 +85,6 @@ const disableProcessButtons = () => {
 
 const enableProcessButtons = () => {
   IMPORT_BUTTON.disabled = false;
-};
-
-const toggleJcrFields = () => {
-  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
-
-  // update our fields
-  config.fields['import-jcr-package'] = SAVE_AS_JCR_PACKAGE.checked;
-  config.fields['import-local-docx'] = !SAVE_AS_JCR_PACKAGE.checked;
-
-  SAVE_AS_DOCX.checked = !SAVE_AS_JCR_PACKAGE.checked;
-
-  // initial state setup, if the fields are empty, mark them as invalid
-  JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-  JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-};
-
-const saveAsDocListener = () => {
-  config.fields['import-local-docx'] = SAVE_AS_DOCX.checked;
-  config.fields['import-jcr-package'] = !SAVE_AS_DOCX.checked;
-
-  SAVE_AS_JCR_PACKAGE.checked = !SAVE_AS_DOCX.checked;
-  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
 };
 
 const postSuccessfulStep = async (results, originalURL) => {
@@ -249,6 +230,8 @@ const setDefaultTransformerNotice = (importer) => {
 };
 
 const createImporter = () => {
+  project = new Project(config);
+
   config.importer = new PollImporter({
     origin: config.origin,
     poll: !IS_BULK,
@@ -399,6 +382,9 @@ const startImport = async () => {
 };
 
 const attachListeners = () => {
+  // attach a listener for valid fields, if they are not valid then disable the import button
+  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons);
+
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
   attachTextFieldListeners(config.fields, PARENT_SELECTOR);
 
@@ -448,12 +434,9 @@ const attachListeners = () => {
       setDefaultTransformerNotice(config.importer);
     }
   });
-
-  SAVE_AS_JCR_PACKAGE.addEventListener('change', toggleJcrFields);
-  SAVE_AS_DOCX.addEventListener('change', saveAsDocListener);
 };
 
-const init = () => {
+const init = async () => {
   config.origin = window.location.origin;
   config.fields = initFields(CONFIG_PARENT_SELECTOR);
 
@@ -464,12 +447,33 @@ const init = () => {
 
   createImporter();
 
+  // figure out based on the project type what to options to display to the user.
+  project = new Project(config);
+  const type = await project.getType();
+  if (type === 'doc') {
+    SAVE_AS_JCR_PACKAGE.classList.add('hidden');
+    config.fields['import-jcr-package'] = false;
+
+    // query the sp-tabs component and remove the JCR tab
+    document.querySelector('sp-tab[label="JCR"]').remove();
+  } else {
+    SAVE_AS_DOCX.classList.add('hidden');
+    config.fields['import-local-docx'] = false;
+
+    JCR_PACKAGE_FIELDS.classList.add('open');
+
+    // initial state setup, if the fields are empty, mark them as invalid
+    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+  }
+
   if (!IS_BULK) {
-    setupPreview(PARENT_SELECTOR);
+    setupPreview(PARENT_SELECTOR, project);
+  } else {
+    setupBulkUI(project);
   }
 
   attachListeners();
-  toggleJcrFields();
 };
 
 init();

@@ -25,6 +25,24 @@ const clearBulkResults = () => {
   }
 };
 
+const setupBulkUI = () => {
+  const urlsFields = document.querySelector('#import-urls');
+
+  const updateUrlLabel = (initial = false) => {
+    const urlsArray = urlsFields.value.split('\n').reverse().filter((u) => u.trim() !== '');
+    if (urlsArray) {
+      const accordionItem = document.querySelector('sp-accordion-item');
+      if (urlsArray.length <= 20 && initial) {
+        accordionItem.click();
+      }
+      accordionItem.label = `URLs (${urlsArray.length})`;
+    }
+  };
+
+  urlsFields.addEventListener('change', updateUrlLabel);
+  updateUrlLabel(true);
+};
+
 const updateBulkResults = (results, originalURL) => {
   const importStatus = ImportStatus.getStatus();
 
@@ -68,4 +86,5 @@ const updateBulkResults = (results, originalURL) => {
 export {
   updateBulkResults,
   clearBulkResults,
+  setupBulkUI,
 };
