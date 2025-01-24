@@ -134,9 +134,8 @@ const postSuccessfulStep = async (results, originalURL) => {
           imageMappings.set(key, value);
         });
 
-        console.log(`mappingFile has ${imageMappings.size} entries`);
-
-        if (ImportStatus.isFinished()) {
+        // if we are finished importing all the pages, then we can create the JCR package
+        if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           console.log(`Generating the content package now for ${jcrPages.length} pages`);
           await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
@@ -243,10 +242,6 @@ const startImport = async () => {
   const field = IS_BULK ? 'import-urls' : 'import-url';
   const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
 
-  console.log('***************************************************************');
-  console.log(`Performing import on ${urlsArray.length} URLs`);
-  console.log('***************************************************************');
-
   ImportStatus.reset();
   ImportStatus.merge({
     urls: urlsArray,
@@ -313,13 +308,14 @@ const startImport = async () => {
           params: { originalURL },
         });
 
+        const type = await project.getType();
         if (onLoadSucceeded) {
           config.importer.setTransformationInput({
             url: replacedURL,
             document,
             includeDocx,
             params: { originalURL },
-            createJCR,
+            projectType: type,
           });
           await config.importer.transform();
           processNext();

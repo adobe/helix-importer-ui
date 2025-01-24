@@ -137,7 +137,7 @@ export default class PollImporter {
   async transform() {
     this.running = true;
     const {
-      includeDocx, createJCR, url, document, params,
+      includeDocx, url, document, params, projectType,
     } = this.transformation;
 
     // eslint-disable-next-line no-console
@@ -160,7 +160,7 @@ export default class PollImporter {
           const { path } = result;
           result.filename = `${path}.docx`;
         });
-      } else if (createJCR) {
+      } else if (projectType === 'xwalk') {
         const components = await loadComponents(this.config);
         const out = await WebImporter.md2jcr(
           url,
@@ -208,6 +208,7 @@ export default class PollImporter {
     includeDocx = false,
     params,
     createJCR = false,
+    projectType,
   }) {
     this.transformation = {
       url,
@@ -215,6 +216,7 @@ export default class PollImporter {
       includeDocx,
       params,
       createJCR,
+      projectType,
     };
   }
 
