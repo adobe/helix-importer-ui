@@ -136,7 +136,6 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
-          console.log(`Generating the content package now for ${jcrPages.length} pages`);
           await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
           // Convert Map to plain object
@@ -149,7 +148,6 @@ const postSuccessfulStep = async (results, originalURL) => {
 
       // save all other files (doc, html, md)
       files.forEach((file) => {
-        console.log(`Saving ${file.type} file ${path}`);
         try {
           const filePath = `/${file.type}${file.filename}`;
           saveFile(dirHandle, filePath, file.data);
@@ -299,7 +297,6 @@ const startImport = async () => {
 
       if (res.document) {
         const includeDocx = !!dirHandle && config.fields['import-local-docx'];
-        const createJCR = !!dirHandle && config.fields['import-jcr-package'];
 
         const { document, replacedURL, originalURL } = res;
         const onLoadSucceeded = await config.importer.onLoad({

@@ -42,6 +42,7 @@ const getProcessedJcr = async (xml, pageUrl, assetFolderName, imageMappings) => 
   if (doc.getElementsByTagName('parsererror').length > 0) {
     // eslint-disable-next-line no-console
     const errors = doc.getElementsByTagName('parsererror');
+    // eslint-disable-next-line no-restricted-syntax
     for (const error of errors) {
       console.error('Error parsing the XML document for the JCR page ', pageUrl, error.textContent);
     }
