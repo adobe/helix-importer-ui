@@ -11,6 +11,7 @@
  */
 
 import alert from '../shared/alert.js';
+import ImportStatus from './import.result.js';
 
 const BULK_URLS_HEADING = document.querySelector('#import-result h2');
 const BULK_URLS_LIST = document.querySelector('#import-result ul');
@@ -24,7 +25,27 @@ const clearBulkResults = () => {
   }
 };
 
-const updateBulkResults = (results, originalURL, importStatus) => {
+const setupBulkUI = () => {
+  const urlsFields = document.querySelector('#import-urls');
+
+  const updateUrlLabel = (initial = false) => {
+    const urlsArray = urlsFields.value.split('\n').reverse().filter((u) => u.trim() !== '');
+    if (urlsArray) {
+      const accordionItem = document.querySelector('sp-accordion-item');
+      if (urlsArray.length <= 20 && initial) {
+        accordionItem.click();
+      }
+      accordionItem.label = `URLs (${urlsArray.length})`;
+    }
+  };
+
+  urlsFields.addEventListener('change', updateUrlLabel);
+  updateUrlLabel(true);
+};
+
+const updateBulkResults = (results, originalURL) => {
+  const importStatus = ImportStatus.getStatus();
+
   try {
     const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
     const li = document.createElement('li');
@@ -51,18 +72,9 @@ const updateBulkResults = (results, originalURL, importStatus) => {
 
     BULK_URLS_LIST.append(li);
 
-    const totalTime = Math.round((new Date() - importStatus.startTime) / 1000);
-    let timeStr = `${totalTime}s`;
-    if (totalTime > 60) {
-      timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
-      if (totalTime > 3600) {
-        timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
-      }
-    }
+    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${ImportStatus.duration()}`;
 
-    BULK_URLS_HEADING.innerText = `Imported URLs (${importStatus.imported} / ${importStatus.total}) - Elapsed time: ${timeStr}`;
-
-    if (importStatus.urls.length === 0) {
+    if (ImportStatus.isFinished()) {
       alert.success('Bulk import completed');
     }
   } catch (err) {
@@ -74,4 +86,5 @@ const updateBulkResults = (results, originalURL, importStatus) => {
 export {
   updateBulkResults,
   clearBulkResults,
+  setupBulkUI,
 };

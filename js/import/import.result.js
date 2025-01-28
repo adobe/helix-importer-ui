@@ -10,36 +10,102 @@
  * governing permissions and limitations under the License.
  */
 
-const importResult = {};
+/**
+ * @typedef {Object} Status
+ * @property {number} startTime - The start time of the process, represented as a timestamp.
+ * @property {number} imported - The number of items successfully imported.
+ * @property {number} total - The total number of items to process.
+ * @property {Array<string>} urls - A list of URLs related to the import process.
+ * @property {Array} rows - An array of rows representing imported data.
+ * @property {Array} extraCols - An array of additional columns or metadata.
+ */
+const status = {};
 
-const resetImportResult = () => {
-  importResult.startTime = 0;
-  importResult.imported = 0;
-  importResult.total = 0;
-  importResult.urls = [];
-  importResult.rows = [];
-  importResult.extraCols = [];
-};
+/**
+ * @typedef {Object} ImportStatus
+ * @property {Function} getStatus - Returns the current import result object.
+ * @property {Function} reset - Resets the import result to its initial state.
+ * @property {Function} merge - Merges the provided status into the import result.
+ * @property {Function} addExtraCols - Adds a column to the `extraCols` array if it doesn't
+ * already exist.
+ * @property {Function} addRow - Adds a row to the `rows` array.
+ * @property {Function} incrementImported - Increments the `imported` count by 1.
+ */
+const ImportStatus = {
+  /**
+   * Returns the current import result object.
+   * @returns {Status} The import result object.
+   */
+  getStatus: () => status,
 
-const ImportResult = {
-  getStatus: () => importResult,
-  reset: resetImportResult,
-  merge: (status = {}) => {
-    Object.entries(status).forEach(([key, value]) => {
-      importResult[key] = value;
+  /**
+   * Resets the import result to its initial state.
+   */
+  reset: () => {
+    status.startTime = 0;
+    status.imported = 0;
+    status.total = 0;
+    status.urls = [];
+    status.rows = [];
+    status.extraCols = [];
+  },
+
+  /**
+   * Merges the provided status into the import result.
+   * @param {Status} newStatus - The status object to merge.
+   */
+  merge: (newStatus = {}) => {
+    Object.entries(newStatus).forEach(([key, value]) => {
+      status[key] = value;
     });
   },
+
+  /**
+   * Adds a column to the `extraCols` array if it doesn't already exist.
+   * @param {string} key - The column key to add.
+   */
   addExtraCols: (key) => {
-    if (!importResult.extraCols.includes(key)) {
-      importResult.extraCols.push(key);
+    if (!status.extraCols.includes(key)) {
+      status.extraCols.push(key);
     }
   },
+
+  /**
+   * Adds a row to the `rows` array.
+   * @param {Object} row - The row to add.
+   */
   addRow: (row) => {
-    importResult.rows.push(row);
+    status.rows.push(row);
   },
+
+  /**
+   * Increments the `imported` count by 1.
+   */
   incrementImported: () => {
-    importResult.imported += 1;
+    status.imported += 1;
+  },
+
+  /**
+   * Return true if the import process is finished.
+   * @return {boolean}
+   */
+  isFinished: () => status.imported === status.total,
+
+  /**
+   * Get the formatted duration of the import process.
+   * @return {string} The formatted duration in the number of minutes and seconds.
+   */
+  duration: () => {
+    const totalTime = Math.round((new Date() - status.startTime) / 1000);
+    let timeStr = `${totalTime}s`;
+    if (totalTime > 60) {
+      timeStr = `${Math.round(totalTime / 60)}m ${totalTime % 60}s`;
+      if (totalTime > 3600) {
+        timeStr = `${Math.round(totalTime / 3600)}h ${Math.round((totalTime % 3600) / 60)}m`;
+      }
+    }
+    return timeStr;
   },
 };
 
-export default ImportResult;
+export default ImportStatus;

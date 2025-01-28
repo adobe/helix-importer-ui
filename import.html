@@ -44,10 +44,7 @@
                 <div class="section-title">
                     <div>
                         <h2>Workbench</h2>
-                        <sp-contextual-help>
-                            <h3>Workbench</h3>
-                            <p>Prepare an import script for migrating your site content.</p>
-                        </sp-contextual-help>
+                        <p>Prepare an import script for migrating your site content.</p>
                     </div>
                 </div>
                 <sp-divider size="l"></sp-divider>
@@ -72,17 +69,6 @@
                                             format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
                                         <div class="local-save">
-                                            <div class="docx-or-jcr-selection">
-                                                <sp-help-text size="m" slot="help-text">
-                                                    Select either doc based or crosswalk.
-                                                </sp-help-text>
-                                                <sp-contextual-help placement="top-start">
-                                                    <h3 slot="heading">Document or Crosswalk Project?</h3>
-                                                    <p>Select the target output format before importing the content.
-                                                        Selecting Save as docx, will save the content as a docx file.
-                                                        Selecting Save as JCR Package, will save the content as a JCR package.</p>
-                                                </sp-contextual-help>
-                                            </div>
                                             <div class="docx-or-jcr">
                                                 <sp-checkbox class="option-field" id="import-local-docx" checked>
                                                     Save as docx

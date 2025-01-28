@@ -32,9 +32,9 @@ import {
 } from './import.preview.js';
 import {
   updateBulkResults,
-  clearBulkResults,
+  clearBulkResults, setupBulkUI,
 } from './import.bulk.js';
-import importStatus from './import.result.js';
+import ImportStatus from './import.result.js';
 import {
   getContentFrame,
   getProxyURLSetup,
@@ -42,6 +42,8 @@ import {
 } from '../shared/document.js';
 import { createJcrPackage } from '../shared/jcr/packaging.js';
 import { getImageUrlMap } from '../shared/jcr/imageurl.mapping.js';
+import Project from '../shared/project.js';
+import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 
 const PARENT_SELECTOR = '.import';
 
@@ -63,15 +65,17 @@ const IS_BULK = document.querySelector('.import-bulk') !== null;
 
 const config = {};
 
+let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
+let imageMappings = new Map();
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
     updatePreview(results, originalURL);
   } else {
-    updateBulkResults(results, originalURL, importStatus.getStatus());
+    updateBulkResults(results, originalURL);
   }
 };
 
@@ -81,28 +85,6 @@ const disableProcessButtons = () => {
 
 const enableProcessButtons = () => {
   IMPORT_BUTTON.disabled = false;
-};
-
-const toggleJcrFields = () => {
-  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
-
-  // update our fields
-  config.fields['import-jcr-package'] = SAVE_AS_JCR_PACKAGE.checked;
-  config.fields['import-local-docx'] = !SAVE_AS_JCR_PACKAGE.checked;
-
-  SAVE_AS_DOCX.checked = !SAVE_AS_JCR_PACKAGE.checked;
-
-  // initial state setup, if the fields are empty, mark them as invalid
-  JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-  JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-};
-
-const saveAsDocListener = () => {
-  config.fields['import-local-docx'] = SAVE_AS_DOCX.checked;
-  config.fields['import-jcr-package'] = !SAVE_AS_DOCX.checked;
-
-  SAVE_AS_JCR_PACKAGE.checked = !SAVE_AS_DOCX.checked;
-  JCR_PACKAGE_FIELDS.classList.toggle('open', SAVE_AS_JCR_PACKAGE.checked);
 };
 
 const postSuccessfulStep = async (results, originalURL) => {
@@ -141,22 +123,27 @@ const postSuccessfulStep = async (results, originalURL) => {
           url: originalURL,
         });
       }
+
       if (jcrPages && jcrPages.length > 0) {
-        const siteFolder = JCR_SITE_FOLDER.value ? JCR_SITE_FOLDER.value : '';
-        const assetFolder = JCR_ASSET_FOLDER.value ? JCR_ASSET_FOLDER.value : '';
+        const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
+        const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        // get image mappings for JCR pages from the markdown content
-        const imageMappings = getImageUrlMap(md);
-        imageMappings.set('asset-folder-name', assetFolder);
+        const mapping = getImageUrlMap(md);
+        // merge the results of the mapping into the imageMappings object
+        mapping.forEach((value, key) => {
+          imageMappings.set(key, value);
+        });
 
-        // create JCR package containing all JCR pages
-        await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
+        // if we are finished importing all the pages, then we can create the JCR package
+        if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
+          await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
-        // Convert Map to plain object
-        const obj = Object.fromEntries(imageMappings);
+          // Convert Map to plain object
+          const obj = Object.fromEntries(imageMappings);
 
-        // Save the object to a JSON file
-        await saveFile(dirHandle, 'jcr-image-mappings.json', JSON.stringify(obj, null, 2));
+          // Save the object to a JSON file
+          await saveFile(dirHandle, 'image-mapping.json', JSON.stringify(obj, null, 2));
+        }
       }
 
       // save all other files (doc, html, md)
@@ -204,12 +191,12 @@ const postSuccessfulStep = async (results, originalURL) => {
 
     if (report) {
       Object.keys(report).forEach((key) => {
-        importStatus.addExtraCols(key);
+        ImportStatus.addExtraCols(key);
       });
       data.report = report;
     }
 
-    importStatus.addRow(data);
+    ImportStatus.addRow(data);
   });
 
   return error;
@@ -221,7 +208,7 @@ const postImportStep = async () => {
   if (autoSaveReport()) {
     // save report file in the folder
     try {
-      await saveFile(dirHandle, REPORT_FILENAME, await getReport(importStatus.getStatus()));
+      await saveFile(dirHandle, REPORT_FILENAME, await getReport(ImportStatus.getStatus()));
     } catch (e) {
       // eslint-disable-next-line no-console
       console.error('Failed to save report file', e);
@@ -240,6 +227,8 @@ const setDefaultTransformerNotice = (importer) => {
 };
 
 const createImporter = () => {
+  project = Project(config);
+
   config.importer = new PollImporter({
     origin: config.origin,
     poll: !IS_BULK,
@@ -250,8 +239,9 @@ const createImporter = () => {
 const startImport = async () => {
   const field = IS_BULK ? 'import-urls' : 'import-url';
   const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
-  importStatus.reset();
-  importStatus.merge({
+
+  ImportStatus.reset();
+  ImportStatus.merge({
     urls: urlsArray,
     total: urlsArray.length,
     startTime: Date.now(),
@@ -263,9 +253,9 @@ const startImport = async () => {
       const { remote, proxy } = getProxyURLSetup(url, config.origin);
       const src = proxy.url;
 
-      importStatus.incrementImported();
+      ImportStatus.incrementImported();
       // eslint-disable-next-line no-console
-      console.log(`Importing: ${importStatus.getStatus().imported} => ${src}`);
+      console.log(`Importing: ${ImportStatus.getStatus().imported} => ${src}`);
 
       const res = await loadDocument(url, {
         origin: config.origin,
@@ -280,7 +270,7 @@ const startImport = async () => {
         // eslint-disable-next-line no-console
         console.warn(`Cannot transform ${src} - page may not exist (status ${res.status || 'unknown'})`);
         alert.error(`Cannot transform. Page may not exist (status ${res.status || 'unknown'})`);
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: `Invalid: ${res.status || 'unknown status'}`,
         });
@@ -294,7 +284,7 @@ const startImport = async () => {
         if (u.origin === window.location.origin) {
           redirect = `${remote.origin}${u.pathname}`;
         }
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: 'Redirect',
           redirect,
@@ -307,7 +297,6 @@ const startImport = async () => {
 
       if (res.document) {
         const includeDocx = !!dirHandle && config.fields['import-local-docx'];
-        const createJCR = !!dirHandle && config.fields['import-jcr-package'];
 
         const { document, replacedURL, originalURL } = res;
         const onLoadSucceeded = await config.importer.onLoad({
@@ -316,13 +305,14 @@ const startImport = async () => {
           params: { originalURL },
         });
 
+        const type = await project.getType();
         if (onLoadSucceeded) {
           config.importer.setTransformationInput({
             url: replacedURL,
             document,
             includeDocx,
             params: { originalURL },
-            createJCR,
+            projectType: type,
           });
           await config.importer.transform();
           processNext();
@@ -334,7 +324,7 @@ const startImport = async () => {
         const path = WebImporter.FileUtils.sanitizePath(u.pathname);
 
         await saveFile(dirHandle, path, res.blob);
-        importStatus.addRow({
+        ImportStatus.addRow({
           url,
           status: 'Success',
           path,
@@ -385,6 +375,9 @@ const startImport = async () => {
 };
 
 const attachListeners = () => {
+  // attach a listener for valid fields, if they are not valid then disable the import button
+  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons);
+
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
   attachTextFieldListeners(config.fields, PARENT_SELECTOR);
 
@@ -413,7 +406,7 @@ const attachListeners = () => {
     console.error(`Error importing ${url}: ${err.message}`, err);
     alert.error('Error importing', `${url}<br/>${err.message}`);
 
-    importStatus.addRow({
+    ImportStatus.addRow({
       url: params.originalURL,
       status: `Error: ${err.message}`,
     });
@@ -424,7 +417,8 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
-    startImport();
+    imageMappings = new Map();
+    await startImport();
   });
 
   IMPORT_FILE_URL_FIELD.addEventListener('change', async (event) => {
@@ -433,12 +427,9 @@ const attachListeners = () => {
       setDefaultTransformerNotice(config.importer);
     }
   });
-
-  SAVE_AS_JCR_PACKAGE.addEventListener('change', toggleJcrFields);
-  SAVE_AS_DOCX.addEventListener('change', saveAsDocListener);
 };
 
-const init = () => {
+const init = async () => {
   config.origin = window.location.origin;
   config.fields = initFields(CONFIG_PARENT_SELECTOR);
 
@@ -449,12 +440,33 @@ const init = () => {
 
   createImporter();
 
+  // figure out based on the project type what to options to display to the user.
+  project = Project(config);
+  const type = await project.getType();
+  if (type === 'doc') {
+    SAVE_AS_JCR_PACKAGE.classList.add('hidden');
+    config.fields['import-jcr-package'] = false;
+
+    // query the sp-tabs component and remove the JCR tab
+    document.querySelector('sp-tab[label="JCR"]').remove();
+  } else {
+    SAVE_AS_DOCX.classList.add('hidden');
+    config.fields['import-local-docx'] = false;
+
+    JCR_PACKAGE_FIELDS.classList.add('open');
+
+    // initial state setup, if the fields are empty, mark them as invalid
+    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+  }
+
   if (!IS_BULK) {
-    setupPreview(PARENT_SELECTOR);
+    setupPreview(PARENT_SELECTOR, project);
+  } else {
+    setupBulkUI(project);
   }
 
   attachListeners();
-  toggleJcrFields();
 };
 
 init();
