@@ -21,25 +21,20 @@
 
 /**
  * Represents a project.
+ * @param {ProjectConfig} config - The configuration of the project.
  */
-export default class Project {
+const Project = (config) => {
   /**
    * @type {ProjectType}
    * The type of the project ('doc' or 'xwalk').
    */
-  #type;
+  let type;
 
   /**
-   * Creates an instance of Project.
-   * @param {ProjectConfig} config - The configuration object for the project.
+   * @type {string}
+   * The base URL to fetch data from.
    */
-  constructor(config) {
-    /**
-     * @type {ProjectConfig}
-     * @description Configuration object for the project.
-     */
-    this.config = config;
-  }
+  const { origin } = config;
 
   /**
    * Retrieves the type of the project. If the type is already cached, it returns it;
@@ -48,19 +43,26 @@ export default class Project {
    * @async
    * @returns {Promise<ProjectType>} The type of the project ('doc' or 'xwalk').
    */
-  async getType() {
-    if (this.#type) {
-      return this.#type;
+  const getType = async () => {
+    if (type) {
+      return type;
     }
 
-    await fetch(`${this.config.origin}/component-models.json`).then((res) => {
-      if (!res.ok) {
-        this.#type = 'doc';
-      } else {
-        this.#type = 'xwalk';
-      }
-    });
+    await fetch(`${origin}/component-models.json`)
+      .then((res) => {
+        if (!res.ok) {
+          type = 'doc';
+        } else {
+          type = 'xwalk';
+        }
+      });
 
-    return this.#type;
-  }
-}
+    return type;
+  };
+
+  return {
+    getType,
+  };
+};
+
+export default Project;

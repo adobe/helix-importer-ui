@@ -227,7 +227,7 @@ const setDefaultTransformerNotice = (importer) => {
 };
 
 const createImporter = () => {
-  project = new Project(config);
+  project = Project(config);
 
   config.importer = new PollImporter({
     origin: config.origin,
@@ -441,7 +441,7 @@ const init = async () => {
   createImporter();
 
   // figure out based on the project type what to options to display to the user.
-  project = new Project(config);
+  project = Project(config);
   const type = await project.getType();
   if (type === 'doc') {
     SAVE_AS_JCR_PACKAGE.classList.add('hidden');
