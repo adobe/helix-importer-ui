@@ -50,56 +50,110 @@ export default class PollImporter {
     this.poll = this.config.poll;
     this.listeners = [];
     this.errorListeners = [];
+    this.moduleLoadListener = [];
     this.transformation = {};
     this.projectTransform = null;
     this.projectTransformFileURL = '';
     this.running = false;
     this.usingDefaultTransformer = true;
+    this.hasModuleErrors = false;
 
     this.#init();
   }
 
   async #loadProjectTransform() {
+    /** Helper function to reset the importer to its default state */
+    const reset = () => {
+      this.usingDefaultTransformer = true;
+      this.lastProjectTransformFileBody = '';
+      this.projectTransformFileURL = '';
+      this.projectTransform = null;
+    };
+
     const $this = this;
     const loadModule = async (projectTransformFileURL) => {
-      const mod = await import(projectTransformFileURL);
-      if (mod.default) {
-        $this.projectTransform = mod.default;
+      // if we can load the module, we get the default export and assign it to the projectTransform
+      try {
+        const mod = await import(projectTransformFileURL);
+        if (mod.default) {
+          $this.projectTransform = mod.default;
+        }
+        this.hasModuleErrors = false;
+        this.notifyModuleSuccessLoad();
+        return true;
+      } catch (err) {
+        this.hasModuleErrors = true;
+        this.notifyModuleLoadError(err);
+        return false;
       }
     };
 
-    const projectTransformFileURL = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
+    // do we need to load the default importer file?
+    if (this.config.importFileURL === '') {
+      const prevUrl = this.projectTransformFileURL;
+      const currentUrl = this.config.importFileURL;
+      reset();
+
+      this.notifyModuleSuccessLoad();
+      // if the urls have changed then we need to reimport.
+      return prevUrl !== currentUrl;
+    }
+
+    const urlToLoad = `${this.config.importFileURL}?cf=${new Date().getTime()}`;
     let body = '';
     try {
-      const res = await fetch(projectTransformFileURL);
-      body = await res.text();
+      const response = await fetch(urlToLoad);
 
-      this.usingDefaultTransformer = !res.ok;
-      if (res.ok && body !== this.lastProjectTransformFileBody) {
+      // if we couldn't load the resource then we reset the importer
+      if (!response.ok) {
+        reset();
+        this.hasModuleErrors = true;
+        this.notifyModuleLoadError(`${response.statusText} : ${this.config.importFileURL}`);
+        return false;
+      }
+
+      this.usingDefaultTransformer = false;
+      body = await response.text();
+
+      // check to see if the last time we loaded the resource is at all different
+      if (body !== this.lastProjectTransformFileBody) {
         this.lastProjectTransformFileBody = body;
-        await loadModule(projectTransformFileURL);
-        this.projectTransformFileURL = projectTransformFileURL;
+
+        // now load the module and obtain the default export
+        const success = await loadModule(urlToLoad);
+        if (!success) {
+          return false;
+        }
+
+        this.projectTransformFileURL = urlToLoad;
         // eslint-disable-next-line no-console
-        console.log(`Loaded importer file: ${projectTransformFileURL}`);
+        console.log(`Loaded importer file: ${urlToLoad}`);
         return true;
       }
     } catch (err) {
       // ignore here, we know the file does not exist
+      console.log(`unable to load the url: ${urlToLoad} caused by error ${err}`);
     }
+
     if (body !== this.lastProjectTransformFileBody) {
       // eslint-disable-next-line no-console
-      console.warn(`Importer file does not exist: ${projectTransformFileURL}`);
+      console.warn(`Importer file does not exist: ${urlToLoad}`);
       this.lastProjectTransformFileBody = body;
       this.projectTransformFileURL = '';
       return true;
     }
+
+    // nothing has changed so we can return false;
     return false;
   }
 
   async #init() {
     const $this = this;
     const poll = async () => {
-      if ($this.running) return;
+      // if the current state is running or if there are module load errors, do not poll
+      if ($this.running || $this.hasModuleErrors) {
+        return;
+      }
       const hasChanged = await $this.#loadProjectTransform();
       if (hasChanged && $this.transformation.url && $this.transformation.document) {
         $this.transform();
@@ -231,5 +285,31 @@ export default class PollImporter {
 
   addErrorListener(listener) {
     this.errorListeners.push(listener);
+  }
+
+  addModuleLoadListener(listener) {
+    this.moduleLoadListener.push(listener);
+  }
+
+  notifyModuleLoadError(cause) {
+    let error = cause;
+    if (typeof cause === 'string') {
+      error = new Error(cause);
+    }
+    // we need to use setTimeout here to make sure the UI has time to setup on initial load
+    setTimeout(() => {
+      this.moduleLoadListener.forEach((listener) => {
+        listener({
+          success: false,
+          error,
+        });
+      });
+    }, 0);
+  }
+
+  notifyModuleSuccessLoad() {
+    this.moduleLoadListener.forEach((listener) => {
+      listener({ success: true });
+    });
   }
 }

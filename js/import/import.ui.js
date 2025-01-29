@@ -398,6 +398,16 @@ const attachListeners = () => {
     }
   });
 
+  /**
+   * Inform the user if the transformation url script failed to load
+   */
+  config.importer.addModuleLoadListener(({ success, error: err }) => {
+    IMPORT_FILE_URL_FIELD.invalid = !success;
+    if (!success) {
+      alert.error('Import Script Error', err.message);
+    }
+  });
+
   config.importer.addErrorListener(async ({ url, error: err, params }) => {
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
@@ -423,7 +433,14 @@ const attachListeners = () => {
 
   IMPORT_FILE_URL_FIELD.addEventListener('change', async (event) => {
     if (config.importer) {
-      await config.importer.setImportFileURL(event.target.value);
+      if (event.target.value === '') {
+        // if we have no value in the field, then we are using the default transformer
+        config.importer.usingDefaultTransformer = true;
+        await config.importer.setImportFileURL('');
+      } else {
+        await config.importer.setImportFileURL(event.target.value);
+      }
+      // update the ui to show that the default transformer is or isn't being used
       setDefaultTransformerNotice(config.importer);
     }
   });
@@ -440,7 +457,7 @@ const init = async () => {
 
   createImporter();
 
-  // figure out based on the project type what to options to display to the user.
+  // figure out based on the project type what to option to display to the user.
   project = Project(config);
   const type = await project.getType();
   if (type === 'doc') {
@@ -456,8 +473,13 @@ const init = async () => {
     JCR_PACKAGE_FIELDS.classList.add('open');
 
     // initial state setup, if the fields are empty, mark them as invalid
-    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+    if (SAVE_AS_JCR_PACKAGE.checked) {
+      JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+      JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+    } else {
+      JCR_SITE_FOLDER.disabled = true;
+      JCR_ASSET_FOLDER.disabled = true;
+    }
   }
 
   if (!IS_BULK) {

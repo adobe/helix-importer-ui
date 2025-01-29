@@ -27,6 +27,17 @@ export default function attachJcrFieldListeners(parent, invalid, valid) {
     } else {
       invalid();
     }
+
+    siteFolder.disabled = !importJcrPackage.checked;
+    assetFolder.disabled = !importJcrPackage.checked;
+
+    if (importJcrPackage.checked) {
+      assetFolder.invalid = assetFolder.value === '';
+      siteFolder.invalid = siteFolder.value === '';
+    } else {
+      assetFolder.invalid = false;
+      siteFolder.invalid = false;
+    }
   };
 
   const observer = new MutationObserver((mutations) => {
