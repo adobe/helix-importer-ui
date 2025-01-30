@@ -211,9 +211,9 @@ const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
 };
 
 /**
- * Converts an asset reference (relative, absolute, or DAM path) into a fully qualified URL
+ * Converts an asset reference (relative or absolute path) into a fully qualified URL
  * based on the page URL.
- * @param {string} assetReference - The asset reference (relative, absolute, or DAM path).
+ * @param {string} assetReference - The asset reference (relative or absolute path).
  * @param {string} pageUrl - The full URL of the current page.
  * @returns {string|null} - The fully qualified URL or null if the input is invalid.
  */
@@ -245,13 +245,9 @@ function getFullAssetUrl(assetReference, pageUrl) {
  * @param {string} pageUrl - The URL of the page
  */
 function updateJcrAssetMap(jcrAssetMap, originalPath, updatedAssetPath, pageUrl) {
-  if (originalPath.startsWith('./') || originalPath.startsWith('/')) {
-    const fullyQualifiedUrl = getFullAssetUrl(originalPath, pageUrl);
-    jcrAssetMap.delete(originalPath);
-    jcrAssetMap.set(fullyQualifiedUrl, updatedAssetPath);
-  } else {
-    jcrAssetMap.set(originalPath, updatedAssetPath);
-  }
+  const fullyQualifiedUrl = getFullAssetUrl(originalPath, pageUrl);
+  jcrAssetMap.delete(originalPath); // delete the original path entry first
+  jcrAssetMap.set(fullyQualifiedUrl, updatedAssetPath); // add the new mapping entry
 }
 
 /**
