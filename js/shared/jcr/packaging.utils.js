@@ -9,13 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-/* global Handlebars */
 /* global he */
-
-// Unescape XML entities
-Handlebars.registerHelper('unescapeXML', (escapedString) => new Handlebars.SafeString(he.decode(escapedString)));
-const template = Handlebars.compile('{{unescapeXML text}}');
-
 /**
  * Get the properties of a page from the jcr:content node.
  * @param {string} xml the XML string of the page
@@ -271,12 +265,10 @@ export const traverseAndUpdateAssetReferences = (node, pageUrl, assetFolderName,
   if (node.nodeType === 1) { // Element node
     // eslint-disable-next-line no-restricted-syntax
     for (const attr of node.attributes) {
-      const attrValue = node.getAttribute(attr.name);
-      // Unescape HTML entities
-      let unescapedAttrValue = Handlebars.Utils.escapeExpression
-        ? template({ text: attrValue }) : attrValue;
+      // Unescape HTML entities (needs double decoding as image urls are double encoded in the xml)
+      let unescapedAttrValue = he.decode(he.decode(node.getAttribute(attr.name)));
       let modified = false;
-      // eslint-disable-next-line no-restricted-syntax
+      // eslint-disable-next-line
       for (const originalPath of jcrAssetMap.keys()) {
         if (unescapedAttrValue.includes(originalPath)) {
           const jcrAssetPath = getJcrAssetRef(originalPath, pageUrl, assetFolderName);
@@ -289,8 +281,9 @@ export const traverseAndUpdateAssetReferences = (node, pageUrl, assetFolderName,
       }
       // if any image path was found and updated in the attribute value, escape and set it back
       if (modified) {
-        const escapedAttrValue = Handlebars.Utils.escapeExpression
-          ? Handlebars.Utils.escapeExpression(unescapedAttrValue) : unescapedAttrValue;
+        // while updating the attribute value, only single escaping is required
+        // as the adjusted jcr path should not contain any special characters (&, <, >, ", ', →, =)
+        const escapedAttrValue = he.encode(unescapedAttrValue);
         // update the attribute value
         node.setAttribute(attr.name, escapedAttrValue);
       }
