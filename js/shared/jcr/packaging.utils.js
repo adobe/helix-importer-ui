@@ -220,13 +220,12 @@ const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
 function getFullAssetUrl(assetReference, pageUrl) {
   if (!assetReference) return null;
 
-  const pageUrlObj = new URL(pageUrl); // Parse only once
-  const host = pageUrlObj.origin;
-
   // Already a full URL, return as is
   if (assetReference.startsWith('http://') || assetReference.startsWith('https://')) {
     return assetReference;
   }
+
+  const pageUrlObj = new URL(pageUrl); // Parse only once
 
   // If the asset reference starts with './', it is a relative file path
   if (assetReference.startsWith('./')) {
@@ -234,7 +233,7 @@ function getFullAssetUrl(assetReference, pageUrl) {
   }
 
   // Absolute asset reference, appending the asset path to the host
-  return `${host}${assetReference}`;
+  return `${pageUrlObj.origin}${assetReference}`;
 }
 
 /**
