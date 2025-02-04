@@ -238,7 +238,13 @@ const createImporter = () => {
 
 const startImport = async () => {
   const field = IS_BULK ? 'import-urls' : 'import-url';
-  const urlsArray = config.fields[field].split('\n').reverse().filter((u) => u.trim() !== '');
+
+  // before we start clean up the url list and remove any slashes at the end
+  const urlsArray = config.fields[field]
+    .split('\n')
+    .reverse()
+    .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
+    .filter((url) => url.trim() !== '');
 
   ImportStatus.reset();
   ImportStatus.merge({
