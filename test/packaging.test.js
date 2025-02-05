@@ -45,7 +45,7 @@ const initImageUrlMap = async (actualImageMap, expectedImageMap) => {
   }
 };
 
-describe('md2html', () => {
+describe('jcr-path-mapping', () => {
   before(() => {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
     global.DOMParser = new JSDOM().window.DOMParser;
