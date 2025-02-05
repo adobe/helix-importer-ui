@@ -217,7 +217,7 @@ const getJcrAssetRef = (assetReference, pageUrl, assetFolderName) => {
  * @param {string} pageUrl - The full URL of the current page.
  * @returns {string|null} - The fully qualified URL or null if the input is invalid.
  */
-function getFullAssetUrl(assetReference, pageUrl) {
+export function getFullAssetUrl(assetReference, pageUrl) {
   if (!assetReference) return null;
 
   // Already a full URL, return as is
