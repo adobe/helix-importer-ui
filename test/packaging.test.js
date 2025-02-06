@@ -14,7 +14,7 @@ import { readFile } from 'fs/promises';
 import { JSDOM } from 'jsdom';
 import he from 'he';
 import assert from 'assert';
-import { getProcessedJcr } from '../js/shared/jcr/packaging.js';
+import { updateAssetReferences } from '../js/shared/jcr/packaging.js';
 import { getFullAssetUrl } from '../js/shared/jcr/packaging.utils.js';
 
 const PAGE_URL = 'https://main--stini--bhellema.hlx.page';
@@ -24,27 +24,25 @@ const IMAGE_MAPPING_PATH = './fixtures/jcr/plush-image-mapping.json';
 const PROCESS_XML_PATH = './fixtures/jcr/plush-processed.xml';
 
 const loadFile = async (file) => readFile(new URL(file, import.meta.url), 'utf-8');
-const actualImageUrlMapping = new Map();
 
 // Helper function to normalize XML for comparison
 const parseXmlWithJsdom = (xmlString) => new JSDOM(xmlString, { contentType: 'text/xml' }).window.document;
 
-// Helper function to initialize image URL maps from test data
-const initImageUrlMap = async (actualImageMap, expectedImageMap) => {
-  const jsonData = JSON.parse(await loadFile(IMAGE_MAPPING_PATH));
+// Helper function to initialize image URL mapping from test data
+const getImageUrlMap = async () => loadFile(IMAGE_MAPPING_PATH)
+  .then((response) => JSON.parse(response))
+  .then((data) => new Map(Object.entries(data)))
+  // eslint-disable-next-line no-console
+  .catch((error) => console.error('Error loading JSON:', error));
 
-  if (typeof jsonData === 'object' && jsonData !== null) {
-    // Convert JSON object to Map (assuming keys and values are strings)
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [key, value] of Object.entries(jsonData)) {
-      if (typeof key === 'string' && typeof value === 'string') {
-        actualImageMap.set(key, '');
-        expectedImageMap.set(key, value);
-      }
-    }
-  }
-};
+// Helper function to initialize image URL keys map from test data
+const getImageUrlKeysMap = async () => loadFile(IMAGE_MAPPING_PATH)
+  .then((response) => JSON.parse(response))
+  .then((data) => new Map(Object.keys(data).map((key) => [key, ''])))
+  // eslint-disable-next-line no-console
+  .catch((error) => console.error('Error loading JSON:', error));
 
+// Test suite for jcr-path-mapping
 describe('jcr-path-mapping', () => {
   before(() => {
     const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
@@ -60,12 +58,13 @@ describe('jcr-path-mapping', () => {
     const originalXml = await loadFile(ORIGINAL_XML_PATH);
     const expectedProcessedXml = await loadFile(PROCESS_XML_PATH);
 
-    await initImageUrlMap(actualImageUrlMapping, new Map());
-    const actualProcessedXml = await getProcessedJcr(
+    // Init image URL map (original urls only, jcr paths will be added by updateAssetReferences)
+    const imageUrlMapping = await getImageUrlKeysMap();
+    const actualProcessedXml = await updateAssetReferences(
       originalXml,
       PAGE_URL,
       ASSET_FOLDER_NAME,
-      actualImageUrlMapping,
+      imageUrlMapping,
     );
 
     // Parse both XMLs using jsdom
@@ -83,10 +82,11 @@ describe('jcr-path-mapping', () => {
   // compare the generated image mapping with the expected image mapping
   it('verify generated image mapping', async () => {
     const originalXml = await loadFile(ORIGINAL_XML_PATH);
-    const expectedImageUrlMapping = new Map();
+    const expectedImageUrlMapping = await getImageUrlMap();
+    // Init image URL map (original urls only, jcr paths will be added by updateAssetReferences)
+    const actualImageUrlMapping = await getImageUrlKeysMap();
 
-    await initImageUrlMap(actualImageUrlMapping, expectedImageUrlMapping);
-    await getProcessedJcr(originalXml, PAGE_URL, ASSET_FOLDER_NAME, actualImageUrlMapping);
+    await updateAssetReferences(originalXml, PAGE_URL, ASSET_FOLDER_NAME, actualImageUrlMapping);
 
     // Compare the two maps
     assert.strictEqual(
@@ -97,6 +97,7 @@ describe('jcr-path-mapping', () => {
 
     // Array.from(map.entries()).forEach(), which avoids ESLint's no-restricted-syntax rule.
     Array.from(expectedImageUrlMapping.entries()).forEach(([key, expectedValue]) => {
+      // the original image urls may be relative, so we need to get the full url for comparison
       const actualValue = actualImageUrlMapping.get(getFullAssetUrl(key, PAGE_URL));
       assert.strictEqual(
         actualValue,
