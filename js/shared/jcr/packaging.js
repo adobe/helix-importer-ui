@@ -71,7 +71,12 @@ export const getJcrPages = async (pages, siteFolderName, assetFolderName, imageM
       sourceXml: page.data,
       pageProperties: getPageProperties(page.data),
       pageContentChildren: getPageContentChildren(page.data),
-      processedXml: await updateAssetReferences(page.data, page.url, assetFolderName, imageMappings),
+      processedXml: await updateAssetReferences(
+        page.data,
+        page.url,
+        assetFolderName,
+        imageMappings,
+      ),
       jcrPath: getJcrPagePath(page.path, siteFolderName),
       contentXmlPath: `jcr_root${getJcrPagePath(page.path, siteFolderName)}/.content.xml`,
       url: page.url,
