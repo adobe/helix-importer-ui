@@ -11,7 +11,7 @@
  */
 /* eslint-disable import/no-extraneous-dependencies */
 const { merge } = require('webpack-merge');
-const { importer, swc } = require('./webpack.common.cjs');
+const { importer, swc, jcr } = require('./webpack.common.cjs');
 
 module.exports = [
   merge(importer, {
@@ -19,6 +19,10 @@ module.exports = [
     devtool: 'source-map',
   }),
   merge(swc, {
+    mode: 'development',
+    devtool: 'source-map',
+  }),
+  merge(jcr, {
     mode: 'development',
     devtool: 'source-map',
   }),

@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* global WebImporter */
+/* global JcrPackager */
 import {
   initFields,
   attachOptionFieldsListeners,
@@ -40,8 +41,6 @@ import {
   getProxyURLSetup,
   loadDocument,
 } from '../shared/document.js';
-import { createJcrPackage } from '../shared/jcr/packaging.js';
-import { getImageUrlMap } from '../shared/jcr/imageurl.mapping.js';
 import Project from '../shared/project.js';
 import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 
@@ -128,7 +127,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        const mapping = getImageUrlMap(md);
+        const mapping = JcrPackager.getImageUrlMap(md);
         // merge the results of the mapping into the imageMappings object
         mapping.forEach((value, key) => {
           imageMappings.set(key, value);
@@ -136,7 +135,8 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
-          await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
+          await JcrPackager
+            .createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
           // Convert Map to plain object
           const obj = Object.fromEntries(imageMappings);
