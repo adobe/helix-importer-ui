@@ -399,6 +399,9 @@ const attachListeners = () => {
 
     if (error) {
       alert.error('Something went wrong while importing the page', `${originalURL}.<br/>Please check the dev console logs.`);
+      updateImporterUI({
+        status: 'error',
+      }, originalURL);
     } else if (!IS_BULK) {
       alert.success('Import completed');
     }

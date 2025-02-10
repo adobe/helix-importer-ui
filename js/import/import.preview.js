@@ -221,6 +221,11 @@ const updatePreview = (results) => {
       loadPreview(results[0]);
     } else if (status === 'redirect') {
       alert.warning('No page imported', `${results[0].from} redirects to ${results[0].to}`);
+    } else if (status === 'error') {
+      // reset the HTML, JCR, and MD code windows to empty
+      preview.transformedEditor.setValue('');
+      preview.jcrEditor.setValue('');
+      preview.markdownEditor.setValue('');
     }
   } catch (err) {
     // eslint-disable-next-line no-console
