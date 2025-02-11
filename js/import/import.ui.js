@@ -10,7 +10,6 @@
  * governing permissions and limitations under the License.
  */
 /* global WebImporter */
-/* global JcrPackager */
 import {
   initFields,
   attachOptionFieldsListeners,
@@ -127,7 +126,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        const mapping = JcrPackager.getImageUrlMap(md);
+        const mapping = WebImporter.JCRUtils.getImageUrlMap(md);
         // merge the results of the mapping into the imageMappings object
         mapping.forEach((value, key) => {
           imageMappings.set(key, value);
@@ -135,7 +134,8 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
-          await JcrPackager
+          await WebImporter
+            .JCRUtils
             .createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
 
           // Convert Map to plain object
@@ -241,10 +241,10 @@ const startImport = async () => {
 
   // before we start clean up the url list and remove any slashes at the end
   const urlsArray = config.fields[field]
-    .split('\n')
-    .reverse()
-    .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
-    .filter((url) => url.trim() !== '');
+  .split('\n')
+  .reverse()
+  .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
+  .filter((url) => url.trim() !== '');
 
   ImportStatus.reset();
   ImportStatus.merge({

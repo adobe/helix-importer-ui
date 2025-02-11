@@ -12,6 +12,10 @@
 /* eslint-disable class-methods-use-this, no-console */
 
 import {
+  createJcrPackage, getImageUrlMap,
+} from '@adobe/helix-importer-jcr-packaging';
+
+import {
   DOMUtils,
   FileUtils,
   Loader,
@@ -88,11 +92,17 @@ async function md2jcrWrapper(url, document, transformCfg, params) {
 
 export { default as md2html } from './md2html.js';
 
+const JCRUtils = {
+  createJcrPackage,
+  getImageUrlMap,
+};
+
 export {
   Blocks,
   DOMUtils,
   Loader,
   FileUtils,
+  JCRUtils,
   html2mdWrapper as html2md,
   html2docxWrapper as html2docx,
   md2jcrWrapper as md2jcr,

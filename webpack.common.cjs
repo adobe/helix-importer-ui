@@ -90,18 +90,4 @@ const swc = {
   },
 };
 
-const jcr = {
-  target: ['web', 'es2020'],
-  entry: './modules/jcr.js',
-  output: {
-    filename: 'jcr-packaging.js',
-    path: path.resolve(__dirname, 'js/dist'),
-    publicPath: './js/dist/',
-    library: {
-      name: 'JcrPackager',
-      type: 'umd',
-    },
-  },
-};
-
-module.exports = { jcr, importer, swc };
+module.exports = { importer, swc };
