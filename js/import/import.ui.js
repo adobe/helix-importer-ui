@@ -40,8 +40,6 @@ import {
   getProxyURLSetup,
   loadDocument,
 } from '../shared/document.js';
-import { createJcrPackage } from '../shared/jcr/packaging.js';
-import { getImageUrlMap } from '../shared/jcr/imageurl.mapping.js';
 import Project from '../shared/project.js';
 import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 
@@ -69,7 +67,7 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-let imageMappings = new Map();
+const allImagesFound = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -128,21 +126,14 @@ const postSuccessfulStep = async (results, originalURL) => {
         const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        const mapping = getImageUrlMap(md);
-        // merge the results of the mapping into the imageMappings object
-        mapping.forEach((value, key) => {
-          imageMappings.set(key, value);
-        });
+        const imageUrls = WebImporter.JCRUtils.getImageUrlsFromMarkdown(md);
+
+        allImagesFound.push(...imageUrls);
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
-          await createJcrPackage(dirHandle, jcrPages, imageMappings, siteFolder, assetFolder);
-
-          // Convert Map to plain object
-          const obj = Object.fromEntries(imageMappings);
-
-          // Save the object to a JSON file
-          await saveFile(dirHandle, 'image-mapping.json', JSON.stringify(obj, null, 2));
+          // eslint-disable-next-line max-len
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder);
         }
       }
 
@@ -436,7 +427,6 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
-    imageMappings = new Map();
     await startImport();
   });
 
