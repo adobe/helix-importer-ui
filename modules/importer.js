@@ -12,7 +12,7 @@
 /* eslint-disable class-methods-use-this, no-console */
 
 import {
-  createJcrPackage, getImageUrlMap,
+  createJcrPackage, getImageUrlsFromMarkdown,
 } from '@adobe/helix-importer-jcr-packaging';
 
 import {
@@ -94,7 +94,7 @@ export { default as md2html } from './md2html.js';
 
 const JCRUtils = {
   createJcrPackage,
-  getImageUrlMap,
+  getImageUrlsFromMarkdown,
 };
 
 export {
