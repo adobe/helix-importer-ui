@@ -67,7 +67,7 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-let allImagesFound = [];
+const allImagesFound = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -232,10 +232,10 @@ const startImport = async () => {
 
   // before we start clean up the url list and remove any slashes at the end
   const urlsArray = config.fields[field]
-  .split('\n')
-  .reverse()
-  .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
-  .filter((url) => url.trim() !== '');
+    .split('\n')
+    .reverse()
+    .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
+    .filter((url) => url.trim() !== '');
 
   ImportStatus.reset();
   ImportStatus.merge({
