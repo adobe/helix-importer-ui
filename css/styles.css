@@ -248,11 +248,6 @@ section > sp-divider {
 
  section .section-title {
    margin-bottom: var(--spectrum-global-dimension-size-150);
-
-   p {
-     display: block;
-     font-size: 10px;
-   }
  }
 
 section .section-title:has(div) {
@@ -261,6 +256,13 @@ section .section-title:has(div) {
   align-items: center;
   justify-content: space-between;
 }
+
+ section .section-title > div:first-child {
+   display: flex;
+   flex-direction: row;
+   align-items: center;
+   gap: var(--spectrum-global-dimension-size-100);
+ }
 
  section .section-title > div h2 {
    margin: 0;

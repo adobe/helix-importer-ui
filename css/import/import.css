@@ -216,11 +216,6 @@
   padding-top: 10px;
 }
 
-.import .docx-or-jcr-selection sp-contextual-help > * {
-  width: 268px;
-  max-width: 268px;
-}
-
 .import #import-local-docx.hidden {
     display: none;
 }
