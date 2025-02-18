@@ -460,16 +460,14 @@ const init = async () => {
   project = Project(config);
   const type = await project.getType();
   if (type === 'doc') {
-    SAVE_AS_JCR_PACKAGE.classList.add('hidden');
+    JCR_PACKAGE_FIELDS.remove();
+    SAVE_AS_JCR_PACKAGE.remove();
     config.fields['import-jcr-package'] = false;
-
     // query the sp-tabs component and remove the JCR tab
     document.querySelector('sp-tab[label="JCR"]').remove();
   } else {
-    SAVE_AS_DOCX.classList.add('hidden');
+    SAVE_AS_DOCX.remove();
     config.fields['import-local-docx'] = false;
-
-    JCR_PACKAGE_FIELDS.classList.add('open');
 
     // initial state setup, if the fields are empty, mark them as invalid
     if (SAVE_AS_JCR_PACKAGE.checked) {
