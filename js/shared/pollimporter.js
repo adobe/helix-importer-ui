@@ -132,6 +132,7 @@ export default class PollImporter {
       }
     } catch (err) {
       // ignore here, we know the file does not exist
+      // eslint-disable-next-line no-console
       console.log(`unable to load the url: ${urlToLoad} caused by error ${err}`);
     }
 
