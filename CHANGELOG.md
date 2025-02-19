@@ -1,3 +1,10 @@
+## [1.53.2](https://github.com/adobe/helix-importer-ui/compare/v1.53.1...v1.53.2) (2025-02-19)
+
+
+### Bug Fixes
+
+* bulk view does not have jcr tabs ([#469](https://github.com/adobe/helix-importer-ui/issues/469)) ([756f122](https://github.com/adobe/helix-importer-ui/commit/756f122caedd3b77e7be2b28de2355a8d2b58b26))
+
 ## [1.53.1](https://github.com/adobe/helix-importer-ui/compare/v1.53.0...v1.53.1) (2025-02-19)
 
 
