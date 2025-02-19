@@ -463,8 +463,12 @@ const init = async () => {
     JCR_PACKAGE_FIELDS.remove();
     SAVE_AS_JCR_PACKAGE.remove();
     config.fields['import-jcr-package'] = false;
-    // query the sp-tabs component and remove the JCR tab
-    document.querySelector('sp-tab[label="JCR"]').remove();
+
+    // bulk import does not have these tabs
+    const jcrTab = document.querySelector('sp-tab[label="JCR"]');
+    if (jcrTab) {
+      jcrTab.remove();
+    }
   } else {
     SAVE_AS_DOCX.remove();
     config.fields['import-local-docx'] = false;
