@@ -48,7 +48,15 @@ export default function attachJcrFieldListeners(parent, invalid, valid) {
     });
   });
 
-  observer.observe(assetFolder, { attributes: true, subtree: true });
-  observer.observe(siteFolder, { attributes: true, subtree: true });
-  observer.observe(importJcrPackage, { attributes: true });
+  if (assetFolder && siteFolder && importJcrPackage) {
+    observer.observe(assetFolder, {
+      attributes: true,
+      subtree: true,
+    });
+    observer.observe(siteFolder, {
+      attributes: true,
+      subtree: true,
+    });
+    observer.observe(importJcrPackage, { attributes: true });
+  }
 }
