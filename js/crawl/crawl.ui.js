@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 /* global ExcelJS */
-import { initOptionFields, attachOptionFieldsListeners } from '../shared/fields.js';
+import { initFields, attachOptionFieldsListeners } from '../shared/fields.js';
 import { loadURLsFromRobots } from '../shared/sitemap.js';
 import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
@@ -405,7 +405,7 @@ const attachListeners = () => {
 
 const init = () => {
   config.origin = window.location.origin;
-  config.fields = initOptionFields(CONFIG_PARENT_SELECTOR);
+  config.fields = initFields(CONFIG_PARENT_SELECTOR);
 
   applyDefaultTheme();
   attachListeners();

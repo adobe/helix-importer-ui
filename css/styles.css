@@ -6,12 +6,12 @@
 
 html:has(body > sp-theme[color="dark"]),
 sp-theme[color="dark"] main > iframe {
-  background-color: rgb(29,29,29);
+  background-color: rgb(29 29 29);
 }
 
 html:has(body > sp-theme[color="light"]),
 sp-theme[color="light"] main > iframe {
-  background-color: rgb(255,255,255);
+  background-color: rgb(255 255 255);
 }
 
 body,
@@ -257,7 +257,7 @@ section .section-title:has(div) {
   justify-content: space-between;
 }
 
-section .section-title > div:first-child {
+ section .section-title > div:first-child {
    display: flex;
    flex-direction: row;
    align-items: center;
@@ -287,13 +287,22 @@ section form {
 
 section sp-accordion sp-accordion-item {
   margin-top: var(--spectrum-global-dimension-size-150);
-  border-bottom: 0;
+  border: none;
 }
 
 section .local-save {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-bottom: 2%;
+}
+
+section .local-save #jcr-package-fields {
+  gap: 10%;
+}
+
+section .local-save #jcr-package-fields>div>sp-textfield {
+  max-width: 100%;
 }
 
 section .local-save .option-field + sp-checkbox {
@@ -361,7 +370,7 @@ section .page-preview iframe {
 }
 
 /* Contextual Help */
- sp-contextual-help > * {
-   width: 268px;
-   max-width: 268px;
- }
+sp-contextual-help > * {
+  width: 268px;
+  max-width: 268px;
+}

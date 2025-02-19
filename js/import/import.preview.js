@@ -11,7 +11,7 @@
  */
 /* global CodeMirror, html_beautify, WebImporter, ExcelJS */
 
-import importStatus from './import.status.js';
+import importResult from './import.result.js';
 import alert from '../shared/alert.js';
 import { getTheme } from '../shared/theme.js';
 
@@ -20,6 +20,7 @@ const PreviewElements = Object.freeze({
   MD_SOURCE_TEXTAREA: document.getElementById('import-markdown-source'),
   MD_PREVIEW_PANEL: document.getElementById('import-markdown-preview'),
   IMPORT_FILE_PICKER_CONTAINER: document.getElementById('import-file-picker-container'),
+  JCR_PANEL: document.getElementById('import-jcr'),
 });
 
 const PreviewButtons = Object.freeze({
@@ -27,17 +28,16 @@ const PreviewButtons = Object.freeze({
 });
 
 const REPORT_FILENAME = 'import-report.xlsx';
-const CONTENT_FILENAME = 'import-content.zip';
 
 const preview = {};
 
 const SPTABS = (parentSelector) => document.querySelector(`${parentSelector} sp-tabs`);
 
-const getReport = async (importStatus) => {
+const getReport = async (reportStatus) => {
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet('Sheet 1');
 
-  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(importStatus.extraCols);
+  const headers = ['URL', 'path', 'file', 'status', 'redirect'].concat(reportStatus.extraCols);
 
   // create Excel auto Filters for the first row / header
   worksheet.autoFilter = {
@@ -54,13 +54,13 @@ const getReport = async (importStatus) => {
 
   worksheet.addRows([
     headers,
-  ].concat(importStatus.rows.map((row) => {
+  ].concat(reportStatus.rows.map((row) => {
     const {
       url, path, file, status, redirect, report,
     } = row;
     const extra = [];
     if (report) {
-      importStatus.extraCols.forEach((col) => {
+      reportStatus.extraCols.forEach((col) => {
         const e = report[col];
         if (e) {
           if (typeof e === 'string') {
@@ -87,8 +87,14 @@ const getReport = async (importStatus) => {
 };
 
 const attachListeners = (config, parentSelector) => {
+  document.querySelector('#import-doimport-button').addEventListener('click', (async () => {
+    preview.transformedEditor.setValue('Import in progress...');
+    preview.jcrEditor.setValue('Import in progress...');
+    preview.markdownEditor.setValue('Import in progress...');
+  }));
+
   PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
-    const buffer = await getReport(importStatus.getStatus());
+    const buffer = await getReport(importResult.getStatus());
     const a = document.createElement('a');
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     a.setAttribute('href', URL.createObjectURL(blob));
@@ -103,6 +109,7 @@ const attachListeners = (config, parentSelector) => {
       setTimeout(() => {
         preview.transformedEditor.refresh();
         preview.markdownEditor.refresh();
+        preview.jcrEditor.refresh();
       }, 1);
     });
   }
@@ -128,6 +135,13 @@ const setupPreview = (parentSelector) => {
   // XSS review: we need interpreted HTML here - <script> tags are removed by importer anyway
   preview.markdownPreview.innerHTML = WebImporter.md2html('Run an import to preview the document.');
 
+  preview.jcrEditor = CodeMirror.fromTextArea(PreviewElements.JCR_PANEL, {
+    lineNumbers: true,
+    mode: 'htmlmixed',
+    theme: 'base16-dark',
+  });
+  preview.jcrEditor.setSize('100%', '100%');
+
   const tabs = SPTABS(parentSelector);
   if (tabs) {
     tabs.selected = 'import-preview';
@@ -136,11 +150,19 @@ const setupPreview = (parentSelector) => {
   return preview;
 };
 
-const loadPreview = ({ md, html: outputHTML }) => {
+const loadPreview = ({ md, html: outputHTML, jcr }) => {
   if (outputHTML) {
     preview.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
       indent_size: '2',
     }));
+  }
+
+  if (jcr) {
+    preview.jcrEditor.setValue(html_beautify(jcr.replaceAll(/\s+/g, ' '), {
+      indent_size: '2',
+    }));
+  } else {
+    preview.jcrEditor.setValue('No preview available.');
   }
 
   if (md) {
@@ -199,6 +221,11 @@ const updatePreview = (results) => {
       loadPreview(results[0]);
     } else if (status === 'redirect') {
       alert.warning('No page imported', `${results[0].from} redirects to ${results[0].to}`);
+    } else if (status === 'error') {
+      // reset the HTML, JCR, and MD code windows to empty
+      preview.transformedEditor.setValue('');
+      preview.jcrEditor.setValue('');
+      preview.markdownEditor.setValue('');
     }
   } catch (err) {
     // eslint-disable-next-line no-console
@@ -214,7 +241,7 @@ const setTheme = (theme) => {
   const codeMirrorTheme = theme === 'dark' ? 'base16-dark' : 'base16-light';
   preview.transformedEditor.setOption('theme', codeMirrorTheme);
   preview.markdownEditor.setOption('theme', codeMirrorTheme);
-}
+};
 
 export {
   REPORT_FILENAME,
@@ -225,5 +252,5 @@ export {
   updatePreview,
   getReport,
   toggleReportButton,
-  setTheme as setPreviewTheme
+  setTheme as setPreviewTheme,
 };

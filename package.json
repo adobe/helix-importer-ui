@@ -8,6 +8,7 @@
     "clean": "rm -fr ./js/dist",
     "build:prod": "npm run clean && npm i && webpack --config webpack.prod.cjs",
     "build:dev": "npm run clean && npm i && webpack --config webpack.dev.cjs",
+    "build:local": "npm run clean && webpack --config webpack.dev.cjs",
     "build": "npm run build:prod",
     "lint:js": "eslint .",
     "lint:css": "stylelint './css/**/*.css'",
@@ -15,7 +16,8 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "3.4.30",
+    "@adobe/helix-importer": "3.4.57",
+    "@adobe/helix-importer-jcr-packaging": "1.1.1",
     "@adobe/mdast-util-gridtables": "4.0.8",
     "@adobe/remark-gridtables": "3.0.8",
     "@spectrum-web-components/bundle": "0.49.0",
@@ -28,7 +30,9 @@
     "rehype-format": "5.0.1",
     "remark-gfm": "4.0.0",
     "remark-parse": "11.0.0",
-    "unified": "11.0.5"
+    "unified": "11.0.5",
+    "jszip": "3.10.1",
+    "ws": "8.6.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.8",

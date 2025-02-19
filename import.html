@@ -30,6 +30,8 @@
     <script src="./js/libs/vendors/js-beautify/beautify-html.min.js"></script>
     <script src="./js/libs/vendors/babel-polyfill/polyfill.js"></script>
     <script src="./js/libs/vendors/exceljs/exceljs.min.js"></script>
+    <script src="./js/libs/vendors/jszip/jszip.min.js"></script>
+    <script src="./js/libs/vendors/he/he.min.js"></script>
     <script src="./js/dist/helix-importer.js"></script>
     <script src="./js/import/import.ui.js" type="module"></script>
 </head>
@@ -43,7 +45,6 @@
                     <div>
                         <h2>Workbench</h2>
                         <sp-contextual-help>
-                            <h3>Workbench</h3>
                             <p>Prepare an import script for migrating your site content.</p>
                         </sp-contextual-help>
                     </div>
@@ -61,15 +62,34 @@
                                 <sp-accordion-item label="Import Options">
                                     <div>
                                         <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
-                                        <sp-textfield class="option-field" id="import-file-url" type="url" value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
+                                        <sp-textfield class="option-field" id="import-file-url" type="url"
+                                            value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
 
                                         <sp-field-label for="import-pageload-timeout">Page load timeout</sp-field-label>
-                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100" min="0" step="100" format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
+                                        <sp-number-field class="option-field" id="import-pageload-timeout" value="100"
+                                            min="0" step="100"
+                                            format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
 
                                         <div class="local-save">
-                                            <sp-checkbox class="option-field" id="import-local-docx" checked>
-                                                Save as docx
-                                            </sp-checkbox>
+                                            <div class="docx-or-jcr">
+                                                <sp-checkbox class="option-field" id="import-local-docx" checked>
+                                                    Save as docx
+                                                </sp-checkbox>
+                                                <sp-checkbox class="option-field" id="import-jcr-package">
+                                                    Save as JCR Package
+                                                </sp-checkbox>
+                                                <!-- Fields to be dynamically displayed -->
+                                            </div>
+                                            <div id="jcr-package-fields">
+                                                <div>
+                                                    <sp-field-label for="jcr-site-folder" required>AEM Site's folder name</sp-field-label>
+                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield"></sp-textfield>
+                                                </div>
+                                                <div>
+                                                    <sp-field-label for="jcr-asset-folder" required>AEM Assets' folder name</sp-field-label>
+                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield"></sp-textfield>
+                                                </div>
+                                            </div>
                                             <sp-checkbox class="option-field" id="import-local-html">
                                                 Save as HTML
                                             </sp-checkbox>
@@ -82,14 +102,16 @@
                                             Enable JavaScript
                                         </sp-checkbox>
                                         <sp-help-text variant="negative" icon>
-                                            Security risk: only enable Javascript execution when importing from trusted websites.
+                                            Security risk: only enable Javascript execution when importing from trusted
+                                            websites.
                                         </sp-help-text>
                                         <sp-checkbox class="option-field" id="import-scroll-to-bottom" checked>
                                             Scroll to bottom
                                         </sp-checkbox>
 
                                         <sp-field-label for="import-custom-headers">Custom headers</sp-field-label>
-                                        <sp-textfield class="option-field" id="import-custom-headers" multiline placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
+                                        <sp-textfield class="option-field" id="import-custom-headers" multiline
+                                            placeholder="Define your custom headers as a JSON object with key/value (header name/header value)"></sp-textfield>
                                     </div>
                                 </sp-accordion-item>
                             </sp-accordion>
@@ -99,7 +121,8 @@
                                     <sp-button id="import-doimport-button">Import</sp-button>
                                 </sp-button-group>
                                 <div id="transformation-file-default" class="hidden">
-                                    <sp-status-light size="s" variant="notice">The default transformation file is being used</sp-status-light>
+                                    <sp-status-light size="s" variant="notice">The default transformation file is being
+                                        used</sp-status-light>
                                 </div>
                             </div>
                         </form>
@@ -114,6 +137,7 @@
                         <sp-tabs selected="import-preview">
                             <sp-tab label="Preview" value="import-preview"></sp-tab>
                             <sp-tab label="Markdown" value="import-markdown"></sp-tab>
+                            <sp-tab label="JCR" value="import-jcr"></sp-tab>
                             <sp-tab label="HTML" value="import-html"></sp-tab>
                             <div id="import-file-picker-container"></div>
                             <sp-tab-panel value="import-preview">
@@ -123,21 +147,29 @@
                             </sp-tab-panel>
                             <sp-tab-panel value="import-markdown">
                                 <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-markdown-source" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                             <sp-tab-panel value="import-html">
                                 <div data-panel="source">
-                                  <div class="code">
-                                    <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
-                                  </div>
+                                    <div class="code">
+                                        <textarea id="import-transformed-html" rows="4" cols="10"></textarea>
+                                    </div>
+                                </div>
+                            </sp-tab-panel>
+                            <sp-tab-panel value="import-jcr">
+                                <div data-panel="source">
+                                    <div class="code">
+                                        <textarea id="import-jcr" rows="4" cols="10"></textarea>
+                                    </div>
                                 </div>
                             </sp-tab-panel>
                         </sp-tabs>
                         <sp-button-group>
-                            <sp-button id="import-downloadImportReport" class="hidden">Download import report</sp-button>
+                            <sp-button id="import-downloadImportReport" class="hidden">Download import
+                                report</sp-button>
                         </sp-button-group>
                     </div>
                 </div>
@@ -147,4 +179,5 @@
     </sp-theme>
     <script src="./js/swc_loader.js" type="module"></script>
 </body>
+
 </html>

@@ -2,6 +2,8 @@
 @import url("../libs/vendors/codemirror/base16-dark.css");
 @import url("../libs/vendors/codemirror/base16-light.css");
 
+/* stylelint-disable selector-class-pattern */
+
 .import {
   /* COLORS */
   --hlx-import-text-color: var(--spectrum-global-color-gray-500);
@@ -28,24 +30,20 @@
   height: calc(100vh - 232px);
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .import .CodeMirror {
   position: absolute;
   inset: 0;
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .import .CodeMirror,
 .import .CodeMirror-gutters {
   background-color: var(--spectrum-global-color-gray-75);
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .import .cm-s-base16-dark.CodeMirror {
   border: 1px solid var(--spectrum-global-color-gray-100);
 }
 
-/* stylelint-disable-next-line selector-class-pattern */
 .import .cm-s-base16-light.CodeMirror {
   border: 1px solid var(--spectrum-global-color-gray-300);
 }
@@ -207,4 +205,21 @@
 
 .import #import-result sp-icon-alert {
   color: rgb(215 25 19);
+}
+
+.import #jcr-package-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.import .local-save {
+  padding-top: 10px;
+}
+
+.import #import-local-docx.hidden {
+    display: none;
+}
+
+.import #import-jcr-package.hidden {
+  display: none;
 }
