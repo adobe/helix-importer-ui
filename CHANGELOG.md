@@ -1,3 +1,10 @@
+## [1.53.1](https://github.com/adobe/helix-importer-ui/compare/v1.53.0...v1.53.1) (2025-02-19)
+
+
+### Bug Fixes
+
+* non xwalk based projects failed to load ([#468](https://github.com/adobe/helix-importer-ui/issues/468)) ([30a4bb7](https://github.com/adobe/helix-importer-ui/commit/30a4bb777a223ad520dd2309585bddab4afe6836))
+
 # [1.53.0](https://github.com/adobe/helix-importer-ui/compare/v1.52.17...v1.53.0) (2025-02-19)
 
 
