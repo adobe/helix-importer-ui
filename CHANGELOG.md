@@ -1,3 +1,11 @@
+# [1.53.0](https://github.com/adobe/helix-importer-ui/compare/v1.52.17...v1.53.0) (2025-02-19)
+
+
+### Features
+
+* **sites-29046:** introduce xwalk support into helix importer ui ([#466](https://github.com/adobe/helix-importer-ui/issues/466)) ([a5bfb01](https://github.com/adobe/helix-importer-ui/commit/a5bfb01ca758f3746a7bd848edc51cc5e09d31b9))
+* UI Extensibility ([#445](https://github.com/adobe/helix-importer-ui/issues/445)) ([e6e2ac9](https://github.com/adobe/helix-importer-ui/commit/e6e2ac963362529016160e6336156c2478bbc7ad))
+
 ## [1.52.17](https://github.com/adobe/helix-importer-ui/compare/v1.52.16...v1.52.17) (2024-11-24)
 
 
