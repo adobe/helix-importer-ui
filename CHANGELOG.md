@@ -1,3 +1,10 @@
+## [1.53.9](https://github.com/adobe/helix-importer-ui/compare/v1.53.8...v1.53.9) (2025-02-26)
+
+
+### Bug Fixes
+
+* **sites-29597:** handle more than images for asset mappings ([#476](https://github.com/adobe/helix-importer-ui/issues/476)) ([75cbba0](https://github.com/adobe/helix-importer-ui/commit/75cbba0a67bca3e1c1ff20e5a41c1f78bd5f0b08))
+
 ## [1.53.8](https://github.com/adobe/helix-importer-ui/compare/v1.53.7...v1.53.8) (2025-02-26)
 
 
