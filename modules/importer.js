@@ -12,7 +12,7 @@
 /* eslint-disable class-methods-use-this, no-console */
 
 import {
-  createJcrPackage, 
+  createJcrPackage,
   getAssetUrlsFromMarkdown,
 } from '@adobe/helix-importer-jcr-packaging';
 
