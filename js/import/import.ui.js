@@ -126,7 +126,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const siteFolder = JCR_SITE_FOLDER.value || (() => { throw new Error('Site folder name is required'); })();
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
-        const imageUrls = WebImporter.JCRUtils.getImageUrlsFromMarkdown(md);
+        const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
 
         allImagesFound.push(...imageUrls);
 
