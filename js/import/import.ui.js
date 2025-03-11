@@ -42,6 +42,7 @@ import {
 } from '../shared/document.js';
 import Project from '../shared/project.js';
 import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
+import { hasText } from '../function.js';
 
 const PARENT_SELECTOR = '.import';
 
@@ -304,11 +305,21 @@ const startImport = async () => {
 
         const type = await project.getType();
         if (onLoadSucceeded) {
+          let customHeaders = {};
+          try {
+            if (hasText(config.fields['import-custom-headers'])) {
+              customHeaders = JSON.parse(config.fields['import-custom-headers']);
+            }
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error(`Unable to parse ${config.fields['import-custom-headers']}`);
+          }
+
           config.importer.setTransformationInput({
             url: replacedURL,
             document,
             includeDocx,
-            params: { originalURL },
+            params: { originalURL, customHeaders },
             projectType: type,
           });
           await config.importer.transform();
