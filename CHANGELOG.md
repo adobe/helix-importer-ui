@@ -1,3 +1,10 @@
+## [1.53.19](https://github.com/adobe/helix-importer-ui/compare/v1.53.18...v1.53.19) (2025-03-12)
+
+
+### Bug Fixes
+
+* **sites-29938:** send customHeaders through to helix-imports options ([#486](https://github.com/adobe/helix-importer-ui/issues/486)) ([9dc22de](https://github.com/adobe/helix-importer-ui/commit/9dc22de6b3d707b67723b22fdfd3dd04571fc528))
+
 ## [1.53.18](https://github.com/adobe/helix-importer-ui/compare/v1.53.17...v1.53.18) (2025-03-12)
 
 
