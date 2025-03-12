@@ -5,7 +5,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
-//  parser: '@babel/eslint-parser',
+  // parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 'latest',
@@ -30,4 +30,12 @@ module.exports = {
       exports: {},
     },
   },
+  overrides: [
+    {
+      files: ['**/test/**/*.js'],
+      rules: {
+        'no-unused-expressions': 'off',
+      },
+    },
+  ],
 };

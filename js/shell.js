@@ -21,6 +21,7 @@ function attachRuntime() {
   if (typeof contentWindow.attachRuntime === 'function') {
     contentWindow.attachRuntime(runtime);
   } else {
+    // eslint-disable-next-line no-console
     console.error('Unable to attach the importer runtime to the iframe.');
   }
 }
