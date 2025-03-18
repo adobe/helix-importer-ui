@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-importer-ui",
   "description": "helix-importer-ui",
-  "version": "1.53.25",
+  "version": "1.53.26",
   "type": "module",
   "scripts": {
     "test": "c8 mocha",
