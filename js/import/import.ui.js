@@ -235,7 +235,6 @@ const startImport = async () => {
   const urlsArray = config.fields[field]
     .split('\n')
     .reverse()
-    .map((url) => (url.endsWith('/') ? url.slice(0, -1) : url))
     .filter((url) => url.trim() !== '');
 
   ImportStatus.reset();
