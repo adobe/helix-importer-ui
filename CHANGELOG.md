@@ -1,3 +1,10 @@
+## [1.53.27](https://github.com/adobe/helix-importer-ui/compare/v1.53.26...v1.53.27) (2025-03-18)
+
+
+### Bug Fixes
+
+* **495:** unable to import a url that ends in / ([#496](https://github.com/adobe/helix-importer-ui/issues/496)) ([5e900c1](https://github.com/adobe/helix-importer-ui/commit/5e900c1a14ecdc919228b647217763efd2f9fd65))
+
 ## [1.53.26](https://github.com/adobe/helix-importer-ui/compare/v1.53.25...v1.53.26) (2025-03-18)
 
 
