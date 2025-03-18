@@ -9,36 +9,40 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import DocProject from './doc-project.js';
-import XWalkProject from './xwalk-project.js';
 
 /**
- * @typedef {"doc" | "xwalk"} ProjectType
- * @description Represents the possible types of a project.
- */
-
-/**
- * @typedef {Object} ProjectConfig
+ * @typedef {Object} XWalkProjectConfig
  * @property {string} origin - The base URL to fetch data from.
  */
 
 /**
- * Creates a project instance based on the presence of component-models.json.
- * @param {ProjectConfig} config - The configuration of the project.
- * @returns {Promise<Object>} The appropriate project instance.
+ * Represents an XWalk project.
+ * @param {XWalkProjectConfig} config - The configuration of the project.
  */
-const Project = async (config) => {
+const XWalkProject = async (config) => {
   const { origin } = config;
+  let transformationRules;
 
-  try {
-    const response = await fetch(`${origin}/component-models.json`);
-    if (response.ok) {
-      return await XWalkProject(config);
-    }
-  } catch (error) {
-    // do nothing
+  /**
+   * Retrieves the type of the project.
+   * @returns "xwalk" The type of the project ('xwalk').
+   */
+  const getType = () => 'xwalk';
+
+  /**
+   * Returns the transformation rules if any are available.
+   */
+  const getTransformationRules = () => transformationRules;
+
+  const response = await fetch(`${origin}/tools/importer/transformation.rules.json`);
+  if (response.ok) {
+    transformationRules = await response.json();
   }
-  return DocProject(config);
+
+  return {
+    getType,
+    getTransformationRules,
+  };
 };
 
-export default Project;
+export default XWalkProject;

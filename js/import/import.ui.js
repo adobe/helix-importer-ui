@@ -134,7 +134,9 @@ const postSuccessfulStep = async (results, originalURL) => {
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder);
+          // fetch the transformation.rules.json file and pass it to the createJcrPackage function
+
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder, project.getTransformationRules());
         }
       }
 
@@ -218,8 +220,8 @@ const setDefaultTransformerNotice = (importer) => {
   }
 };
 
-const createImporter = () => {
-  project = Project(config);
+const createImporter = async () => {
+  project = await Project(config);
 
   config.importer = new PollImporter({
     origin: config.origin,
@@ -464,11 +466,11 @@ const init = async () => {
     setPreviewTheme(theme);
   });
 
-  createImporter();
+  await createImporter();
 
   // figure out based on the project type what to option to display to the user.
-  project = Project(config);
-  const type = await project.getType();
+  project = await Project(config);
+  const type = project.getType();
   if (type === 'doc') {
     JCR_PACKAGE_FIELDS.remove();
     SAVE_AS_JCR_PACKAGE.remove();
