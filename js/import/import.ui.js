@@ -219,8 +219,6 @@ const setDefaultTransformerNotice = (importer) => {
 };
 
 const createImporter = async () => {
-  project = await Project(config);
-
   config.importer = new PollImporter({
     origin: config.origin,
     poll: !IS_BULK,
@@ -495,13 +493,8 @@ const init = async () => {
     config.fields['import-local-docx'] = false;
 
     // initial state setup, if the fields are empty, mark them as invalid
-    if (SAVE_AS_JCR_PACKAGE.checked) {
-      JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-      JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-    } else {
-      JCR_SITE_FOLDER.disabled = true;
-      JCR_ASSET_FOLDER.disabled = true;
-    }
+    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
 
     project.setSitePath(JCR_SITE_FOLDER.value);
     project.setAssetPath(JCR_ASSET_FOLDER.value);

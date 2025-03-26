@@ -23,22 +23,14 @@ export default function attachJcrFieldListeners(parent, invalid, valid, project)
   const importJcrPackage = document.querySelector(`${parent} #import-jcr-package`);
 
   const checkForValidTextFields = () => {
-    if (!importJcrPackage.checked || (!assetFolder.invalid && !siteFolder.invalid)) {
+    if ((!assetFolder.invalid && !siteFolder.invalid)) {
       valid();
     } else {
       invalid();
     }
 
-    siteFolder.disabled = !importJcrPackage.checked;
-    assetFolder.disabled = !importJcrPackage.checked;
-
-    if (importJcrPackage.checked) {
-      assetFolder.invalid = assetFolder.value === '';
-      siteFolder.invalid = siteFolder.value === '';
-    } else {
-      assetFolder.invalid = false;
-      siteFolder.invalid = false;
-    }
+    assetFolder.invalid = assetFolder.value === '';
+    siteFolder.invalid = siteFolder.value === '';
   };
 
   const observer = new MutationObserver((mutations) => {
