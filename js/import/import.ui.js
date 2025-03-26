@@ -218,8 +218,8 @@ const setDefaultTransformerNotice = (importer) => {
   }
 };
 
-const createImporter = () => {
-  project = Project(config);
+const createImporter = async () => {
+  project = await Project(config);
 
   config.importer = new PollImporter({
     origin: config.origin,
@@ -302,7 +302,6 @@ const startImport = async () => {
           params: { originalURL },
         });
 
-        const type = await project.getType();
         if (onLoadSucceeded) {
           let customHeaders = {};
           try {
@@ -314,12 +313,23 @@ const startImport = async () => {
             console.error(`Unable to parse ${config.fields['import-custom-headers']}`);
           }
 
+          const projectType = await project.getType();
+
+          let params = { originalURL, customHeaders };
+          if (projectType === 'xwalk') {
+            params = {
+              ...params,
+              sitePath: project.getSitePath(),
+              assetPath: project.getAssetPath(),
+            };
+          }
+
           config.importer.setTransformationInput({
             url: replacedURL,
             document,
             includeDocx,
-            params: { originalURL, customHeaders },
-            projectType: type,
+            params,
+            projectType,
           });
           await config.importer.transform();
           processNext();
@@ -383,7 +393,7 @@ const startImport = async () => {
 
 const attachListeners = () => {
   // attach a listener for valid fields, if they are not valid then disable the import button
-  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons);
+  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons, project);
 
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
   attachTextFieldListeners(config.fields, PARENT_SELECTOR);
@@ -464,11 +474,12 @@ const init = async () => {
     setPreviewTheme(theme);
   });
 
-  createImporter();
+  await createImporter();
 
   // figure out based on the project type what to option to display to the user.
-  project = Project(config);
-  const type = await project.getType();
+  project = await Project(config);
+  const type = project.getType();
+
   if (type === 'doc') {
     JCR_PACKAGE_FIELDS.remove();
     SAVE_AS_JCR_PACKAGE.remove();
@@ -491,6 +502,9 @@ const init = async () => {
       JCR_SITE_FOLDER.disabled = true;
       JCR_ASSET_FOLDER.disabled = true;
     }
+
+    project.setSiteFolder(JCR_SITE_FOLDER.value);
+    project.setAssetFolder(JCR_ASSET_FOLDER.value);
   }
 
   if (!IS_BULK) {

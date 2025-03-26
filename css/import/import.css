@@ -223,3 +223,8 @@
 .import #import-jcr-package.hidden {
   display: none;
 }
+
+.import #jcr-package-fields > div > div {
+  display: flex;
+  justify-content: space-between;
+}

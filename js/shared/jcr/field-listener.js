@@ -15,8 +15,9 @@
  * @param parent The parent element to use to query the field changes on.
  * @param invalid The callback to call when the field becomes invalid.
  * @param valid The callback to call when the field becomes valid.
+ * @param project The crosswalk project.
  */
-export default function attachJcrFieldListeners(parent, invalid, valid) {
+export default function attachJcrFieldListeners(parent, invalid, valid, project) {
   const assetFolder = document.querySelector(`${parent} #jcr-asset-folder`);
   const siteFolder = document.querySelector(`${parent} #jcr-site-folder`);
   const importJcrPackage = document.querySelector(`${parent} #import-jcr-package`);
@@ -51,12 +52,22 @@ export default function attachJcrFieldListeners(parent, invalid, valid) {
   if (assetFolder && siteFolder && importJcrPackage) {
     observer.observe(assetFolder, {
       attributes: true,
+      attributeFilter: ['value', 'invalid', 'checked'],
       subtree: true,
     });
     observer.observe(siteFolder, {
       attributes: true,
+      attributeFilter: ['value', 'invalid', 'checked'],
       subtree: true,
     });
     observer.observe(importJcrPackage, { attributes: true });
+
+    assetFolder.addEventListener('change', () => {
+      project.setAssetFolder(assetFolder.value.trim());
+    });
+
+    siteFolder.addEventListener('change', () => {
+      project.setSiteFolder(siteFolder.value.trim());
+    });
   }
 }
