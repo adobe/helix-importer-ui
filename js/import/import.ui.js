@@ -133,10 +133,17 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
-          // eslint-disable-next-line max-len
-          // fetch the transformation.rules.json file and pass it to the createJcrPackage function
-
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder, project.getTransformationRules());
+          const rules = await project.getTransformationRules();
+          const functions = await project.getTransformationFunctions();
+          await WebImporter.JCRUtils.createJcrPackage(
+            dirHandle,
+            jcrPages,
+            allImagesFound,
+            siteFolder,
+            assetFolder,
+            rules,
+            functions,
+          );
         }
       }
 

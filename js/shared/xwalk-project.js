@@ -9,7 +9,7 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-
+/* eslint-disable no-console */
 /**
  * @typedef {Object} XWalkProjectConfig
  * @property {string} origin - The base URL to fetch data from.
@@ -21,7 +21,6 @@
  */
 const XWalkProject = async (config) => {
   const { origin } = config;
-  let transformationRules;
 
   /**
    * Retrieves the type of the project.
@@ -32,16 +31,36 @@ const XWalkProject = async (config) => {
   /**
    * Returns the transformation rules if any are available.
    */
-  const getTransformationRules = () => transformationRules;
+  const getTransformationRules = async () => {
+    const response = await fetch(`${origin}/tools/importer/jcr-transformer-mapping.json`);
+    if (response.ok) {
+      return response.json();
+    }
+    return undefined;
+  };
 
-  const response = await fetch(`${origin}/tools/importer/jcr-transformers.json`);
-  if (response.ok) {
-    transformationRules = await response.json();
-  }
+  /**
+   * Return the transformation functions if any are available.
+   */
+  const getTransformationFunctions = async () => {
+    try {
+      const mod = await import(`${origin}/tools/importer/jcr-transformer-functions.js`);
+      if (mod.default) {
+        console.log('jcr-transformer-functions found.');
+        return mod.default;
+      }
+      console.log('No jcr-transformer-functions functions found');
+    } catch (err) {
+      // ignore error as no functions were found
+      console.log('No jcr-transformer-functions functions found');
+    }
+    return undefined;
+  };
 
   return {
     getType,
     getTransformationRules,
+    getTransformationFunctions,
   };
 };
 
