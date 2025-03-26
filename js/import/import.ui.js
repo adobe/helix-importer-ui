@@ -503,8 +503,8 @@ const init = async () => {
       JCR_ASSET_FOLDER.disabled = true;
     }
 
-    project.setSiteFolder(JCR_SITE_FOLDER.value);
-    project.setAssetFolder(JCR_ASSET_FOLDER.value);
+    project.setSitePath(JCR_SITE_FOLDER.value);
+    project.setAssetPath(JCR_ASSET_FOLDER.value);
   }
 
   if (!IS_BULK) {

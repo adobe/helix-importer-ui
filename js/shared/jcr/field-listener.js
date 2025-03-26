@@ -63,11 +63,11 @@ export default function attachJcrFieldListeners(parent, invalid, valid, project)
     observer.observe(importJcrPackage, { attributes: true });
 
     assetFolder.addEventListener('change', () => {
-      project.setAssetFolder(assetFolder.value.trim());
+      project.setAssetPath(assetFolder.value.trim());
     });
 
     siteFolder.addEventListener('change', () => {
-      project.setSiteFolder(siteFolder.value.trim());
+      project.setSitePath(siteFolder.value.trim());
     });
   }
 }
