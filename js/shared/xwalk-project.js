@@ -34,7 +34,7 @@ const XWalkProject = async (config) => {
    */
   const getTransformationRules = () => transformationRules;
 
-  const response = await fetch(`${origin}/tools/importer/transformation.rules.json`);
+  const response = await fetch(`${origin}/tools/importer/jcr-transformers.json`);
   if (response.ok) {
     transformationRules = await response.json();
   }
