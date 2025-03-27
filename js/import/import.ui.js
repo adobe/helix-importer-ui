@@ -218,7 +218,7 @@ const setDefaultTransformerNotice = (importer) => {
   }
 };
 
-const createImporter = async () => {
+const createImporter = () => {
   config.importer = new PollImporter({
     origin: config.origin,
     poll: !IS_BULK,
@@ -472,7 +472,7 @@ const init = async () => {
     setPreviewTheme(theme);
   });
 
-  await createImporter();
+  createImporter();
 
   // figure out based on the project type what to option to display to the user.
   project = await Project(config);
