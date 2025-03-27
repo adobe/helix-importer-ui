@@ -18,48 +18,43 @@
  * @param project The crosswalk project.
  */
 export default function attachJcrFieldListeners(parent, invalid, valid, project) {
+
+  if (project.getType() !== 'xwalk') {
+    return;
+  }
+
   const assetFolder = document.querySelector(`${parent} #jcr-asset-folder`);
   const siteFolder = document.querySelector(`${parent} #jcr-site-folder`);
-  const importJcrPackage = document.querySelector(`${parent} #import-jcr-package`);
 
-  const checkForValidTextFields = () => {
-    if ((!assetFolder.invalid && !siteFolder.invalid)) {
-      valid();
-    } else {
-      invalid();
-    }
-
-    assetFolder.invalid = assetFolder.value === '';
-    siteFolder.invalid = siteFolder.value === '';
+  const isValidCheck = () => {
+    // eslint-disable-next-line no-unused-expressions
+    (siteFolder.invalid || assetFolder.invalid) ? invalid() : valid();
   };
 
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.attributeName === 'invalid' || mutation.attributeName === 'checked') {
-        checkForValidTextFields();
-      }
-    });
+  const assetCheck = () => {
+    assetFolder.invalid = !/^\/content\/dam\/.+/.test(assetFolder.value);
+    project.setAssetPath(assetFolder.value.trim());
+    isValidCheck();
+  };
+
+  const siteCheck = () => {
+    siteFolder.invalid = !/^\/content\/.+/.test(siteFolder.value);
+    project.setSitePath(siteFolder.value.trim());
+    isValidCheck();
+  };
+
+  const checkFields = () => {
+    assetCheck();
+    siteCheck();
+  };
+
+  assetFolder.addEventListener('change', () => {
+    assetCheck();
   });
 
-  if (assetFolder && siteFolder && importJcrPackage) {
-    observer.observe(assetFolder, {
-      attributes: true,
-      attributeFilter: ['value', 'invalid', 'checked'],
-      subtree: true,
-    });
-    observer.observe(siteFolder, {
-      attributes: true,
-      attributeFilter: ['value', 'invalid', 'checked'],
-      subtree: true,
-    });
-    observer.observe(importJcrPackage, { attributes: true });
+  siteFolder.addEventListener('change', () => {
+    siteCheck();
+  });
 
-    assetFolder.addEventListener('change', () => {
-      project.setAssetPath(assetFolder.value.trim());
-    });
-
-    siteFolder.addEventListener('change', () => {
-      project.setSitePath(siteFolder.value.trim());
-    });
-  }
+  checkFields();
 }

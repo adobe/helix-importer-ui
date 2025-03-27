@@ -33,7 +33,7 @@ const Project = async (config) => {
   try {
     const response = await fetch(`${origin}/component-models.json`);
     if (response.ok) {
-      return await XWalkProject(config);
+      return XWalkProject(config);
     }
   } catch (error) {
     // do nothing

@@ -84,23 +84,27 @@
                                                     <div>
                                                         <sp-field-label for="jcr-site-folder" required>Content Import Path</sp-field-label>
                                                         <sp-contextual-help>
-                                                            <p>The import destination under /content/&lt;site&gt;.</p><p>For example, an input value of
-                                                            mysite, results in the import destination being /content/mysite.</p>
-                                                            <p>If you want to import into a subfolder, use &lt;site&gt;/&lt;subfolder&gt;.</p>
+                                                            <p>The import destination must reside under the JCR '/content/' path.</p>
                                                         </sp-contextual-help>
                                                     </div>
-                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield"></sp-textfield>
+                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield" pattern="/content/.+">
+                                                        <sp-help-text slot="help-text">
+                                                            Example: /content/mysite
+                                                        </sp-help-text>
+                                                    </sp-textfield>
                                                 </div>
                                                 <div>
                                                     <div>
                                                         <sp-field-label for="jcr-asset-folder" required>Asset Import Path</sp-field-label>
                                                         <sp-contextual-help>
-                                                            <p>Assets will be imported under the destination /content/dam/&lt;path&gt;.</p><p>For example, an input value of
-                                                            myfolder, results in the import destination being /content/dam/myfolder.</p>
-                                                            <p>If you want to import into a subfolder, use &lt;myfolder&gt;/&lt;subfolder&gt;.</p>
+                                                            <p>The asset import destination must reside under the JCR '/content/dam/' path.</p>
                                                         </sp-contextual-help>
                                                     </div>
-                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield"></sp-textfield>
+                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield" pattern="/content/dam/.+">
+                                                        <sp-help-text slot="help-text">
+                                                            Example: /content/dam/assets
+                                                        </sp-help-text>
+                                                    </sp-textfield>
                                                 </div>
                                             </div>
                                             <sp-checkbox class="option-field" id="import-local-html">

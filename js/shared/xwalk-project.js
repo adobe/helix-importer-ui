@@ -22,8 +22,15 @@
 const XWalkProject = (config) => {
   const { origin } = config;
 
-  let assetFolder;
-  let siteFolder;
+  /**
+   * The path to the asset folder.
+   */
+  let assetPath;
+
+  /**
+   * The path to the site folder.
+   */
+  let sitePath;
 
   /**
    * Retrieves the type of the project.
@@ -33,31 +40,29 @@ const XWalkProject = (config) => {
 
   /**
    * Set the jcr destination path for the asset folder.
-   * Any path that is passed in will have the /content/dam/ prefix removed.
    * @param path - The jcr path to the folder.
    */
   const setAssetPath = (path) => {
-    assetFolder = path ? path.replace(/^\/content\/dam\//, '').replace(/^\/+/, '') : null;
+    assetPath = path;
   };
 
   /**
    * Set the jcr destination path for the site folder.
-   * Any path that is passed in will have the /content/ prefix removed.
-   * @param path
+   * @param path - The jcr path to the folder.
    */
   const setSitePath = (path) => {
-    siteFolder = path ? path.replace(/^\/content\//, '').replace(/^\/+/, '') : null;
+    sitePath = path;
   };
 
   /**
    * Return the path of the asset folder without the /content/dam prefix.
    */
-  const getAssetPath = () => assetFolder;
+  const getAssetPath = () => assetPath;
 
   /**
    * Return the path of the site folder without the /content prefix.
    */
-  const getSitePath = () => siteFolder;
+  const getSitePath = () => sitePath;
 
   /**
    * Return the origin of the project.
