@@ -18,10 +18,11 @@
  * @param project The crosswalk project.
  */
 export default function attachJcrFieldListeners(parent, invalid, valid, project) {
-
   if (project.getType() !== 'xwalk') {
     return;
   }
+
+  let assetFolderFocused = false;
 
   const assetFolder = document.querySelector(`${parent} #jcr-asset-folder`);
   const siteFolder = document.querySelector(`${parent} #jcr-site-folder`);
@@ -32,6 +33,16 @@ export default function attachJcrFieldListeners(parent, invalid, valid, project)
   };
 
   const assetCheck = () => {
+    // if the asset folder is empty and the site folder is valid, then set the asset folder
+    // to the site folder, but only if the asset folder has not been interacted with
+    if (!assetFolderFocused && assetFolder.value === '' && !siteFolder.invalid) {
+      // remove everything after the last /content/ in the site path and use it as the asset path
+      const sitePath = siteFolder.value.trim();
+      const lastContent = sitePath.lastIndexOf('/content/');
+      const path = sitePath.substring(lastContent + 8, sitePath.length);
+      assetFolder.value = `/content/dam${path}`;
+    }
+
     assetFolder.invalid = !/^\/content\/dam\/.+/.test(assetFolder.value);
     project.setAssetPath(assetFolder.value.trim());
     isValidCheck();
@@ -44,16 +55,20 @@ export default function attachJcrFieldListeners(parent, invalid, valid, project)
   };
 
   const checkFields = () => {
-    assetCheck();
     siteCheck();
+    assetCheck();
   };
 
+  assetFolder.addEventListener('focus', () => {
+    assetFolderFocused = true;
+  });
+
   assetFolder.addEventListener('change', () => {
-    assetCheck();
+    checkFields();
   });
 
   siteFolder.addEventListener('change', () => {
-    siteCheck();
+    checkFields();
   });
 
   checkFields();
