@@ -15,48 +15,61 @@
  * @param parent The parent element to use to query the field changes on.
  * @param invalid The callback to call when the field becomes invalid.
  * @param valid The callback to call when the field becomes valid.
+ * @param project The crosswalk project.
  */
-export default function attachJcrFieldListeners(parent, invalid, valid) {
+export default function attachJcrFieldListeners(parent, invalid, valid, project) {
+  if (project.getType() !== 'xwalk') {
+    return;
+  }
+
+  let assetFolderFocused = false;
+
   const assetFolder = document.querySelector(`${parent} #jcr-asset-folder`);
   const siteFolder = document.querySelector(`${parent} #jcr-site-folder`);
-  const importJcrPackage = document.querySelector(`${parent} #import-jcr-package`);
 
-  const checkForValidTextFields = () => {
-    if (!importJcrPackage.checked || (!assetFolder.invalid && !siteFolder.invalid)) {
-      valid();
-    } else {
-      invalid();
-    }
-
-    siteFolder.disabled = !importJcrPackage.checked;
-    assetFolder.disabled = !importJcrPackage.checked;
-
-    if (importJcrPackage.checked) {
-      assetFolder.invalid = assetFolder.value === '';
-      siteFolder.invalid = siteFolder.value === '';
-    } else {
-      assetFolder.invalid = false;
-      siteFolder.invalid = false;
-    }
+  const isValidCheck = () => {
+    // eslint-disable-next-line no-unused-expressions
+    (siteFolder.invalid || assetFolder.invalid) ? invalid() : valid();
   };
 
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.attributeName === 'invalid' || mutation.attributeName === 'checked') {
-        checkForValidTextFields();
-      }
-    });
+  const assetCheck = () => {
+    // if the asset folder is empty and the site folder is valid, then set the asset folder
+    // to the site folder, but only if the asset folder has not been interacted with
+    if (!assetFolderFocused && assetFolder.value === '' && !siteFolder.invalid) {
+      // remove everything after the last /content/ in the site path and use it as the asset path
+      const sitePath = siteFolder.value.trim();
+      const lastContent = sitePath.lastIndexOf('/content/');
+      const path = sitePath.substring(lastContent + 8, sitePath.length);
+      assetFolder.value = `/content/dam${path}`;
+    }
+
+    assetFolder.invalid = !/^\/content\/dam\/.+/.test(assetFolder.value);
+    project.setAssetPath(assetFolder.value.trim());
+    isValidCheck();
+  };
+
+  const siteCheck = () => {
+    siteFolder.invalid = !/^\/content\/.+/.test(siteFolder.value);
+    project.setSitePath(siteFolder.value.trim());
+    isValidCheck();
+  };
+
+  const checkFields = () => {
+    siteCheck();
+    assetCheck();
+  };
+
+  assetFolder.addEventListener('focus', () => {
+    assetFolderFocused = true;
   });
 
-  if (assetFolder && siteFolder && importJcrPackage) {
-    observer.observe(assetFolder, {
-      attributes: true,
-      subtree: true,
-    });
-    observer.observe(siteFolder, {
-      attributes: true,
-      subtree: true,
-    });
-    observer.observe(importJcrPackage, { attributes: true });
-  }
+  assetFolder.addEventListener('change', () => {
+    checkFields();
+  });
+
+  siteFolder.addEventListener('change', () => {
+    checkFields();
+  });
+
+  checkFields();
 }

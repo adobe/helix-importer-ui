@@ -219,8 +219,6 @@ const setDefaultTransformerNotice = (importer) => {
 };
 
 const createImporter = () => {
-  project = Project(config);
-
   config.importer = new PollImporter({
     origin: config.origin,
     poll: !IS_BULK,
@@ -302,7 +300,6 @@ const startImport = async () => {
           params: { originalURL },
         });
 
-        const type = await project.getType();
         if (onLoadSucceeded) {
           let customHeaders = {};
           try {
@@ -314,12 +311,23 @@ const startImport = async () => {
             console.error(`Unable to parse ${config.fields['import-custom-headers']}`);
           }
 
+          const projectType = await project.getType();
+
+          let params = { originalURL, customHeaders };
+          if (projectType === 'xwalk') {
+            params = {
+              ...params,
+              sitePath: project.getSitePath(),
+              assetPath: project.getAssetPath(),
+            };
+          }
+
           config.importer.setTransformationInput({
             url: replacedURL,
             document,
             includeDocx,
-            params: { originalURL, customHeaders },
-            projectType: type,
+            params,
+            projectType,
           });
           await config.importer.transform();
           processNext();
@@ -383,7 +391,7 @@ const startImport = async () => {
 
 const attachListeners = () => {
   // attach a listener for valid fields, if they are not valid then disable the import button
-  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons);
+  attachJcrFieldListeners(PARENT_SELECTOR, disableProcessButtons, enableProcessButtons, project);
 
   attachOptionFieldsListeners(config.fields, PARENT_SELECTOR);
   attachTextFieldListeners(config.fields, PARENT_SELECTOR);
@@ -467,8 +475,9 @@ const init = async () => {
   createImporter();
 
   // figure out based on the project type what to option to display to the user.
-  project = Project(config);
-  const type = await project.getType();
+  project = await Project(config);
+  const type = project.getType();
+
   if (type === 'doc') {
     JCR_PACKAGE_FIELDS.remove();
     SAVE_AS_JCR_PACKAGE.remove();
@@ -484,13 +493,11 @@ const init = async () => {
     config.fields['import-local-docx'] = false;
 
     // initial state setup, if the fields are empty, mark them as invalid
-    if (SAVE_AS_JCR_PACKAGE.checked) {
-      JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-      JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-    } else {
-      JCR_SITE_FOLDER.disabled = true;
-      JCR_ASSET_FOLDER.disabled = true;
-    }
+    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
+    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
+
+    project.setSitePath(JCR_SITE_FOLDER.value);
+    project.setAssetPath(JCR_ASSET_FOLDER.value);
   }
 
   if (!IS_BULK) {

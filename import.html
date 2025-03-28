@@ -69,7 +69,6 @@
                                         <sp-number-field class="option-field" id="import-pageload-timeout" value="100"
                                             min="0" step="100"
                                             format-options='{ "style": "unit", "unit": "millisecond", "unitDisplay": "short" }'></sp-number-field>
-
                                         <div class="local-save">
                                             <div class="docx-or-jcr">
                                                 <sp-checkbox class="option-field" id="import-local-docx" checked>
@@ -82,12 +81,30 @@
                                             </div>
                                             <div id="jcr-package-fields">
                                                 <div>
-                                                    <sp-field-label for="jcr-site-folder" required>AEM Site's folder name</sp-field-label>
-                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield"></sp-textfield>
+                                                    <div>
+                                                        <sp-field-label for="jcr-site-folder" required>Content Import Path</sp-field-label>
+                                                        <sp-contextual-help>
+                                                            <p>The import destination must reside under the path: '/content/'</p>
+                                                        </sp-contextual-help>
+                                                    </div>
+                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield" pattern="/content/.+">
+                                                        <sp-help-text slot="help-text">
+                                                            Example: /content/mysite
+                                                        </sp-help-text>
+                                                    </sp-textfield>
                                                 </div>
                                                 <div>
-                                                    <sp-field-label for="jcr-asset-folder" required>AEM Assets' folder name</sp-field-label>
-                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield"></sp-textfield>
+                                                    <div>
+                                                        <sp-field-label for="jcr-asset-folder" required>Asset Import Path</sp-field-label>
+                                                        <sp-contextual-help>
+                                                            <p>The asset import destination must reside under the path: '/content/dam/'</p>
+                                                        </sp-contextual-help>
+                                                    </div>
+                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield" pattern="/content/dam/.+">
+                                                        <sp-help-text slot="help-text">
+                                                            Example: /content/dam/assets
+                                                        </sp-help-text>
+                                                    </sp-textfield>
                                                 </div>
                                             </div>
                                             <sp-checkbox class="option-field" id="import-local-html">
