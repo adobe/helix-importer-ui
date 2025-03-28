@@ -1,3 +1,10 @@
+## [1.53.31](https://github.com/adobe/helix-importer-ui/compare/v1.53.30...v1.53.31) (2025-03-28)
+
+
+### Bug Fixes
+
+* **sites-30298:** pass asset and site path values to import scripts ([#500](https://github.com/adobe/helix-importer-ui/issues/500)) ([36481b0](https://github.com/adobe/helix-importer-ui/commit/36481b0b9523ef07a8562284aa12b494944ff654))
+
 ## [1.53.30](https://github.com/adobe/helix-importer-ui/compare/v1.53.29...v1.53.30) (2025-03-26)
 
 
