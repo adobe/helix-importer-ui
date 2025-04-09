@@ -113,6 +113,10 @@ const postSuccessfulStep = async (results, originalURL) => {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
       }
 
+      if (config.fields['import-local-da'] && md) {
+        files.push({ type: 'da', filename: `${path}.html`, data: `<html><head></head><body><main>${WebImporter.md2html(md)}</main></body></html>` });
+      }
+
       // if we were told to save the JCR package, add it to the list
       if (config.fields['import-jcr-package'] && jcr) {
         jcrPages.push({
@@ -371,7 +375,7 @@ const startImport = async () => {
 
   disableProcessButtons();
   toggleLoadingButton(IMPORT_BUTTON);
-  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-jcr-package'];
+  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-jcr-package'] || config.fields['import-local-da'];
   if (isSaveLocal && !dirHandle) {
     try {
       dirHandle = await getDirectoryHandle();
