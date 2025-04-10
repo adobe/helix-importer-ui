@@ -1,3 +1,15 @@
+# [1.54.0](https://github.com/adobe/helix-importer-ui/compare/v1.53.37...v1.54.0) (2025-04-10)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#457](https://github.com/adobe/helix-importer-ui/issues/457)) ([a444fd6](https://github.com/adobe/helix-importer-ui/commit/a444fd6efaa85bfebb039b0556dcafebad99147c))
+
+
+### Features
+
+* save for DA ([#506](https://github.com/adobe/helix-importer-ui/issues/506)) ([e239bcf](https://github.com/adobe/helix-importer-ui/commit/e239bcf02a10642b70bbdaf0a1af3f217e3c0e50))
+
 ## [1.53.37](https://github.com/adobe/helix-importer-ui/compare/v1.53.36...v1.53.37) (2025-04-10)
 
 
