@@ -13,7 +13,7 @@
 const path = require('path');
 
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const { NormalModuleReplacementPlugin, DefinePlugin } = require('webpack');
+const { NormalModuleReplacementPlugin, DefinePlugin, ProvidePlugin } = require('webpack');
 
 // helix-importer module
 const importer = {
@@ -66,7 +66,11 @@ const importer = {
     new DefinePlugin({
       process: {
         env: {},
+        version: JSON.stringify(process.version),
       },
+    }),
+    new ProvidePlugin({
+      Buffer: ['buffer', 'Buffer'],
     }),
   ],
   module: {
