@@ -1,3 +1,10 @@
+## [1.54.2](https://github.com/adobe/helix-importer-ui/compare/v1.54.1...v1.54.2) (2025-04-11)
+
+
+### Bug Fixes
+
+* image2png function must await to get buffer data from the blob ([#509](https://github.com/adobe/helix-importer-ui/issues/509)) ([bb5c2ab](https://github.com/adobe/helix-importer-ui/commit/bb5c2ab80764537904baf0bbf3e014cf0462d487))
+
 ## [1.54.1](https://github.com/adobe/helix-importer-ui/compare/v1.54.0...v1.54.1) (2025-04-10)
 
 
