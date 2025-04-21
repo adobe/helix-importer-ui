@@ -4,9 +4,9 @@ import '@spectrum-web-components/theme/theme-dark.js';
 import '@spectrum-web-components/theme/scale-medium.js';
 
 import '@spectrum-web-components/theme/sp-theme.js';
-
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-edit.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-anchor-select.js';
+import '@spectrum-web-components/icons-workflow/icons/sp-icon-lock-closed.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-alias.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-delete.js';
 import '@spectrum-web-components/icons-workflow/icons/sp-icon-contrast.js';
@@ -32,6 +32,11 @@ import '@spectrum-web-components/link/sp-link.js';
 import '@spectrum-web-components/asset/sp-asset.js';
 import '@spectrum-web-components/color-handle/sp-color-handle.js';
 import '@spectrum-web-components/picker/sp-picker.js';
+import '@spectrum-web-components/radio/sp-radio.js';
+import '@spectrum-web-components/radio/sp-radio-group.js';
+
+import '@spectrum-web-components/coachmark/sp-coachmark.js';
+import '@spectrum-web-components/coachmark/sp-coach-indicator.js';
 
 import '@spectrum-web-components/divider/sp-divider.js';
 import '@spectrum-web-components/help-text/sp-help-text.js';
@@ -56,6 +61,8 @@ import '@spectrum-web-components/menu/sp-menu-divider.js';
 
 import '@spectrum-web-components/popover/sp-popover.js';
 import '@spectrum-web-components/dialog/sp-dialog-base.js';
+import '@spectrum-web-components/dialog/sp-dialog.js';
 import '@spectrum-web-components/dialog/sp-dialog-wrapper.js';
 import '@spectrum-web-components/overlay/sp-overlay.js';
+import '@spectrum-web-components/overlay/overlay-trigger.js';
 import '@spectrum-web-components/contextual-help/sp-contextual-help.js';

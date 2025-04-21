@@ -33,7 +33,10 @@ const setupBulkUI = () => {
     if (urlsArray) {
       const accordionItem = document.querySelector('sp-accordion-item');
       if (urlsArray.length <= 20 && initial) {
-        accordionItem.click();
+        accordionItem.open = true;
+      } else {
+        const accordionItem2 = document.querySelector('sp-accordion-item:nth-child(2)');
+        accordionItem2.open = true;
       }
       accordionItem.label = `URLs (${urlsArray.length})`;
     }

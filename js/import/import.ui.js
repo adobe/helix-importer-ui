@@ -52,9 +52,6 @@ const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-previ
 const IMPORT_FILE_URL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
-const SAVE_AS_DOCX = document.getElementById('import-local-docx');
-const SAVE_AS_JCR_PACKAGE = document.getElementById('import-jcr-package');
-const JCR_PACKAGE_FIELDS = document.getElementById('jcr-package-fields');
 const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
 const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
 
@@ -480,29 +477,6 @@ const init = async () => {
 
   // figure out based on the project type what to option to display to the user.
   project = await Project(config);
-  const type = project.getType();
-
-  if (type === 'doc') {
-    JCR_PACKAGE_FIELDS.remove();
-    SAVE_AS_JCR_PACKAGE.remove();
-    config.fields['import-jcr-package'] = false;
-
-    // bulk import does not have these tabs
-    const jcrTab = document.querySelector('sp-tab[label="JCR"]');
-    if (jcrTab) {
-      jcrTab.remove();
-    }
-  } else {
-    SAVE_AS_DOCX.remove();
-    config.fields['import-local-docx'] = false;
-
-    // initial state setup, if the fields are empty, mark them as invalid
-    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-
-    project.setSitePath(JCR_SITE_FOLDER.value);
-    project.setAssetPath(JCR_ASSET_FOLDER.value);
-  }
 
   if (!IS_BULK) {
     setupPreview(PARENT_SELECTOR, project);
