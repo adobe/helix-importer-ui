@@ -13,6 +13,7 @@
 import './topnav.js';
 import './sidenav.js';
 import './status-bar.js';
+import './tour.js';
 import { attachRuntime } from './shell.js';
 
 const iframe = document.querySelector('main > iframe');

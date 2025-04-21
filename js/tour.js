@@ -13,7 +13,7 @@ import { LOCAL_STORAGE_KEYS } from './shared/localstorage.js';
 /**
  * Shows a coachmark for the project picker if the user hasn't seen it before
  */
-export default function showProjectPickerCoachmark() {
+function showProjectPickerCoachmark() {
   if (localStorage.getItem(LOCAL_STORAGE_KEYS.TOURS_PROJECT_PICKER_SEEN)
     || localStorage.getItem(LOCAL_STORAGE_KEYS.PROJECT_TYPE_LOCKED)) {
     return;
@@ -55,7 +55,7 @@ export default function showProjectPickerCoachmark() {
 
   const contentSlot = window.top.document.createElement('div');
   contentSlot.slot = 'content';
-  contentSlot.textContent = 'This is your project picker. Based on your project selection the UI will update to show the appropriate options.';
+  contentSlot.textContent = 'This is your project picker. Based on the selection, the user interface will update to show the appropriate fields.';
   coachmark.appendChild(contentSlot);
 
   overlay.appendChild(coachmark);
