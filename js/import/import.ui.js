@@ -135,7 +135,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       // save all other files (doc, html, md)
       files.forEach((file) => {
         try {
-          const filePath = `/${file.type}${file.filename}`;
+          const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
           saveFile(dirHandle, filePath, file.data);
           data.file = filePath;
           data.status = 'Success';
