@@ -45,18 +45,14 @@ import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 import { hasText } from '../function.js';
 
 const PARENT_SELECTOR = '.import';
-
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
-
 const IMPORT_FILE_URL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
 const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
 const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
-
 const FOLDER_NAME_SPAN = document.getElementById('folder-name');
-
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 
 const config = {};
@@ -65,7 +61,6 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-const allImagesFound = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -130,12 +125,10 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
 
-        allImagesFound.push(...imageUrls);
-
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder);
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, imageUrls, siteFolder, assetFolder);
         }
       }
 
