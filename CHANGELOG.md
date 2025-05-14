@@ -1,3 +1,10 @@
+# [1.55.0](https://github.com/adobe/helix-importer-ui/compare/v1.54.15...v1.55.0) (2025-05-14)
+
+
+### Features
+
+* Introduce Authoring Experience Selection ([f4ffbe9](https://github.com/adobe/helix-importer-ui/commit/f4ffbe9bcc66e073781884b8ff9cbe7c5e852229))
+
 ## [1.54.15](https://github.com/adobe/helix-importer-ui/compare/v1.54.14...v1.54.15) (2025-05-13)
 
 
