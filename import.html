@@ -59,9 +59,10 @@
                                 <sp-help-text slot="negative-help-text">Please enter a valid URL.</sp-help-text>
                             </sp-textfield>
                             <sp-accordion>
-                                <sp-accordion-item label="Import Options">
+                                <sp-accordion-item label="Import Options" open>
                                     <div>
-                                        <sp-field-label for="import-file-url" required>Transformation file URL</sp-field-label>
+                                        <sp-field-label for="import-file-url">Transformation file
+                                            URL</sp-field-label>
                                         <sp-textfield class="option-field" id="import-file-url" type="url"
                                             value="http://localhost:3001/tools/importer/import.js"></sp-textfield>
 
@@ -74,50 +75,57 @@
                                                 <sp-checkbox class="option-field" id="import-local-docx" checked>
                                                     Save as docx
                                                 </sp-checkbox>
+                                                <!-- Fields to be dynamically displayed -->
+                                            </div>
+                                            <div id="xwalk">
                                                 <sp-checkbox class="option-field" id="import-jcr-package">
                                                     Save as JCR Package
                                                 </sp-checkbox>
-                                                <!-- Fields to be dynamically displayed -->
-                                            </div>
-                                            <div id="jcr-package-fields">
-                                                <div>
+                                                <div id="jcr-package-fields">
                                                     <div>
-                                                        <sp-field-label for="jcr-site-folder" required>Content Import Path</sp-field-label>
-                                                        <sp-contextual-help>
-                                                            <p>The import destination must reside under the path: '/content/'</p>
-                                                        </sp-contextual-help>
+                                                        <div>
+                                                            <sp-field-label for="jcr-site-folder" required>Content
+                                                                Import Path</sp-field-label>
+                                                            <sp-contextual-help>
+                                                                <p>The import destination must reside under the path:
+                                                                    '/content/'</p>
+                                                            </sp-contextual-help>
+                                                        </div>
+                                                        <sp-textfield id="jcr-site-folder" type="text" class="textfield"
+                                                            pattern="/content/.+">
+                                                            <sp-help-text slot="help-text">
+                                                                Example: /content/mysite
+                                                            </sp-help-text>
+                                                        </sp-textfield>
                                                     </div>
-                                                    <sp-textfield id="jcr-site-folder" type="text" class="textfield" pattern="/content/.+">
-                                                        <sp-help-text slot="help-text">
-                                                            Example: /content/mysite
-                                                        </sp-help-text>
-                                                    </sp-textfield>
-                                                </div>
-                                                <div>
                                                     <div>
-                                                        <sp-field-label for="jcr-asset-folder" required>Asset Import Path</sp-field-label>
-                                                        <sp-contextual-help>
-                                                            <p>The asset import destination must reside under the path: '/content/dam/'</p>
-                                                        </sp-contextual-help>
+                                                        <div>
+                                                            <sp-field-label for="jcr-asset-folder" required>Asset Import
+                                                                Path</sp-field-label>
+                                                            <sp-contextual-help>
+                                                                <p>The asset import destination must reside under the
+                                                                    path: '/content/dam/'</p>
+                                                            </sp-contextual-help>
+                                                        </div>
+                                                        <sp-textfield id="jcr-asset-folder" type="text"
+                                                            class="textfield" pattern="/content/dam/.+">
+                                                            <sp-help-text slot="help-text">
+                                                                Example: /content/dam/assets
+                                                            </sp-help-text>
+                                                        </sp-textfield>
                                                     </div>
-                                                    <sp-textfield id="jcr-asset-folder" type="text" class="textfield" pattern="/content/dam/.+">
-                                                        <sp-help-text slot="help-text">
-                                                            Example: /content/dam/assets
-                                                        </sp-help-text>
-                                                    </sp-textfield>
                                                 </div>
                                             </div>
+                                            <sp-checkbox class="option-field" id="import-local-da">
+                                                Save HTML for Document Authoring
+                                            </sp-checkbox>
                                             <sp-checkbox class="option-field" id="import-local-html">
-                                                Save as HTML
+                                                Save raw HTML
                                             </sp-checkbox>
                                             <sp-checkbox class="option-field" id="import-local-md">
                                                 Save as Markdown
                                             </sp-checkbox>
-                                            <sp-checkbox class="option-field" id="import-local-da">
-                                                Save for DA
-                                            </sp-checkbox>
                                         </div>
-
                                         <sp-checkbox class="option-field" id="import-enable-js">
                                             Enable JavaScript
                                         </sp-checkbox>

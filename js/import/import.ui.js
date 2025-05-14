@@ -45,21 +45,14 @@ import attachJcrFieldListeners from '../shared/jcr/field-listener.js';
 import { hasText } from '../function.js';
 
 const PARENT_SELECTOR = '.import';
-
 const CONFIG_PARENT_SELECTOR = `${PARENT_SELECTOR} form`;
 const PREVIEW_CONTAINER = document.querySelector(`${PARENT_SELECTOR} .page-preview`);
-
 const IMPORT_FILE_URL_FIELD = document.getElementById('import-file-url');
 const IMPORT_BUTTON = document.getElementById('import-doimport-button');
 const DEFAULT_TRANSFORMER_USED = document.getElementById('transformation-file-default');
-const SAVE_AS_DOCX = document.getElementById('import-local-docx');
-const SAVE_AS_JCR_PACKAGE = document.getElementById('import-jcr-package');
-const JCR_PACKAGE_FIELDS = document.getElementById('jcr-package-fields');
 const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
 const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
-
 const FOLDER_NAME_SPAN = document.getElementById('folder-name');
-
 const IS_BULK = document.querySelector('.import-bulk') !== null;
 
 const config = {};
@@ -68,7 +61,6 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-const allImagesFound = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -133,19 +125,17 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
 
-        allImagesFound.push(...imageUrls);
-
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, allImagesFound, siteFolder, assetFolder);
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, imageUrls, siteFolder, assetFolder);
         }
       }
 
       // save all other files (doc, html, md)
       files.forEach((file) => {
         try {
-          const filePath = `/${file.type}${file.filename}`;
+          const filePath = files.length > 1 ? `/${file.type}${file.filename}` : file.filename;
           saveFile(dirHandle, filePath, file.data);
           data.file = filePath;
           data.status = 'Success';
@@ -480,29 +470,6 @@ const init = async () => {
 
   // figure out based on the project type what to option to display to the user.
   project = await Project(config);
-  const type = project.getType();
-
-  if (type === 'doc') {
-    JCR_PACKAGE_FIELDS.remove();
-    SAVE_AS_JCR_PACKAGE.remove();
-    config.fields['import-jcr-package'] = false;
-
-    // bulk import does not have these tabs
-    const jcrTab = document.querySelector('sp-tab[label="JCR"]');
-    if (jcrTab) {
-      jcrTab.remove();
-    }
-  } else {
-    SAVE_AS_DOCX.remove();
-    config.fields['import-local-docx'] = false;
-
-    // initial state setup, if the fields are empty, mark them as invalid
-    JCR_SITE_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_SITE_FOLDER.id}`) === '';
-    JCR_ASSET_FOLDER.invalid = localStorage.getItem(`textfield-${JCR_ASSET_FOLDER.id}`) === '';
-
-    project.setSitePath(JCR_SITE_FOLDER.value);
-    project.setAssetPath(JCR_ASSET_FOLDER.value);
-  }
 
   if (!IS_BULK) {
     setupPreview(PARENT_SELECTOR, project);

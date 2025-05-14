@@ -66,9 +66,8 @@ const options = {
     try {
       ctx.drawImage(img, 0, 0);
       const newBlob = await canvas.convertToBlob();
-      const newData = await newBlob.arrayBuffer();
       return {
-        data: newData,
+        data: newBlob.arrayBuffer(),
         width,
         height,
         type: 'image/png',
