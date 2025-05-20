@@ -1,3 +1,10 @@
+## [1.55.2](https://github.com/adobe/helix-importer-ui/compare/v1.55.1...v1.55.2) (2025-05-20)
+
+
+### Bug Fixes
+
+* **526:** JS error during bulk import ([dbb15b0](https://github.com/adobe/helix-importer-ui/commit/dbb15b06aefc50c2585ef1d4d4c42657db9d932a))
+
 ## [1.55.1](https://github.com/adobe/helix-importer-ui/compare/v1.55.0...v1.55.1) (2025-05-19)
 
 
