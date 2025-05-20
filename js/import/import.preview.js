@@ -88,9 +88,12 @@ const getReport = async (reportStatus) => {
 
 const attachListeners = (config, parentSelector) => {
   document.querySelector('#import-doimport-button').addEventListener('click', (async () => {
-    preview.transformedEditor.setValue('Import in progress...');
-    preview.jcrEditor.setValue('Import in progress...');
-    preview.markdownEditor.setValue('Import in progress...');
+    // bulk import does not have these previews
+    if (preview.transformedEditor && preview.jcrEditor && preview.markdownEditor) {
+      preview.transformedEditor.setValue('Import in progress...');
+      preview.jcrEditor.setValue('Import in progress...');
+      preview.markdownEditor.setValue('Import in progress...');
+    }
   }));
 
   PreviewButtons.DOWNLOAD_IMPORT_REPORT_BUTTON?.addEventListener('click', (async () => {
