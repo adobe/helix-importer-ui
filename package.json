@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@adobe/helix-importer": "3.4.90",
-    "@adobe/helix-importer-jcr-packaging": "2.0.6",
+    "@adobe/helix-importer-jcr-packaging": "2.0.7",
     "@adobe/mdast-util-gridtables": "4.0.12",
     "@adobe/remark-gridtables": "3.0.13",
     "@spectrum-web-components/bundle": "1.6.0",
