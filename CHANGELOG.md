@@ -1,3 +1,10 @@
+## [1.55.4](https://github.com/adobe/helix-importer-ui/compare/v1.55.3...v1.55.4) (2025-05-21)
+
+
+### Bug Fixes
+
+* keep track of all image during bulk imports ([#528](https://github.com/adobe/helix-importer-ui/issues/528)) ([f080cb3](https://github.com/adobe/helix-importer-ui/commit/f080cb331ca1bf438c015118a44610910fb50d5d))
+
 ## [1.55.3](https://github.com/adobe/helix-importer-ui/compare/v1.55.2...v1.55.3) (2025-05-20)
 
 
