@@ -61,6 +61,7 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
+let jcrPageImages = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -124,11 +125,12 @@ const postSuccessfulStep = async (results, originalURL) => {
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
+        jcrPageImages.push(...imageUrls);
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, imageUrls, siteFolder, assetFolder);
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, jcrPageImages, siteFolder, assetFolder);
         }
       }
 
@@ -439,6 +441,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
+    jcrPageImages = [];
     await startImport();
   });
 
