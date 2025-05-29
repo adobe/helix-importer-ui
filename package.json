@@ -36,7 +36,7 @@
     "ws": "8.18.2"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.9",
+    "@adobe/eslint-config-helix": "3.0.1",
     "@babel/core": "7.27.1",
     "@babel/eslint-parser": "7.27.1",
     "@semantic-release/changelog": "6.0.3",
