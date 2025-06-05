@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-importer-ui",
   "description": "helix-importer-ui",
-  "version": "1.55.4",
+  "version": "1.55.7",
   "type": "module",
   "scripts": {
     "test": "c8 mocha",
@@ -16,7 +16,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-importer": "3.4.90",
+    "@adobe/helix-importer": "3.4.92",
     "@adobe/helix-importer-jcr-packaging": "2.0.7",
     "@adobe/mdast-util-gridtables": "4.0.12",
     "@adobe/remark-gridtables": "3.0.13",
@@ -27,7 +27,7 @@
     "hast-util-to-html": "9.0.5",
     "jszip": "3.10.1",
     "mdast-util-to-hast": "13.2.0",
-    "parcel": "2.15.1",
+    "parcel": "2.15.2",
     "path-browserify": "1.0.1",
     "rehype-format": "5.0.1",
     "remark-gfm": "4.0.1",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.9",
-    "@babel/core": "7.27.1",
+    "@babel/core": "7.27.4",
     "@babel/eslint-parser": "7.27.1",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "7.1.0",
@@ -52,13 +52,13 @@
     "eslint-plugin-import": "2.31.0",
     "html-webpack-plugin": "5.6.3",
     "mini-css-extract-plugin": "2.9.2",
-    "mocha": "11.4.0",
+    "mocha": "11.5.0",
     "node-polyfill-webpack-plugin": "4.1.0",
-    "semantic-release": "24.2.4",
+    "semantic-release": "24.2.5",
     "semantic-release-discord-bot": "^1.1.0",
-    "stylelint": "16.19.1",
+    "stylelint": "16.20.0",
     "stylelint-config-standard": "38.0.0",
-    "webpack": "5.99.8",
+    "webpack": "5.99.9",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.1",
     "webpack-merge": "6.0.1"
