@@ -22,6 +22,7 @@ import alert from '../shared/alert.js';
 import { toggleLoadingButton } from '../shared/ui.js';
 import { registerRuntime } from '../shared/runtime.js';
 import { applyDefaultTheme } from '../shared/theme.js';
+import { convertTablesToDA } from '../shared/da.js';
 import {
   setupPreview,
   attachPreviewListeners,
@@ -106,8 +107,16 @@ const postSuccessfulStep = async (results, originalURL) => {
         files.push({ type: 'md', filename: `${path}.md`, data: md });
       }
 
+      // if we were told to save the DA file, add it to the list
       if (config.fields['import-local-da'] && md) {
-        files.push({ type: 'da', filename: `${path}.html`, data: `<html><head></head><body><main>${WebImporter.md2html(md)}</main></body></html>` });
+        // Convert markdown to HTML, then to DA blocks, then flatten
+        const html = WebImporter.md2html(md);
+        const daHtml = convertTablesToDA(html);
+        files.push({ 
+          type: 'da', 
+          filename: `${path}.html`, 
+          data: `<body><main><div>${daHtml}</div></main></body>` 
+        });
       }
 
       // if we were told to save the JCR package, add it to the list
