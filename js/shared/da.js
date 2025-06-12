@@ -8,7 +8,7 @@
 export function convertTablesToDA(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
-    const tables = doc.querySelectorAll('table');
+    const tables = doc.querySelectorAll('table:not(table table)');
     if (!tables.length) return doc.body.innerHTML;
   
     tables.forEach(table => {
