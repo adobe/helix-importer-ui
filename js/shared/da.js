@@ -12,12 +12,11 @@ export function convertTablesToDA(html) {
     if (!tables.length) return doc.body.innerHTML;
   
     tables.forEach(table => {
-      // Get block name from first th or td in the first row
+      // Get block name from first row
       let blockName = '';
       const firstRow = table.rows[0];
       if (firstRow) {
-        const firstCell = firstRow.cells[0];
-        if (firstCell) blockName = firstCell.textContent.trim().toLowerCase();
+        blockName = firstRow.textContent.trim().toLowerCase();
       }
       if (!blockName) return;
   
@@ -28,11 +27,7 @@ export function convertTablesToDA(html) {
       // Convert each row to a div, skipping the first row if it's the block name
       Array.from(table.rows).forEach((row, idx) => {
         // Skip first row if it's a single cell with the block name
-        if (
-          idx === 0 &&
-          row.cells.length === 1 &&
-          row.cells[0].textContent.trim().toLowerCase() === blockName
-        ) {
+        if (idx === 0) {
           return;
         }
         const rowDiv = doc.createElement('div');
