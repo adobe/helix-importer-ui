@@ -16,6 +16,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
+    "@adobe/helix-html-pipeline": "6.25.5",
     "@adobe/helix-importer": "3.4.94",
     "@adobe/helix-importer-jcr-packaging": "2.0.7",
     "@adobe/mdast-util-gridtables": "4.0.12",
@@ -24,10 +25,7 @@
     "@spectrum-web-components/icons-workflow": "1.6.0",
     "buffer": "6.0.3",
     "hast-util-raw": "9.1.0",
-    "hast-util-select": "6.0.4",
     "hast-util-to-html": "9.0.5",
-    "hast-util-to-string": "3.0.1",
-    "hastscript": "9.0.1",
     "jszip": "3.10.1",
     "mdast-util-to-hast": "13.2.0",
     "parcel": "2.15.2",
@@ -36,7 +34,6 @@
     "remark-gfm": "4.0.1",
     "remark-parse": "11.0.0",
     "unified": "11.0.5",
-    "unist-util-visit": "5.0.0",
     "ws": "8.18.2"
   },
   "devDependencies": {
