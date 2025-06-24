@@ -10,47 +10,31 @@
  * governing permissions and limitations under the License.
  */
 
-import { toHast as mdast2hast, defaultHandlers } from 'mdast-util-to-hast';
-import { raw } from 'hast-util-raw';
-import remarkGridTable from '@adobe/remark-gridtables';
-import { mdast2hastGridTablesHandler, TYPE_TABLE } from '@adobe/mdast-util-gridtables';
 import { toHtml } from 'hast-util-to-html';
-import rehypeFormat from 'rehype-format';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
+import { IDSlugger } from '@adobe/helix-html-pipeline/src/utils/id-slugger.js';
+import html from '@adobe/helix-html-pipeline/src/steps/make-html.js';
+import parseMarkdown from '@adobe/helix-html-pipeline/src/steps/parse-markdown.js';
 import split from '@adobe/helix-html-pipeline/src/steps/split-sections.js';
+import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 
 export default function md2html(md, da = false) {
-  // note: we could use the entire unified chain, but it would need to be async -
-  // which would require too much of a change
-  const mdast = unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkGridTable)
-    .parse(md);
+  const state = { content: { data: md, slugger: new IDSlugger() } };
+
+  parseMarkdown(state);
 
   if (da) {
-    split({ content: { mdast } });
+    split(state);
   }
 
-  const hast = mdast2hast(mdast, {
-    handlers: {
-      ...defaultHandlers,
-      [TYPE_TABLE]: mdast2hastGridTablesHandler(),
-    },
-    allowDangerousHtml: true,
-  });
-
-  raw(hast);
-  rehypeFormat()(hast);
+  html(state);
 
   if (da) {
-    createPageBlocks({ content: { hast } });
+    createPageBlocks(state);
+    fixSections(state);
   }
 
-  return toHtml(hast, {
+  return toHtml(state.content.hast, {
     upperDoctype: true,
   });
 }
