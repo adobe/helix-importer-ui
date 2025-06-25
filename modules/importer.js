@@ -92,7 +92,7 @@ async function md2jcrWrapper(url, document, transformCfg, params) {
   return md2jcr(url, document, transformCfg, options, params);
 }
 
-export { default as md2html } from './md2html.js';
+export { md2da, md2html } from './md2html.js';
 
 const JCRUtils = {
   createJcrPackage,

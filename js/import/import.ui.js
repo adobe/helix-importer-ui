@@ -107,7 +107,7 @@ const postSuccessfulStep = async (results, originalURL) => {
       }
 
       if (config.fields['import-local-da'] && md) {
-        files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2html(md, true)}</main></body>` });
+        files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
       }
 
       // if we were told to save the JCR package, add it to the list

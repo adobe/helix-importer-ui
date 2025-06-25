@@ -18,7 +18,7 @@ import split from '@adobe/helix-html-pipeline/src/steps/split-sections.js';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 
-export default function md2html(md, da = false) {
+function md2htmlInternal(md, da = false) {
   const state = { content: { data: md, slugger: new IDSlugger() } };
 
   parseMarkdown(state);
@@ -38,3 +38,13 @@ export default function md2html(md, da = false) {
     upperDoctype: true,
   });
 }
+
+function md2da(md) {
+  return md2htmlInternal(md, true);
+}
+
+function md2html(md) {
+  return md2htmlInternal(md, false);
+}
+
+export { md2da, md2html };
