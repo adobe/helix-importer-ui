@@ -30,8 +30,8 @@ export default function md2html(md, da = false) {
   html(state);
 
   if (da) {
-    createPageBlocks(state);
     fixSections(state);
+    createPageBlocks(state);
   }
 
   return toHtml(state.content.hast, {
