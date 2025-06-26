@@ -10,37 +10,57 @@
  * governing permissions and limitations under the License.
  */
 
-import { toHast as mdast2hast, defaultHandlers } from 'mdast-util-to-hast';
-import { raw } from 'hast-util-raw';
-import remarkGridTable from '@adobe/remark-gridtables';
-import { mdast2hastGridTablesHandler, TYPE_TABLE } from '@adobe/mdast-util-gridtables';
 import { toHtml } from 'hast-util-to-html';
-import rehypeFormat from 'rehype-format';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
+import { IDSlugger } from '@adobe/helix-html-pipeline/src/utils/id-slugger.js';
+import html from '@adobe/helix-html-pipeline/src/steps/make-html.js';
+import parseMarkdown from '@adobe/helix-html-pipeline/src/steps/parse-markdown.js';
+import split from '@adobe/helix-html-pipeline/src/steps/split-sections.js';
+import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
+import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 
-export default function md2html(md) {
-  // note: we could use the entire unified chain, but it would need to be async -
-  // which would require too much of a change
-  const mdast = unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkGridTable)
-    .parse(md);
+/**
+ * Convert markdown to HTML
+ * @param {string} md - The markdown to convert
+ * @param {boolean} da - Whether to convert to DA compliant HTML
+ * @returns {string} The converted HTML
+ */
+function md2htmlInternal(md, da = false) {
+  const state = { content: { data: md, slugger: new IDSlugger() } };
 
-  const hast = mdast2hast(mdast, {
-    handlers: {
-      ...defaultHandlers,
-      [TYPE_TABLE]: mdast2hastGridTablesHandler(),
-    },
-    allowDangerousHtml: true,
-  });
+  parseMarkdown(state);
 
-  raw(hast);
-  rehypeFormat()(hast);
+  if (da) { // split sections (get rid of <hr> and create div nesting)
+    split(state);
+  }
 
-  return toHtml(hast, {
+  html(state);
+
+  if (da) { // convert <table> structure into <div> structure
+    fixSections(state);
+    createPageBlocks(state);
+  }
+
+  return toHtml(state.content.hast, {
     upperDoctype: true,
   });
 }
+
+/**
+ * Convert markdown to DA compliant HTML.
+ * @param {string} md - The markdown to convert
+ * @returns {string} The DA compliant HTML
+ */
+function md2da(md) {
+  return md2htmlInternal(md, true);
+}
+
+/**
+ * Convert markdown to HTML
+ * @param {string} md - The markdown to convert
+ * @returns {string} The HTML
+ */
+function md2html(md) {
+  return md2htmlInternal(md, false);
+}
+
+export { md2da, md2html };
