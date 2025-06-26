@@ -1,3 +1,10 @@
+# [1.56.0](https://github.com/adobe/helix-importer-ui/compare/v1.55.15...v1.56.0) (2025-06-26)
+
+
+### Features
+
+* **da:** split sections and convert table to divs ([#539](https://github.com/adobe/helix-importer-ui/issues/539)) ([90fe199](https://github.com/adobe/helix-importer-ui/commit/90fe199c6dbd75b8ed345e2a63146de26aea10a0))
+
 ## [1.55.15](https://github.com/adobe/helix-importer-ui/compare/v1.55.14...v1.55.15) (2025-06-24)
 
 
