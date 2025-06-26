@@ -18,18 +18,24 @@ import split from '@adobe/helix-html-pipeline/src/steps/split-sections.js';
 import fixSections from '@adobe/helix-html-pipeline/src/steps/fix-sections.js';
 import createPageBlocks from '@adobe/helix-html-pipeline/src/steps/create-page-blocks.js';
 
-export default function md2html(md, da = false) {
+/**
+ * Convert markdown to HTML
+ * @param {string} md - The markdown to convert
+ * @param {boolean} da - Whether to convert to DA compliant HTML
+ * @returns {string} The converted HTML
+ */
+function md2htmlInternal(md, da = false) {
   const state = { content: { data: md, slugger: new IDSlugger() } };
 
   parseMarkdown(state);
 
-  if (da) {
+  if (da) { // split sections (get rid of <hr> and create div nesting)
     split(state);
   }
 
   html(state);
 
-  if (da) {
+  if (da) { // convert <table> structure into <div> structure
     fixSections(state);
     createPageBlocks(state);
   }
@@ -38,3 +44,23 @@ export default function md2html(md, da = false) {
     upperDoctype: true,
   });
 }
+
+/**
+ * Convert markdown to DA compliant HTML.
+ * @param {string} md - The markdown to convert
+ * @returns {string} The DA compliant HTML
+ */
+function md2da(md) {
+  return md2htmlInternal(md, true);
+}
+
+/**
+ * Convert markdown to HTML
+ * @param {string} md - The markdown to convert
+ * @returns {string} The HTML
+ */
+function md2html(md) {
+  return md2htmlInternal(md, false);
+}
+
+export { md2da, md2html };
