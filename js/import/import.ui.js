@@ -61,8 +61,7 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-let jcrPageImages = [];
-let daPageAssets = [];
+let pageAssets = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -109,7 +108,7 @@ const postSuccessfulStep = async (results, originalURL) => {
 
       if (config.fields['import-local-da'] && md) {
         const assetUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        daPageAssets.push(...assetUrls);
+        pageAssets.push(...assetUrls);
 
         files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
 
@@ -117,7 +116,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         if (ImportStatus.isFinished()) {
           // save the referenced assets urls as a json file
           const daAssets = {
-            assets: daPageAssets,
+            assets: pageAssets,
           };
           saveFile(dirHandle, 'asset-list.json', JSON.stringify(daAssets));
         }
@@ -138,12 +137,12 @@ const postSuccessfulStep = async (results, originalURL) => {
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        jcrPageImages.push(...imageUrls);
+        pageAssets.push(...imageUrls);
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, jcrPageImages, siteFolder, assetFolder);
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, pageAssets, siteFolder, assetFolder);
         }
       }
 
@@ -454,8 +453,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
-    jcrPageImages = [];
-    daPageAssets = [];
+    pageAssets = [];
     await startImport();
   });
 
