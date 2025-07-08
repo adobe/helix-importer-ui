@@ -62,6 +62,7 @@ let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
 let jcrPageImages = [];
+let daPageAssets = [];
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -107,7 +108,19 @@ const postSuccessfulStep = async (results, originalURL) => {
       }
 
       if (config.fields['import-local-da'] && md) {
+        const assetUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
+        daPageAssets.push(...assetUrls);
+
         files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
+
+        // if we are finished importing all the pages, then we can save the da page assets as a json file
+        if (ImportStatus.isFinished()) {
+          // save the da page assets as a json file
+          const daAssets = {
+            assets: daPageAssets,
+          };
+          saveFile(dirHandle, 'asset-list.json', JSON.stringify(daAssets));
+        }
       }
 
       // if we were told to save the JCR package, add it to the list
@@ -442,6 +455,7 @@ const attachListeners = () => {
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
     jcrPageImages = [];
+    daPageAssets = [];
     await startImport();
   });
 
