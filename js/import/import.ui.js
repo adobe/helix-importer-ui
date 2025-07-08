@@ -113,9 +113,9 @@ const postSuccessfulStep = async (results, originalURL) => {
 
         files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
 
-        // if we are finished importing all the pages, then we can save the da page assets as a json file
+        // if we are finished importing all the pages, save the referenced assets urls
         if (ImportStatus.isFinished()) {
-          // save the da page assets as a json file
+          // save the referenced assets urls as a json file
           const daAssets = {
             assets: daPageAssets,
           };
