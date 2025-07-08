@@ -1,3 +1,10 @@
+# [1.57.0](https://github.com/adobe/helix-importer-ui/compare/v1.56.5...v1.57.0) (2025-07-08)
+
+
+### Features
+
+* [DA] Gather and save referenced asset urls for uploading to author bus ([#554](https://github.com/adobe/helix-importer-ui/issues/554)) ([3595487](https://github.com/adobe/helix-importer-ui/commit/3595487c8cfac29ea4bda9158c7650e5cc99144c))
+
 ## [1.56.5](https://github.com/adobe/helix-importer-ui/compare/v1.56.4...v1.56.5) (2025-07-07)
 
 
