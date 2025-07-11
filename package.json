@@ -16,7 +16,7 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-html-pipeline": "6.26.3",
+    "@adobe/helix-html-pipeline": "6.26.4",
     "@adobe/helix-importer": "3.4.98",
     "@adobe/helix-importer-jcr-packaging": "2.0.9",
     "@spectrum-web-components/bundle": "1.7.0",
