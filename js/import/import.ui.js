@@ -61,7 +61,7 @@ let project;
 let isSaveLocal = false;
 let dirHandle = null;
 let jcrPages = [];
-let pageAssets = [];
+let pageAssets = new Set();
 
 const updateImporterUI = (results, originalURL) => {
   if (!IS_BULK) {
@@ -108,17 +108,18 @@ const postSuccessfulStep = async (results, originalURL) => {
 
       if (config.fields['import-local-da'] && md) {
         const assetUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        pageAssets.push(...assetUrls);
+        assetUrls.forEach((url) => pageAssets.add(url));
 
         files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
 
         // if we are finished importing all the pages, save the referenced assets urls
         if (ImportStatus.isFinished()) {
-          // save the referenced assets urls as a json file
+          // save the referenced assets urls, and the site origin as a json file
           const daAssets = {
-            assets: pageAssets,
+            assets: Array.from(pageAssets),
+            siteOrigin: new URL(originalURL).origin,
           };
-          saveFile(dirHandle, 'asset-list.json', JSON.stringify(daAssets));
+          saveFile(dirHandle, 'asset-list.json', JSON.stringify(daAssets, null, 2));
         }
       }
 
@@ -137,12 +138,12 @@ const postSuccessfulStep = async (results, originalURL) => {
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        pageAssets.push(...imageUrls);
+        imageUrls.forEach((url) => pageAssets.add(url));
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
           // eslint-disable-next-line max-len
-          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, pageAssets, siteFolder, assetFolder);
+          await WebImporter.JCRUtils.createJcrPackage(dirHandle, jcrPages, Array.from(pageAssets), siteFolder, assetFolder);
         }
       }
 
@@ -453,7 +454,7 @@ const attachListeners = () => {
 
   IMPORT_BUTTON.addEventListener('click', async () => {
     jcrPages = [];
-    pageAssets = [];
+    pageAssets = new Set();
     await startImport();
   });
 
