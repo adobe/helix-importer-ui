@@ -108,7 +108,7 @@ const postSuccessfulStep = async (results, originalURL) => {
 
       if (config.fields['import-local-da'] && md) {
         const assetUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        assetUrls.forEach(url => pageAssets.add(url));
+        assetUrls.forEach((url) => pageAssets.add(url));
 
         files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
 
@@ -138,7 +138,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const assetFolder = JCR_ASSET_FOLDER.value || (() => { throw new Error('Asset folder name is required'); })();
 
         const imageUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
-        imageUrls.forEach(url => pageAssets.add(url));
+        imageUrls.forEach((url) => pageAssets.add(url));
 
         // if we are finished importing all the pages, then we can create the JCR package
         if (ImportStatus.isFinished() && config.fields['import-jcr-package']) {
