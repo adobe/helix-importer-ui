@@ -1,3 +1,10 @@
+## [1.57.3](https://github.com/adobe/helix-importer-ui/compare/v1.57.2...v1.57.3) (2025-07-17)
+
+
+### Bug Fixes
+
+* [Xwalk + DA] Handle duplicate asset references in bulk import ([#559](https://github.com/adobe/helix-importer-ui/issues/559)) ([a711a9a](https://github.com/adobe/helix-importer-ui/commit/a711a9abc669ab2f96065f6d5191abf5e26070a0))
+
 ## [1.57.2](https://github.com/adobe/helix-importer-ui/compare/v1.57.1...v1.57.2) (2025-07-16)
 
 
