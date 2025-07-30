@@ -187,8 +187,10 @@ const loadPreview = ({ md, html: outputHTML, jcr }) => {
 
 const updatePreview = (results) => {
   try {
-    const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
+    // attempt to get the status from the first result, default to success if not found
+    const status = results.length > 0 && results[0]?.status ? results[0].status.toLowerCase() : 'success';
     PreviewElements.IMPORT_FILE_PICKER_CONTAINER.textContent = '';
+
     if (status === 'success') {
       const picker = document.createElement('sp-picker');
       picker.setAttribute('size', 'm');
@@ -214,6 +216,7 @@ const updatePreview = (results) => {
 
       PreviewElements.IMPORT_FILE_PICKER_CONTAINER.append(picker);
 
+      // if there are results, add a listener to the picker to load the preview
       if (results.length > 0) {
         picker.addEventListener('change', (e) => {
           const r = results.filter((i) => i.path === e.target.value)[0];
@@ -225,10 +228,15 @@ const updatePreview = (results) => {
     } else if (status === 'redirect') {
       alert.warning('No page imported', `${results[0].from} redirects to ${results[0].to}`);
     } else if (status === 'error') {
-      // reset the HTML, JCR, and MD code windows to empty
-      preview.transformedEditor.setValue('');
-      preview.jcrEditor.setValue('');
-      preview.markdownEditor.setValue('');
+      // if the results contain values then set the editors
+      if (results[0]?.results?.[0]) {
+        loadPreview(results[0].results[0]);
+      } else {
+        // reset the HTML, JCR, and MD code windows to empty
+        preview.transformedEditor.setValue('');
+        preview.jcrEditor.setValue('');
+        preview.markdownEditor.setValue('');
+      }
     }
   } catch (err) {
     // eslint-disable-next-line no-console

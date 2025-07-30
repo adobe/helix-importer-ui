@@ -2,6 +2,7 @@
 
 :root {
   --toolbar-height: 50px;
+  --mod-modal-max-width: 60%;
 }
 
 *,
@@ -354,7 +355,6 @@ section .page-preview iframe {
   position: fixed;
   bottom: 0;
   margin-bottom: var(--spectrum-global-dimension-size-250);
-  ;
   display: flex;
   align-items: center;
   justify-content: center;
