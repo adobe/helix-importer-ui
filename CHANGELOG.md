@@ -1,3 +1,48 @@
+## [1.57.6](https://github.com/adobe/helix-importer-ui/compare/v1.57.5...v1.57.6) (2025-07-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-importer to v3.4.101 ([#565](https://github.com/adobe/helix-importer-ui/issues/565)) ([21a0999](https://github.com/adobe/helix-importer-ui/commit/21a09991694c56bc316a4737ef2b10753d573a3f))
+
+## [1.57.5](https://github.com/adobe/helix-importer-ui/compare/v1.57.4...v1.57.5) (2025-07-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-importer to v3.4.100 ([#563](https://github.com/adobe/helix-importer-ui/issues/563)) ([35e4b7f](https://github.com/adobe/helix-importer-ui/commit/35e4b7f97c79415b95fd8760b3794583a33e48ae))
+
+## [1.57.4](https://github.com/adobe/helix-importer-ui/compare/v1.57.3...v1.57.4) (2025-07-22)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#561](https://github.com/adobe/helix-importer-ui/issues/561)) ([8114032](https://github.com/adobe/helix-importer-ui/commit/8114032b2dc80bfff7b1e1d41ffe706a09cfb614))
+* **deps:** update dependency @adobe/helix-html-pipeline to v6.26.5 ([#560](https://github.com/adobe/helix-importer-ui/issues/560)) ([315566b](https://github.com/adobe/helix-importer-ui/commit/315566b8d30f3cb6825f5cbbcd659bc0dbbb7ca6))
+
+## [1.57.3](https://github.com/adobe/helix-importer-ui/compare/v1.57.2...v1.57.3) (2025-07-17)
+
+
+### Bug Fixes
+
+* [Xwalk + DA] Handle duplicate asset references in bulk import ([#559](https://github.com/adobe/helix-importer-ui/issues/559)) ([a711a9a](https://github.com/adobe/helix-importer-ui/commit/a711a9abc669ab2f96065f6d5191abf5e26070a0))
+
+## [1.57.2](https://github.com/adobe/helix-importer-ui/compare/v1.57.1...v1.57.2) (2025-07-16)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-importer to v3.4.99 ([#558](https://github.com/adobe/helix-importer-ui/issues/558)) ([4426260](https://github.com/adobe/helix-importer-ui/commit/4426260fdb237f0ba8f2e381132645600d6ca9be))
+
+## [1.57.1](https://github.com/adobe/helix-importer-ui/compare/v1.57.0...v1.57.1) (2025-07-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-html-pipeline to v6.26.4 ([#556](https://github.com/adobe/helix-importer-ui/issues/556)) ([dc81eda](https://github.com/adobe/helix-importer-ui/commit/dc81eda6bbae9c400dac9a6fc5fd906389e0525d))
+* **deps:** update dependency @adobe/helix-importer to v3.4.98 ([#555](https://github.com/adobe/helix-importer-ui/issues/555)) ([781a93f](https://github.com/adobe/helix-importer-ui/commit/781a93f5852dae82a976928fcb081ac4295ef599))
+* working on release fix ([9edc18e](https://github.com/adobe/helix-importer-ui/commit/9edc18eb2205b69536d7225912e24b08bea1d197))
+
 # [1.57.0](https://github.com/adobe/helix-importer-ui/compare/v1.56.5...v1.57.0) (2025-07-08)
 
 
