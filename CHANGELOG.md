@@ -1,3 +1,10 @@
+## [1.57.7](https://github.com/adobe/helix-importer-ui/compare/v1.57.6...v1.57.7) (2025-07-30)
+
+
+### Bug Fixes
+
+* display markdown even if jcr creation fails ([#567](https://github.com/adobe/helix-importer-ui/issues/567)) ([1a8e4a2](https://github.com/adobe/helix-importer-ui/commit/1a8e4a26a36f098f8aad7c4efb8cbc104fa7be65)), closes [#566](https://github.com/adobe/helix-importer-ui/issues/566)
+
 ## [1.57.6](https://github.com/adobe/helix-importer-ui/compare/v1.57.5...v1.57.6) (2025-07-30)
 
 
