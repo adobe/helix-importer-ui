@@ -37,8 +37,8 @@ describe('function tests', () => {
     ];
 
     invalidArrays.forEach((value) => expect(isArray(value)).to.be.false);
-    expect(isArray([])).to.be.true;
-    expect(isArray(['abc'])).to.be.true;
+    expect(isArray([])).to.equal(true);
+    expect(isArray(['abc'])).to.equal(true);
   });
 
   it('is non-empty array', () => {
@@ -56,7 +56,7 @@ describe('function tests', () => {
     ];
 
     invalidArrays.forEach((value) => expect(isNonEmptyArray(value)).to.be.false);
-    expect(isNonEmptyArray(['abc'])).to.be.true;
+    expect(isNonEmptyArray(['abc'])).to.equal(true);
   });
 
   it('is object', () => {
@@ -71,8 +71,8 @@ describe('function tests', () => {
 
     invalidObjects.forEach((value) => expect(isObject(value)).to.be.false);
 
-    expect(isObject({})).to.be.true;
-    expect(isObject({ asd: 'dsa' })).to.be.true;
+    expect(isObject({})).to.equal(true);
+    expect(isObject({ asd: 'dsa' })).to.equal(true);
   });
 
   it('non empty object', () => {
@@ -88,8 +88,8 @@ describe('function tests', () => {
 
     invalidObjects.forEach((value) => expect(isNonEmptyObject(value)).to.be.false);
 
-    expect(isNonEmptyObject({})).to.be.false;
-    expect(isNonEmptyObject({ asd: 'dsa' })).to.be.true;
+    expect(isNonEmptyObject({})).to.equal(false);
+    expect(isNonEmptyObject({ asd: 'dsa' })).to.equal(true);
   });
 
   it('is string', () => {
@@ -105,8 +105,8 @@ describe('function tests', () => {
 
     invalidStrings.forEach((value) => expect(isString(value)).to.be.false);
 
-    expect(isString('')).to.be.true;
-    expect(isString('dasd')).to.be.true;
+    expect(isString('')).to.equal(true);
+    expect(isString('dasd')).to.equal(true);
   });
 
   it('has text', () => {
@@ -123,8 +123,8 @@ describe('function tests', () => {
 
     invalidStrings.forEach((value) => expect(hasText(value)).to.be.false);
 
-    expect(hasText('a')).to.be.true;
-    expect(hasText(' ')).to.be.true;
-    expect(hasText(' a ')).to.be.true;
+    expect(hasText('a')).to.equal(true);
+    expect(hasText(' ')).to.equal(true);
+    expect(hasText(' a ')).to.equal(true);
   });
 });
