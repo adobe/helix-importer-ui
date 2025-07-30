@@ -11,42 +11,49 @@
  */
 const ALERT = document.getElementById('alert-container');
 
-const doAlert = (message, variant, details) => {
-  const toast = document.createElement('sp-toast');
-  toast.setAttribute('timeout', 1);
-  toast.setAttribute('variant', variant);
-  toast.setAttribute('open', true);
-  if (details) {
-    toast.innerHTML = `
-        ${message}
-        <sp-button
-            id="alertDetailsTrigger" 
-            slot="action"
-            static="white"
-            variant="secondary"
-            treatment="outline">
-            Details
-        </sp-button>
-    `;
-  } else {
-    toast.textContent = message;
-  }
+const doAlert = (message, variant, details, autoOpen = false) => {
+  if (!autoOpen) {
+    const toast = document.createElement('sp-toast');
+    toast.setAttribute('timeout', 1);
+    toast.setAttribute('variant', variant);
+    toast.setAttribute('open', true);
+    if (details) {
+      toast.innerHTML = `
+          ${message}
+          <sp-button
+              id="alertDetailsTrigger" 
+              slot="action"
+              static="white"
+              variant="secondary"
+              treatment="outline">
+              Details
+          </sp-button>
+      `;
+    } else {
+      toast.textContent = message;
+    }
 
-  toast.addEventListener('close', () => {
-    toast.remove();
-  });
-
-  if (ALERT.hasChildNodes()) {
-    ALERT.childNodes.forEach((node) => {
-      node.remove();
+    toast.addEventListener('close', () => {
+      toast.remove();
     });
-  }
 
-  ALERT.append(toast);
+    if (ALERT.hasChildNodes()) {
+      ALERT.childNodes.forEach((node) => {
+        node.remove();
+      });
+    }
+
+    ALERT.append(toast);
+  }
 
   if (details) {
     const overlay = document.createElement('sp-overlay');
-    overlay.setAttribute('trigger', 'alertDetailsTrigger@click');
+    if (autoOpen) {
+      overlay.setAttribute('open', true);
+    }
+    if (!autoOpen) {
+      overlay.setAttribute('trigger', 'alertDetailsTrigger@click');
+    }
     overlay.setAttribute('type', 'modal');
     overlay.innerHTML = `
         <sp-dialog-wrapper headline="Details" dismissable underlay>
@@ -61,8 +68,8 @@ const success = (message, details) => {
   doAlert(message, 'positive', details);
 };
 
-const error = (message, details) => {
-  doAlert(message, 'negative', details);
+const error = (message, details, autoOpen = false) => {
+  doAlert(message, 'negative', details, autoOpen);
 };
 
 const info = (message, details) => {

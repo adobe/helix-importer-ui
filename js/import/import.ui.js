@@ -63,11 +63,11 @@ let dirHandle = null;
 let jcrPages = [];
 let pageAssets = new Set();
 
-const updateImporterUI = (results, originalURL) => {
+const updateImporterUI = (results, originalURL, error) => {
   if (!IS_BULK) {
-    updatePreview(results, originalURL);
+    updatePreview(results, originalURL, error);
   } else {
-    updateBulkResults(results, originalURL);
+    updateBulkResults(results, originalURL, error);
   }
 };
 
@@ -440,20 +440,31 @@ const attachListeners = () => {
     }
   });
 
-  config.importer.addErrorListener(async ({ url, error: err, params }) => {
+  /**
+   * Handler for errors during the import process.
+   * @param {Object} params - The parameters passed to the error listener.
+   * @param {Array} params.originalURL - The original URL of the page that failed.
+   */
+  config.importer.addErrorListener(async ({
+    results,
+    error: err,
+    params,
+  }) => {
     const frame = getContentFrame();
     const { originalURL } = frame.dataset;
 
-    // eslint-disable-next-line no-console
-    console.error(`Error importing ${url}: ${err.message}`, err);
-    alert.error('Error importing', `${url}<br/>${err.message}`);
+    console.error(`Error importing ${originalURL}.`, err);
+
+    if (!IS_BULK) {
+      alert.error('Error importing', err.message);
+    }
 
     ImportStatus.addRow({
       url: params.originalURL,
       status: `Error: ${err.message}`,
     });
 
-    updateImporterUI([{ status: 'error' }], originalURL);
+    updateImporterUI([{ results, status: 'error' }], originalURL, err.message);
     await postImportStep();
   });
 

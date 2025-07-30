@@ -46,14 +46,15 @@ const setupBulkUI = () => {
   updateUrlLabel(true);
 };
 
-const updateBulkResults = (results, originalURL) => {
+const updateBulkResults = (results, originalURL, error) => {
   const importStatus = ImportStatus.getStatus();
 
   try {
     const status = results.length > 0 && results[0].status ? results[0].status.toLowerCase() : 'success';
     const li = document.createElement('li');
+    li.className = 'import-result-item';
+
     const link = document.createElement('sp-link');
-    link.setAttribute('size', 'm');
     link.setAttribute('target', '_blank');
     link.setAttribute('href', originalURL);
     link.textContent = originalURL;
@@ -71,7 +72,18 @@ const updateBulkResults = (results, originalURL) => {
 
     const icon = document.createElement(name);
     icon.setAttribute('label', label);
-    li.append(icon);
+
+    if (status === 'error') {
+      const errorBtn = document.createElement('span');
+      errorBtn.style.cursor = 'pointer';
+      errorBtn.addEventListener('click', () => {
+        alert.error('Error importing', error, true);
+      });
+      errorBtn.appendChild(icon);
+      li.append(errorBtn);
+    } else {
+      li.append(icon);
+    }
 
     BULK_URLS_LIST.append(li);
 

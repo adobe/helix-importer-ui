@@ -216,18 +216,46 @@ export default class PollImporter {
           result.filename = `${path}.docx`;
         });
       } else if (projectType === 'xwalk') {
-        const components = await loadComponents(this.config);
-        const out = await WebImporter.md2jcr(
-          url,
-          documentClone,
-          this.projectTransform,
-          {
-            components,
-            ...params,
-          },
-        );
-        out.url = params.originalURL;
-        results = Array.isArray(out) ? out : [out];
+        try {
+          const components = await loadComponents(this.config);
+          const out = await WebImporter.md2jcr(
+            url,
+            documentClone,
+            this.projectTransform,
+            {
+              components,
+              ...params,
+            },
+          );
+          out.url = params.originalURL;
+          results = Array.isArray(out) ? out : [out];
+        } catch (jcrError) {
+          // We try to get the markdown output first as it is helpful for
+          // debugging the md2jcr conversion
+          const mdOut = await WebImporter.html2md(
+            url,
+            documentClone,
+            this.projectTransform,
+            params,
+          );
+
+          // keep the mdResults for the error listeners
+          results = Array.isArray(mdOut) ? mdOut : [mdOut];
+
+          // notify error listeners about the JCR conversion failure, but still
+          // return the markdown output
+          this.errorListeners.forEach((listener) => {
+            listener({
+              results,
+              url,
+              error: jcrError,
+              params,
+            });
+          });
+
+          this.running = false;
+          return;
+        }
       } else {
         const out = await WebImporter.html2md(
           url,

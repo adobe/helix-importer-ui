@@ -217,15 +217,19 @@
 }
 
 .import #import-local-docx.hidden {
-    display: none;
+  display: none;
 }
 
 .import #import-jcr-package.hidden {
   display: none;
 }
 
-.import #jcr-package-fields > div > div {
+.import #jcr-package-fields>div>div {
   display: flex;
   justify-content: space-between;
   padding: 2px 0;
+}
+
+.import-bulk .import-result-item {
+  height: 20px;
 }
