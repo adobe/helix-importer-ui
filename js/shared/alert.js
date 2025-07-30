@@ -45,7 +45,7 @@ const doAlert = (message, variant, details, autoOpen = false) => {
     }
     overlay.setAttribute('type', 'modal');
     overlay.innerHTML = `
-        <sp-dialog-wrapper headline="Details" dismissable underlay class="alert-details">
+        <sp-dialog-wrapper headline="Details" dismissable underlay>
             <p>${details}</p>
         </sp-dialog-wrapper>
     `;
