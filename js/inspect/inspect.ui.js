@@ -49,11 +49,17 @@ const disableButton = () => {
 };
 
 const enablePickers = () => {
-  PICKERS.forEach((picker) => { picker.disabled = false; });
+  PICKERS.forEach((picker) => {
+    // eslint-disable-next-line no-param-reassign
+    picker.disabled = false;
+  });
 };
 
 const disablePickers = () => {
-  PICKERS.forEach((picker) => { picker.disabled = true; });
+  PICKERS.forEach((picker) => {
+    // eslint-disable-next-line no-param-reassign
+    picker.disabled = true;
+  });
 };
 
 const doDrop = async () => {
