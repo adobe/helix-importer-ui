@@ -82,14 +82,14 @@ const enableProcessButtons = () => {
 const postSuccessfulStep = async (results, originalURL) => {
   let error = false;
   await asyncForEach(results, async ({
-    docx, html, md, jcr, filename, path, report, from,
+    docx, html, md, jcr, json, filename, path, report, from,
   }) => {
     const data = {
       url: originalURL,
       path,
     };
 
-    if (isSaveLocal && dirHandle && (docx || html || md || jcr)) {
+    if (isSaveLocal && dirHandle && (docx || html || md || jcr || json)) {
       const files = [];
       // if we were told to ave the doc file, add it to the list
       if (config.fields['import-local-docx'] && docx) {
@@ -121,6 +121,10 @@ const postSuccessfulStep = async (results, originalURL) => {
           };
           saveFile(dirHandle, 'asset-list.json', JSON.stringify(daAssets, null, 2));
         }
+      }
+
+      if (config.fields['import-local-json'] && json) {
+        files.push({ type: 'json', filename: path, data: json });
       }
 
       // if we were told to save the JCR package, add it to the list
@@ -385,7 +389,7 @@ const startImport = async () => {
 
   disableProcessButtons();
   toggleLoadingButton(IMPORT_BUTTON);
-  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-jcr-package'] || config.fields['import-local-da'];
+  isSaveLocal = config.fields['import-local-docx'] || config.fields['import-local-html'] || config.fields['import-local-md'] || config.fields['import-jcr-package'] || config.fields['import-local-da'] || config.fields['import-local-json'];
   if (isSaveLocal && !dirHandle) {
     try {
       dirHandle = await getDirectoryHandle();

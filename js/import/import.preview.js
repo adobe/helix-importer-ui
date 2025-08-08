@@ -19,6 +19,8 @@ const PreviewElements = Object.freeze({
   TRANSFORMED_HTML_TEXTAREA: document.getElementById('import-transformed-html'),
   MD_SOURCE_TEXTAREA: document.getElementById('import-markdown-source'),
   MD_PREVIEW_PANEL: document.getElementById('import-markdown-preview'),
+  // use md preview panel for json
+  JSON_PREVIEW_PANEL: document.getElementById('import-markdown-preview'),
   IMPORT_FILE_PICKER_CONTAINER: document.getElementById('import-file-picker-container'),
   JCR_PANEL: document.getElementById('import-jcr'),
 });
@@ -153,7 +155,9 @@ const setupPreview = (parentSelector) => {
   return preview;
 };
 
-const loadPreview = ({ md, html: outputHTML, jcr }) => {
+const loadPreview = ({
+  md, html: outputHTML, jcr, json,
+}) => {
   if (outputHTML) {
     preview.transformedEditor.setValue(html_beautify(outputHTML.replaceAll(/\s+/g, ' '), {
       indent_size: '2',
@@ -181,7 +185,11 @@ const loadPreview = ({ md, html: outputHTML, jcr }) => {
     });
   } else {
     preview.markdownEditor.setValue('No preview available.');
-    preview.markdownPreview.innerHTML = 'No preview available.';
+    if (json) {
+      preview.markdownPreview.innerHTML = `<pre><code>${json}</code></pre>`;
+    } else {
+      preview.markdownPreview.innerHTML = 'No preview available.';
+    }
   }
 };
 

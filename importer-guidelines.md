@@ -671,7 +671,24 @@ Every new project has its own collection of new use cases which might be totally
 - Linked images are not supported by Online Word thus they will be converted to image + link in Word.
 - Reuse the DOM elements from the orignal page, no need to re-create complete DOM structures, especially if the Markdown is what you need. Example: Text in a `div` will become a paragraph, no need to create a `p` tag and replace the `div`. More generally, the DOM can be dirty, as long as the output Markdown looks as expected, it does not matter.
 - If you import multiple page "types" for the project, you cannot either handle them in the same `import.js` file or have one `import-<type>.js` file per type (or any filename convention you lie). Use the UI options to point to a different import filename.
-  
+
+## JSON import
+
+To import JSON, you need an `import.js` file with the following `transform` method:
+
+```
+export default {
+  transform: ({
+    document, url, html, params,
+  }) => {
+    return {
+      path: `/<path-to-file>.json`,
+      json: JSON.stringify(<object>, null, 2)
+    }
+  },
+};
+```
+
 ## Debugging
 
   If you experience some deep nested Javascript exception, you can run the importer ui in developer mode, JS files will not be minified and obfuscated. Just run in the `/tools/importer/helix-importer-ui` folder:

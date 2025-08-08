@@ -13,9 +13,10 @@
 
 import DocProject from './doc-project.js';
 import XWalkProject from './xwalk-project.js';
+import JsonProject from './json-project.js';
 import { LOCAL_STORAGE_KEYS } from './localstorage.js';
 /**
- * @typedef {"doc" | "xwalk"} ProjectType
+ * @typedef {"doc" | "xwalk" | "json" } ProjectType
  * @description Represents the possible types of a project.
  */
 
@@ -34,6 +35,7 @@ const Project = async (config) => {
   const projectTypeMap = {
     doc: DocProject,
     xwalk: XWalkProject,
+    json: JsonProject,
   };
 
   /**
@@ -202,7 +204,10 @@ const Project = async (config) => {
   const updateUI = () => {
     const SAVE_AS_DOCX = document.getElementById('import-local-docx');
     const DA_FIELD = document.getElementById('import-local-da');
+    const LOCAL_HTML = document.getElementById('import-local-html');
+    const LOCAL_MD = document.getElementById('import-local-md');
     const XWALK_FIELDS = document.getElementById('xwalk');
+    const JSON_FIELDS = document.getElementById('json');
     const JCR_ASSET_FOLDER = document.getElementById('jcr-asset-folder');
     const JCR_SITE_FOLDER = document.getElementById('jcr-site-folder');
 
@@ -234,6 +239,7 @@ const Project = async (config) => {
 
     if (projectType === 'doc') {
       if (XWALK_FIELDS) XWALK_FIELDS.remove();
+      if (JSON_FIELDS) JSON_FIELDS.remove();
 
       config.fields['import-jcr-package'] = false;
 
@@ -242,6 +248,19 @@ const Project = async (config) => {
       if (jcrTab) {
         jcrTab.remove();
       }
+    } else if (projectType === 'json') {
+      if (XWALK_FIELDS) XWALK_FIELDS.remove();
+      if (SAVE_AS_DOCX) SAVE_AS_DOCX.remove();
+      if (DA_FIELD) DA_FIELD.remove();
+      if (LOCAL_HTML) LOCAL_HTML.remove();
+      if (LOCAL_MD) LOCAL_MD.remove();
+
+      config.fields['import-local-docx'] = false;
+      config.fields['import-local-json'] = true;
+      config.fields['import-jcr-package'] = false;
+      config.fields['import-local-da'] = false;
+      config.fields['import-local-html'] = false;
+      config.fields['import-local-md'] = false;
     } else {
       if (SAVE_AS_DOCX) SAVE_AS_DOCX.remove();
       if (DA_FIELD) DA_FIELD.remove();
