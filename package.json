@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@adobe/helix-html-pipeline": "6.26.6",
-    "@adobe/helix-importer": "3.4.101",
+    "@adobe/helix-importer": "https://github.com/adobe/helix-importer/tree/json",
     "@adobe/helix-importer-jcr-packaging": "2.0.10",
     "@spectrum-web-components/bundle": "1.7.0",
     "@spectrum-web-components/icons-workflow": "1.7.0",

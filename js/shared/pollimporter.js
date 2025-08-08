@@ -256,6 +256,14 @@ export default class PollImporter {
           this.running = false;
           return;
         }
+      } else if (projectType === 'json') {
+        const out = await WebImporter.html2json(
+          url,
+          documentClone,
+          this.projectTransform,
+          params,
+        );
+        results = Array.isArray(out) ? out : [out];
       } else {
         const out = await WebImporter.html2md(
           url,

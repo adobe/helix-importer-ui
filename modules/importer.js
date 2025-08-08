@@ -25,6 +25,7 @@ import {
   html2md,
   md2jcr,
   rules,
+  html2json,
 } from '@adobe/helix-importer';
 
 import docxStylesXML from '../resources/styles.xml';
@@ -83,6 +84,9 @@ const options = {
 async function html2mdWrapper(url, document, transformCfg, params) {
   return html2md(url, document, transformCfg, options, params);
 }
+async function html2jsonWrapper(url, document, transformCfg, params) {
+  return html2json(url, document, transformCfg, options, params);
+}
 
 async function html2docxWrapper(url, document, transformCfg, params) {
   return html2docx(url, document, transformCfg, options, params);
@@ -106,6 +110,7 @@ export {
   FileUtils,
   JCRUtils,
   html2mdWrapper as html2md,
+  html2jsonWrapper as html2json,
   html2docxWrapper as html2docx,
   md2jcrWrapper as md2jcr,
   rules,
