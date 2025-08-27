@@ -71,9 +71,7 @@ const loadDocument = async (url, options) => {
   let res;
   try {
     const headersObj = JSON.parse(headers || '{}');
-    res = await fetch(src, {
-      headersObj,
-    });
+    res = await fetch(src, { headers: headersObj });
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(`Unexpected error when trying to fetch ${src} - CORS issue or invalid headers ?`, e);
