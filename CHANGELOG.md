@@ -1,3 +1,10 @@
+## [1.57.10](https://github.com/adobe/helix-importer-ui/compare/v1.57.9...v1.57.10) (2025-08-27)
+
+
+### Bug Fixes
+
+* custom headers are not being set ([#575](https://github.com/adobe/helix-importer-ui/issues/575)) ([8f4276e](https://github.com/adobe/helix-importer-ui/commit/8f4276eb0362278586821c85778026fc0cc902b4)), closes [#574](https://github.com/adobe/helix-importer-ui/issues/574)
+
 ## [1.57.9](https://github.com/adobe/helix-importer-ui/compare/v1.57.8...v1.57.9) (2025-08-25)
 
 
