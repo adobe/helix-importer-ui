@@ -1,3 +1,10 @@
+## [1.57.12](https://github.com/adobe/helix-importer-ui/compare/v1.57.11...v1.57.12) (2025-08-28)
+
+
+### Bug Fixes
+
+* jcr - html comments are lost when an error is thrown ([#578](https://github.com/adobe/helix-importer-ui/issues/578)) ([e5ad168](https://github.com/adobe/helix-importer-ui/commit/e5ad168bcf7e8072745ecbc2dac230ce807dabd6)), closes [#577](https://github.com/adobe/helix-importer-ui/issues/577)
+
 ## [1.57.11](https://github.com/adobe/helix-importer-ui/compare/v1.57.10...v1.57.11) (2025-08-27)
 
 
