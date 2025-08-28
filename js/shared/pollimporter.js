@@ -234,7 +234,7 @@ export default class PollImporter {
           // debugging the md2jcr conversion
           const mdOut = await WebImporter.html2md(
             url,
-            documentClone,
+            deepCloneWithStyles(document, this.projectTransform?.REQUIRED_STYLES),
             this.projectTransform,
             params,
           );
