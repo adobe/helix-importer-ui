@@ -2,17 +2,17 @@
 
 ## General idea
 
-The general idea of the importer is pretty straight forward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file. For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file thus the next references to Markdown or docx are equivalent to "the output of the transformation process".
+The general idea of the importer is pretty straightforward: it takes a page DOM and transforms it into a Markdown file which is then converted to a docx file. For now, let's consider that the Markdown file is a one-to-one equivalent to the docx file, thus the next references to Markdown or docx are equivalent to "the output of the transformation process".
 
 As Markdown is a pretty simple format, the DOM transformation is really basic: a `<h1>` becomes a `Heading 1`, a paragraph or text in a `<span>` or `<div>` becomes a paragraph, an `<a>` stays a link, an `<img>` an image... All styling, layout or `<div>` nesting disappears in the Markdown output. The only special case is `<table>` which becomes a `gridtable` element in the Markdown output and becomes a table in Word (which is the foundation for [Blocks](https://www.hlx.live/developer/markup-sections-blocks)).
 
-The point is really to only extract the content from the original page. And the importer primary objective is to help in digesting a large amount of pages from an existing website. If you have only few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
+The point is really to only extract the content from the original page. And the importer primary objective is to help in digesting a large amount of pages from an existing website. If you have only a few pages on the website, it is easier and faster to manually copy/paste the content into Word documents. But in the case of a large website with pages that are structurally similar (for example a blog site with thousands of blog articles), it would be fastidious to manually copy/paste all pages. 
 
 To summarize: if a large set of pages look the same, this is when you want to use the importer and write a specific `import.js` transformation file.
 
-The transformation file will contain a set of basic transformation rules. Writing those import transformation rules is an iterative process: you will first digest one page with a minimun of transformations. Then you should try to style this page: you will see that you might need some blocks for certain pieces. That's when you come back to your transformation rules and add more to automatically convert some areas of the DOM into blocks. Once the page is exactly what you expect in terms of content structure, try another one. You might find other blocks that could benefit from automatic transformations. Try with 2, 3 more. Then you can run the import on your whole set of pages!
+The transformation file will contain a set of basic transformation rules. Writing those import transformation rules is an iterative process: you will first digest one page with a minimum of transformations. Then you should try to style this page: you will see that you might need some blocks for certain pieces. That's when you come back to your transformation rules and add more to automatically convert some areas of the DOM into blocks. Once the page is exactly what you expect in terms of content structure, try another one. You might find other blocks that could benefit from automatic transformations. Try with 2, 3 more. Then you can run the import on your whole set of pages!
 
-It is worth mentioning that this is a developer tool and requires some understanding of Javascript and the DOM. But nothing else.
+It is worth mentioning that this is a developer tool and requires some understanding of JavaScript and the DOM. But nothing else.
 
 Reading this document before starting with content import is highly recommended. You'll find some [tips and tricks at the end](#tips-and-tricks).
 
@@ -20,7 +20,7 @@ Reading this document before starting with content import is highly recommended.
 
 Out of the box, the importer should be able to consume any page and output a Markdown file out of it. Some parts like the navigation, the header or the footer should not appear in all the docx files, the first element of the docx should be a Heading 1, some data are metadata that can be stored in a Metadata block... these are basic rules to structure the content in the Word documents and the transformation file is the place to write those rules.
 
-Such a rule is very straight forward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
+Such a rule is very straightforward to implement: it is usually a set of DOM operations: create new, move or delete DOM elements.
 
 In your `import.js` transformation file, you can implement 2 modes: 
 - one input / one output - default file snippet: https://gist.github.com/kptdobe/8a726387ecca80dde2081b17b3e913f7 (the code provided here is equivalent to the default import running if you do not provide an `import.js` file)
@@ -39,7 +39,7 @@ You must implement those 2 methods:
   - `params`: some params given by the importer. Only param so far is the `originalURL` which is the url of the page being imported (url is the one to the proxy)
 - `generateDocumentPath: ({ document, url, html, params }) => {}`: return a path that describes the document being transformed - allows you to define / filter the page name and the folder structure in which the document should be stored (default is the current url pathname with the trailing slash and the `.html`). Params are the same than above.
 
-This is simpler version of the implementation. You can achieve the same by implementing the `transform` method as describe below.
+This is a simpler version of the implementation. You can achieve the same by implementing the `transform` method as described below.
 
 #### one input / multiple outputs
 
@@ -248,7 +248,7 @@ const table = WebImporter.DOMUtils.createTable(cells, document);
 main.append(table);
 ```
 
-This code would do the same and produce the same table (almost - it does not deal yet with the colspan) than the Metadata table above.
+This code would do the same and produce the same table (almost - it does not deal yet with the colspan) as the Metadata table above.
 
 You can "move" elements in the table by simply adding the elements to the cells array:
 
@@ -335,7 +335,7 @@ Second section
 
 ### Convert background images
 
-Backgroud images are either part of the CSS or inline styles. As mentioned above, the styles considered when converting the DOM to Markdown. If background images are used on the pages being imported, they must receive a special treatment.
+Background images are either part of the CSS or inline styles. As mentioned above, the styles considered when converting the DOM to Markdown. If background images are used on the pages being imported, they must receive a special treatment.
 
 Note: in a preprocessing step, the importer tries its best to inline in the DOM the background images which are stored in CSS files.
 
@@ -353,7 +353,7 @@ Input DOM:
 </html>
 ```
 
-With not special handling, the output is: 
+With no special handling, the output is: 
 
 ```md
 # Hello World
@@ -372,7 +372,7 @@ Output is then:
 ![](https://www.sample.com/images/helloworld.png);
 ```
 
-### Mutiple output
+### Multiple output
 
 If you need to transform one page into multiple Word documents (fragments, banners, author pages...), you can use the `transform` method.
 
@@ -430,12 +430,12 @@ Outputs are:
 ```
 
 Note:
-- be careful with the DOM elements you are working with. You always work on the same document thus you may destruct elements for one output which may have an inpact on the other outputs.
+- be careful with the DOM elements you are working with. You always work on the same document thus you may destruct elements for one output which may have an impact on the other outputs.
 - you may have as many outputs as you want (limit not tested yet).
 
 ### Reporting back
 
-The Importer UI offers a "Download import report" button (same behavior in the `Import - Workbench` and `Import - Bulk` UIs). The XLSX report generated gives you the list of URLs processed, the status of the import (might have failed) and some explanations on why it failed. You can add some extra columns to that report. For that, you have to use the `transform` method, presented in the [Multiple Output](./importer-guidelines.md#multiple-output) section above (for the obvious reason you can define the properties of the output object). You do not have to return mutliple objects, one object or an array of one object is enough (migrating from the usage of `transformDOM` / `generateDocumentPath` is straight forward).
+The Importer UI offers a "Download import report" button (same behavior in the `Import - Workbench` and `Import - Bulk` UIs). The XLSX report generated gives you the list of URLs processed, the status of the import (might have failed) and some explanations on why it failed. You can add some extra columns to that report. For that, you have to use the `transform` method, presented in the [Multiple Output](./importer-guidelines.md#multiple-output) section above (for the obvious reason you can define the properties of the output object). You do not have to return multiple objects, one object or an array of one object is enough (migrating from the usage of `transformDOM` / `generateDocumentPath` is straightforward).
 
 You can do something like:
 
@@ -478,7 +478,7 @@ The report would look like this:
 | https://www.sample.com/ | / | | Success | | Sample page title | ["https://www.sample.com/img1", "https://www.sample.com/img2"] | [{"name":"viewport","content":"width=device-width,initial-scale=1"},{"name":"description","content":"Sample site homepage description"},...] |
 | https://www.sample.com/page1.html | /page1 | | Success | | Sample page 1 title | ["https://www.sample.com/img3", "https://www.otherdomain.com/img"] | [{"name":"viewport","content":"width=device-width,initial-scale=1"},{"name":"description","content":"Sample site page 1 description"},...] |
 
-The report extra columns are created based on the top level properties in the `report` object. We recommand the value to be a string for easiness to consume in Excel but, in theory, it can be anything that can be `JSON.stringify`.
+The report extra columns are created based on the top-level properties in the `report` object. We recommend the value to be a string for ease of consumption in Excel but, in theory, it can be anything that can be `JSON.stringify`.
 
 Depending on your Excel skills and your needs you can be creative and easily customise the report.
 
@@ -552,7 +552,7 @@ With this method, you can construct an `xlsx` spreadsheet with the site data you
 
 ### More samples
 
-Sites in the https://github.com/hlxsites/ organization have all be imported. There are many different implementations that cover a lot of use cases.
+Sites in the https://github.com/hlxsites/ organization have all been imported. There are many different implementations that cover a lot of use cases.
 
 ## Case studies
 
@@ -585,11 +585,11 @@ When using one of the default `import.js` file snippets provided above, you'll f
 
 ## Proxy, security and memory
 
-When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the Javascript from the page being imported.
+When using this importer tool, everything happens in the browser which means the import process must be able to fetch all the resources and in some cases execute the JavaScript from the page being imported.
 
 When running `aem import`, a proxy is started and all requests to the host are re-written client-side and go through the proxy. This allows the importer to control the security settings and avoid CORS and CSP issues. The target page is then loaded in an iframe and the importer access to the DOM via this iframe.
 
-This is a generic solution that works in 90% of the cases. But some sites are pretty imaginative on how to prevent being loaded in a iframe (like a Javascript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the AEM team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
+This is a generic solution that works in 90% of the cases. But some sites are pretty imaginative on how to prevent being loaded in an iframe (like a JavaScript redirect if the `window.location` is not their own host). If you face such a problem, you can contact the AEM team and we can look at some workarounds and potentially integrate more logic in the proxy to handle more of these cases.
 
 One workaround to try could be to run the browser with all security settings off. But this is getting harder and harder to do.
 
@@ -607,7 +607,7 @@ Using the following command, you can define custom header sent by the proxy to t
 aem import --headers-file ./headers.json
 ```
 
-This is useful to control the headers of the proxied request. One typical usecase is to define the `Authorization` header or the `Cookie` header to authenticate to the remote host. The `headers.json` file would then look like this:
+This is useful to control the headers of the proxied request. One typical use case is to define the `Authorization` header or the `Cookie` header to authenticate to the remote host. The `headers.json` file would then look like this:
 
 ```
 {
@@ -651,38 +651,38 @@ const makeProxySrcs = (main, host) => {
 
 This simply transforms the image srcs to use the proxy: `https://www.sample.com/images/helloworld.png` becomes `http://localhost:3001/images/helloworld.png?host=https://www.sample.com`
 
-### Javascript or not Javascript: memory consumption
+### JavaScript or not JavaScript: memory consumption
 
-Disabling Javascript in the option is the best solution for speed and memory consumption. You can then import thousands of pages.
-With Javascript enabled, things become more complicated for the browser. It depends on the amount of code to load and execute, but in general, you can only import around one hundred pages before the browser crashes (too much memory consumed).
+Disabling JavaScript in the option is the best solution for speed and memory consumption. You can then import thousands of pages.
+With JavaScript enabled, things become more complicated for the browser. It depends on the amount of code to load and execute, but in general, you can only import around one hundred pages before the browser crashes (too much memory consumed).
 
-Having Javascript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create a small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
+Having JavaScript enabled is usually required to capture content which is dynamically loaded which is 100% of the cases with SPA (React, Angular...). In this case, you need to create a small set of pages to import, run the import and reload the full browser window to flush the memory and run the next batch.
 
 We might also work on a cli version of the importer (see https://github.com/adobe/helix-importer/issues/23) where memory could be handled properly.
 
 ## Tips and tricks
 
-Every new project has its own collection of new use cases which might be totally new. Here is a collection of tips and tricks based on things we have seens so far or known limitations.
+Every new project has its own collection of new use cases which might be totally new. Here is a collection of tips and tricks based on things we have seen so far or known limitations.
 
-- Update the host of all the links during the import to match "https://main--<repo>--<ref>.hlx.page". This allow the naviguation on preview / live and the product domain.
+- Update the host of all the links during the import to match "https://main--<repo>--<ref>.hlx.page". This allows navigation on preview / live and the product domain.
 - In most of the cases, importing the homepage is useless because it is unique and different from the rest. Find sets of pages that are similar, this is where it makes most sense to write some code to import them.
 - Use the browser `console.log`, there might be some explicit import errors.
 - Use the import opportunity to append the Metadata block to all your pages - they tend to be forgotten but are key for SEO.
 - Linked images are not supported by Online Word thus they will be converted to image + link in Word.
-- Reuse the DOM elements from the orignal page, no need to re-create complete DOM structures, especially if the Markdown is what you need. Example: Text in a `div` will become a paragraph, no need to create a `p` tag and replace the `div`. More generally, the DOM can be dirty, as long as the output Markdown looks as expected, it does not matter.
-- If you import multiple page "types" for the project, you cannot either handle them in the same `import.js` file or have one `import-<type>.js` file per type (or any filename convention you lie). Use the UI options to point to a different import filename.
+- Reuse the DOM elements from the original page, no need to re-create complete DOM structures, especially if the Markdown is what you need. Example: Text in a `div` will become a paragraph, no need to create a `p` tag and replace the `div`. More generally, the DOM can be dirty, as long as the output Markdown looks as expected, it does not matter.
+- If you import multiple page "types" for the project, you can either handle them in the same `import.js` file or have one `import-<type>.js` file per type (or any filename convention you like). Use the UI options to point to a different import filename.
   
 ## Debugging
 
-  If you experience some deep nested Javascript exception, you can run the importer ui in developer mode, JS files will not be minified and obfuscated. Just run in the `/tools/importer/helix-importer-ui` folder:
+  If you experience some deeply nested JavaScript exception, you can run the importer UI in developer mode, JS files will not be minified and obfuscated. Just run in the `/tools/importer/helix-importer-ui` folder:
   
   ```bash
   npm run build:dev
   ```
 
- And reload the importer ui browser window.
+ And reload the importer UI browser window.
  
- ℹ️ If you want to make and/or propose changes in the `helix-importer` package (a dependency for `helix-importer-ui`, following additional steps would be needed:
+ ℹ️ If you want to make and/or propose changes in the `helix-importer` package (a dependency for `helix-importer-ui`), the following additional steps would be needed:
    1. check-out https://github.com/adobe/helix-importer
    1. execute `npm i` in the repository root
    1. execute `npm link`
@@ -692,7 +692,7 @@ Every new project has its own collection of new use cases which might be totally
    1. execute `npm link @adobe/helix-importer`
    1. update the `build:dev` goal in `package.json`, and remove `npm i` execution from the goal
       * this is required, otherwise the symlink created by `npm link @adobe/helix-importer` will be reset
-   1. execute `npm run build:dev` and reload the importer ui browser window.
+   1. execute `npm run build:dev` and reload the importer UI browser window.
       * this step is required for all subsequent (local) updates made to `helix-importer` dependency
       * to restore, revert changes made to `package.json` and repeat this step
 
@@ -755,7 +755,7 @@ export default {
 
 Just add the extra styles you need to perform your transformation.
 
-### Hot reload of JS Dependencies
+### Hot reload of JS dependencies
 
 It is common to use multiple files for the import process, usually using `import.js` as the entry.  By default, the UI will only hot reload changes in the "Transformation file URL" specified in the UI (i.e. import.js) and *not* its 'imports' which forces the user to refresh whenever dependencies are changed. To enable hot reload of dependencies, `esbuild` can be used with the watch option.
 
@@ -766,4 +766,3 @@ It is common to use multiple files for the import process, usually using `import
 - In the Importer UI, change the transformation file indicated to the one that is built in the output dir.
 
 Now the UI will load the bundled JS file, which will be automatically built when any changes are made.
-
