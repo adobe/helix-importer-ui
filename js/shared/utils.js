@@ -27,16 +27,24 @@ async function asyncForEach(array, callback) {
  * @returns {number} return -1 if v1 < v2, 0 if v1 == v2, 1 if v1 > v2
  */
 function compareVersions(from, against) {
-  if (!from || !against) throw new Error('Version is required');
+  if (!from || !against) {
+    throw new Error('Version is required');
+  }
 
   const v1Parts = from.split('.').map(Number);
   const v2Parts = against.split('.').map(Number);
 
-  if (v1Parts.some(Number.isNaN) || v2Parts.some(Number.isNaN)) throw new Error('Invalid version format');
+  if (v1Parts.some(Number.isNaN) || v2Parts.some(Number.isNaN)) {
+    throw new Error('Invalid version format');
+  }
 
   for (let i = 0; i < 3; i += 1) {
-    if (v1Parts[i] < v2Parts[i]) return -1;
-    if (v1Parts[i] > v2Parts[i]) return 1;
+    if (v1Parts[i] < v2Parts[i]) {
+      return -1;
+    }
+    if (v1Parts[i] > v2Parts[i]) {
+      return 1;
+    }
   }
 
   return 0;
