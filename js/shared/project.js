@@ -233,7 +233,9 @@ const Project = async (config) => {
     }
 
     if (projectType === 'doc') {
-      if (XWALK_FIELDS) XWALK_FIELDS.remove();
+      if (XWALK_FIELDS) {
+        XWALK_FIELDS.remove();
+      }
 
       config.fields['import-jcr-package'] = false;
 
@@ -243,8 +245,12 @@ const Project = async (config) => {
         jcrTab.remove();
       }
     } else {
-      if (SAVE_AS_DOCX) SAVE_AS_DOCX.remove();
-      if (DA_FIELD) DA_FIELD.remove();
+      if (SAVE_AS_DOCX) {
+        SAVE_AS_DOCX.remove();
+      }
+      if (DA_FIELD) {
+        DA_FIELD.remove();
+      }
       config.fields['import-local-docx'] = false;
 
       // initial state setup, if the fields are empty, mark them as invalid
