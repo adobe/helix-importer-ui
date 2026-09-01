@@ -95,7 +95,9 @@ const doDrop = async () => {
 
 const getStyle = (win, x, y, type) => {
   const element = win.document.elementFromPoint(x, y);
-  if (!element) return null;
+  if (!element) {
+    return null;
+  }
   if (type === 'img') {
     if (element.tagName === 'IMG') {
       return element.src;
@@ -159,7 +161,9 @@ const saveCapture = (event) => {
 
 const stopCapturing = () => {
   enablePickers();
-  if (!currentPicker) return;
+  if (!currentPicker) {
+    return;
+  }
   currentPicker.removeAttribute('selected');
   currentPicker.removeAttribute('emphasized');
   CONTENT_FRAME.contentDocument.removeEventListener('mousemove', capture);
@@ -202,8 +206,12 @@ const doCopyCSS = async () => {
 };
 
 const downloadLogo = async () => {
-  if (!LOGO_FIELD.value) return;
-  if (LOGO_FIELD.value === 'none') return;
+  if (!LOGO_FIELD.value) {
+    return;
+  }
+  if (LOGO_FIELD.value === 'none') {
+    return;
+  }
 
   const a = document.createElement('a');
   if (LOGO_FIELD.value.startsWith('<svg')) {
