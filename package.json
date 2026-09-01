@@ -3,7 +3,7 @@
   "description": "helix-importer-ui",
   "version": "1.57.17",
   "type": "module",
-  "packageManager": "npm@10.8.2",
+  "packageManager": "npm@10.9.9",
   "scripts": {
     "test": "c8 mocha",
     "clean": "rm -fr ./js/dist",
@@ -28,7 +28,7 @@
     "parcel": "2.16.4",
     "path-browserify": "1.0.1",
     "unified": "11.0.5",
-    "ws": "8.21.1"
+    "ws": "8.21.3"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "3.0.31",
