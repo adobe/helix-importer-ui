@@ -3,7 +3,7 @@
   "description": "helix-importer-ui",
   "version": "1.57.17",
   "type": "module",
-  "packageManager": "npm@10.8.2",
+  "packageManager": "npm@12.0.2",
   "scripts": {
     "test": "c8 mocha",
     "clean": "rm -fr ./js/dist",
