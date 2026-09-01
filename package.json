@@ -17,8 +17,8 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@adobe/helix-html-pipeline": "6.29.6",
-    "@adobe/helix-importer": "3.4.140",
+    "@adobe/helix-html-pipeline": "6.31.4",
+    "@adobe/helix-importer": "3.4.146",
     "@adobe/helix-importer-jcr-packaging": "2.0.16",
     "@spectrum-web-components/bundle": "1.12.2",
     "@spectrum-web-components/icons-workflow": "1.12.2",
@@ -31,7 +31,7 @@
     "ws": "8.21.1"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "3.0.28",
+    "@adobe/eslint-config-helix": "3.0.31",
     "@babel/core": "7.29.7",
     "@babel/eslint-parser": "7.29.7",
     "@eslint/config-helpers": "0.7.0",
