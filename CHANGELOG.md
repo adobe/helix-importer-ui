@@ -1,3 +1,14 @@
+## [1.57.18](https://github.com/adobe/helix-importer-ui/compare/v1.57.17...v1.57.18) (2026-09-08)
+
+
+### Bug Fixes
+
+* **deps:** resync package-lock.json (restore chokidar@3.6.0 tree) ([#589](https://github.com/adobe/helix-importer-ui/issues/589)) ([256e2dd](https://github.com/adobe/helix-importer-ui/commit/256e2ddf77bd6c3981fe9896473bb123d5a50b50)), closes [#585](https://github.com/adobe/helix-importer-ui/issues/585) [#586](https://github.com/adobe/helix-importer-ui/issues/586)
+* **deps:** update adobe fixes ([#585](https://github.com/adobe/helix-importer-ui/issues/585)) ([fc5309a](https://github.com/adobe/helix-importer-ui/commit/fc5309a64e8348f13f80348f011cfdb56219814a))
+* **deps:** update dependency @adobe/helix-html-pipeline to v6.32.0 ([#592](https://github.com/adobe/helix-importer-ui/issues/592)) ([98501e3](https://github.com/adobe/helix-importer-ui/commit/98501e3c72c3a6ce129e11464ad7f3b20e9d4ff2))
+* **deps:** update external fixes ([#569](https://github.com/adobe/helix-importer-ui/issues/569)) ([e048bda](https://github.com/adobe/helix-importer-ui/commit/e048bdafb496a3fef1450491a85fb3c46cdca629))
+* **deps:** update external fixes ([#586](https://github.com/adobe/helix-importer-ui/issues/586)) ([e42e49f](https://github.com/adobe/helix-importer-ui/commit/e42e49f2ba284c28d09b23242cb6df20fe02d293))
+
 ## [1.57.17](https://github.com/adobe/helix-importer-ui/compare/v1.57.16...v1.57.17) (2026-07-07)
 
 
