@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-importer-ui",
   "description": "helix-importer-ui",
-  "version": "1.57.21",
+  "version": "1.57.22",
   "type": "module",
   "packageManager": "npm@10.9.9",
   "scripts": {
