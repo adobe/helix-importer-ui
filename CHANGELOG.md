@@ -1,3 +1,10 @@
+## [1.57.23](https://github.com/adobe/helix-importer-ui/compare/v1.57.22...v1.57.23) (2026-09-29)
+
+
+### Bug Fixes
+
+* **deps:** update dependency jszip to v3.10.2 ([#598](https://github.com/adobe/helix-importer-ui/issues/598)) ([3b117ec](https://github.com/adobe/helix-importer-ui/commit/3b117ec9825510b497918f0ed51d56c4539600f6))
+
 ## [1.57.22](https://github.com/adobe/helix-importer-ui/compare/v1.57.21...v1.57.22) (2026-09-23)
 
 
