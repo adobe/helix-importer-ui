@@ -33,7 +33,7 @@
   "devDependencies": {
     "@adobe/eslint-config-helix": "3.0.32",
     "@babel/core": "7.29.7",
-    "@babel/eslint-parser": "7.29.7",
+    "@babel/eslint-parser": "7.29.9",
     "@eslint/config-helpers": "0.7.0",
     "@semantic-release/changelog": "6.0.3",
     "@semantic-release/exec": "7.1.0",
@@ -55,7 +55,7 @@
     "semantic-release-discord-bot": "^1.1.0",
     "stylelint": "16.26.1",
     "stylelint-config-standard": "38.0.0",
-    "webpack": "5.109.2",
+    "webpack": "5.111.1",
     "webpack-cli": "6.0.1",
     "webpack-dev-server": "5.2.6",
     "webpack-merge": "6.0.1"
