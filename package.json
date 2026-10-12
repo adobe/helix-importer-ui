@@ -28,7 +28,7 @@
     "parcel": "2.16.4",
     "path-browserify": "1.0.1",
     "unified": "11.0.5",
-    "ws": "8.21.3"
+    "ws": "8.22.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "3.0.32",
