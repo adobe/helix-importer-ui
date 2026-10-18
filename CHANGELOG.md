@@ -1,3 +1,10 @@
+## [1.57.34](https://github.com/adobe/helix-importer-ui/compare/v1.57.33...v1.57.34) (2026-10-18)
+
+
+### Bug Fixes
+
+* **deps:** update adobe fixes ([#609](https://github.com/adobe/helix-importer-ui/issues/609)) ([970d779](https://github.com/adobe/helix-importer-ui/commit/970d779edfc4ef15cc8836bdd02750772ae76991))
+
 ## [1.57.33](https://github.com/adobe/helix-importer-ui/compare/v1.57.32...v1.57.33) (2026-10-13)
 
 
