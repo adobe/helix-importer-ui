@@ -100,4 +100,18 @@ describe('md2da', () => {
     const md = '[/café.jpg](/café.jpg "Alt")';
     assert.ok(md2da(md, { html }).includes('data-edit-as="image"'));
   });
+
+  it('marks the second of two identical links when only it is marked', () => {
+    const html = '<p><a href="/pic.jpg">Picture</a></p><p><a href="/pic.jpg" data-edit-as="image">Picture</a></p>';
+    const md = '[Picture](/pic.jpg)\n\n[Picture](/pic.jpg)';
+    const actual = md2da(md, { html });
+    assert.equal(actual.match(/data-edit-as/g).length, 1, actual);
+    assert.ok(actual.indexOf('data-edit-as') > actual.indexOf('<a '), actual);
+  });
+
+  it('does not mark a link with the same url but a different title', () => {
+    const html = '<p><a href="/pic.jpg" data-edit-as="image" title="Alt">/pic.jpg</a></p>';
+    const md = '[/pic.jpg](/pic.jpg "Other")';
+    assert.ok(!md2da(md, { html }).includes('data-edit-as'));
+  });
 });
