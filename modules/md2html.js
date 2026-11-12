@@ -97,7 +97,8 @@ function md2htmlInternal(md, da = false, sourceHtml = '') {
     if (images.length === source.images.length) {
       images.forEach((img, i) => {
         const { dataFocalX, dataFocalY, alt } = source.images[i];
-        if (dataFocalX != null && dataFocalY != null && normalizeAlt(alt) === normalizeAlt(img.properties.alt)) {
+        const sameAlt = normalizeAlt(alt) === normalizeAlt(img.properties.alt);
+        if (dataFocalX != null && dataFocalY != null && sameAlt) {
           img.properties.dataFocalX = dataFocalX;
           img.properties.dataFocalY = dataFocalY;
         }
