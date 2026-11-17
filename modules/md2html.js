@@ -44,6 +44,12 @@ const linkKey = (node) => JSON.stringify([
 
 const isEl = (node, tag) => node.type === 'element' && node.tagName === tag;
 
+/**
+ * Collect links and images from the source HTML so their attributes can be restored
+ * @param {string} source - The source HTML
+ * @returns {{links: Map<string, boolean[]>, images: object[]}} Link occurrences keyed by
+ * href/title/text (each flagged for data-edit-as="image") and the image properties in order
+ */
 function collectSource(source) {
   const info = { links: new Map(), images: [] };
   if (!source) {
