@@ -3,7 +3,7 @@
   "description": "helix-importer-ui",
   "version": "1.57.44",
   "type": "module",
-  "packageManager": "npm@10.9.9",
+  "packageManager": "npm@10.9.10",
   "scripts": {
     "test": "c8 mocha",
     "clean": "rm -fr ./js/dist",
@@ -20,15 +20,15 @@
     "@adobe/helix-html-pipeline": "6.33.7",
     "@adobe/helix-importer": "3.4.158",
     "@adobe/helix-importer-jcr-packaging": "2.0.16",
-    "@spectrum-web-components/bundle": "1.12.4",
-    "@spectrum-web-components/icons-workflow": "1.12.4",
+    "@spectrum-web-components/bundle": "1.12.5",
+    "@spectrum-web-components/icons-workflow": "1.12.5",
     "buffer": "6.0.3",
-    "hast-util-to-html": "9.0.5",
+    "hast-util-to-html": "9.0.6",
     "jszip": "3.10.2",
     "parcel": "2.16.4",
     "path-browserify": "1.0.1",
     "unified": "11.0.5",
-    "ws": "8.22.0"
+    "ws": "8.22.1"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "3.0.35",
