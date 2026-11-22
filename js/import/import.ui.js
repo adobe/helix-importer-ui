@@ -110,7 +110,7 @@ const postSuccessfulStep = async (results, originalURL) => {
         const assetUrls = WebImporter.JCRUtils.getAssetUrlsFromMarkdown(md);
         assetUrls.forEach((url) => pageAssets.add(url));
 
-        files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md)}</main></body>` });
+        files.push({ type: 'da', filename: `${path}.html`, data: `<body><main>${WebImporter.md2da(md, { html })}</main></body>` });
 
         // if we are finished importing all the pages, save the referenced assets urls
         if (ImportStatus.isFinished()) {
