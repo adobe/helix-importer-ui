@@ -1,3 +1,10 @@
+## [1.57.50](https://github.com/adobe/helix-importer-ui/compare/v1.57.49...v1.57.50) (2026-11-27)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-html-pipeline to v6.33.13 ([#626](https://github.com/adobe/helix-importer-ui/issues/626)) ([28581ef](https://github.com/adobe/helix-importer-ui/commit/28581ef8258cd2309e8961c2e1c3f449b3a1dc2a))
+
 ## [1.57.49](https://github.com/adobe/helix-importer-ui/compare/v1.57.48...v1.57.49) (2026-11-25)
 
 
